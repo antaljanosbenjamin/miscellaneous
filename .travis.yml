@@ -1,0 +1,27 @@
+language: cpp
+
+os:
+  - linux
+  - windows
+
+compiler:
+  - gcc
+  - clang
+      
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      compiler: gcc
+    - os: linux
+      dist: trusty
+      compiler: clang
+    - os: windows
+
+script:
+  - cmake . -B build
+  - cd build
+  - cmake --build . -- -j2
+  
+notifications:
+  email: false
