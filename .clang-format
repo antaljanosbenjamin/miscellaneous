@@ -1,0 +1,9 @@
+﻿BreakConstructorInitializers: BeforeComma
+ColumnLimit: '120'
+ConstructorInitializerIndentWidth: '2'
+IndentWidth: '2'
+NamespaceIndentation: None
+UseTab: Never
+SortIncludes: true
+AllowShortFunctionsOnASingleLine: false
+SpaceBeforeRangeBasedForLoopColon: false
