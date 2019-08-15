@@ -4,18 +4,16 @@
 #include "Advice.hpp"
 #include "Point.hpp"
 
-using namespace std;
-
 int main() {
   size_t sPathCount;
-  cin >> sPathCount;
+  std::cin >> sPathCount;
   while (sPathCount > 0) {
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     AdviceCalculator adviceCalculator(sPathCount);
-    adviceCalculator.readDatas(cin);
+    adviceCalculator.readDatas(std::cin);
     adviceCalculator.calculate();
     Point pointAverage = adviceCalculator.getAverageDestination();
-    std::cout << pointAverage.x << " " << pointAverage.y << " " << adviceCalculator.getLongestDistance() << endl;
-    cin >> sPathCount;
+    std::cout << pointAverage.x << " " << pointAverage.y << " " << adviceCalculator.getLongestDistance() << "\n";
+    std::cin >> sPathCount;
   }
 }

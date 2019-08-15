@@ -88,8 +88,8 @@ constexpr CoordOffset::CoordOffset(int iRowOffset, int iColOffset)
 }
 
 const Coord Coord::operator+(const CoordOffset &rhs) const {
-  int iNewRow = sRow + rhs.iRowOffset;
-  int iNewCol = sCol + rhs.iColOffset;
+  int iNewRow = static_cast<int>(sRow) + rhs.iRowOffset;
+  int iNewCol = static_cast<int>(sCol) + rhs.iColOffset;
 
   return Coord{(size_t)iNewRow, (size_t)iNewCol};
 }
@@ -111,8 +111,8 @@ FieldType SeaCoastCounter::getFieldType(char cField) {
   case '1':
     return LAND;
   default:
-    cerr << "Undefined field type: ";
-    cerr << cField << endl;
+    std::cerr << "Undefined field type: ";
+    std::cerr << cField << endl;
     return WATER;
   }
 }
@@ -122,7 +122,7 @@ FieldType &SeaCoastCounter::fieldAt(const Coord &coordField) {
 }
 
 void SeaCoastCounter::readInput(istream &inputSteam) {
-  cin >> m_sRowsInside >> m_sColsInside;
+  inputSteam >> m_sRowsInside >> m_sColsInside;
   m_sRows = m_sRowsInside + 2;
   m_sCols = m_sColsInside + 2;
 
@@ -131,7 +131,7 @@ void SeaCoastCounter::readInput(istream &inputSteam) {
   char cField;
   for (size_t sActualRow = 1; sActualRow < m_sRows - 1; ++sActualRow)
     for (size_t sActualCol = 1; sActualCol < m_sCols - 1; ++sActualCol) {
-      cin >> cField;
+      inputSteam >> cField;
       m_vectorMap[sActualRow][sActualCol] = getFieldType(cField);
     }
 }
@@ -181,10 +181,6 @@ void SeaCoastCounter::handleBecameSea(const Coord &coordNewSea) {
     Coord coordNeighbour = coordNewSea + coordOffsetNeighbour;
 
     if (fieldAt(coordNeighbour) == LAND) {
-      /*cout << "From: (" << coordNewSea.sRow << "," << coordNewSea.sCol << ") to (" << coordNeighbour.sRow << "," <<
-      coordNeighbour.sCol
-      << ")" << endl;*/
-
       ++uiSeaCoastLength;
     } else if (fieldAt(coordNeighbour) == WATER)
       m_queueCoordsToBecameSea.push(coordNeighbour);
@@ -213,8 +209,8 @@ unsigned int SeaCoastCounter::calculateSeaCoastLength() {
 
 int main() {
   SeaCoastCounter seaCoastComputer;
-  seaCoastComputer.readInput(cin);
-  cout << seaCoastComputer.calculateSeaCoastLength() << endl;
+  seaCoastComputer.readInput(std::cin);
+  std::cout << seaCoastComputer.calculateSeaCoastLength() << "\n";
 
   return 0;
 }

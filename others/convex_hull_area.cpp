@@ -15,8 +15,6 @@
 // Output:
 // 23
 
-using namespace std;
-
 enum Orientation { COLLINEAR, CLOCKWISE, COUNTERCLOCKWISE };
 
 struct Point {
@@ -43,7 +41,7 @@ public:
   Point m_pointMostLeftBottom;
   std::vector<Point> m_vectorConvexHull;
 
-  ConvexHullCalculator(vector<Point> vectorPoints);
+  ConvexHullCalculator(std::vector<Point> vectorPoints);
 
   void calculateConvexHull();
 
@@ -92,7 +90,7 @@ bool Point::compare(const Point &pointSource, const Point &pointLhs, const Point
   return (orientation == COUNTERCLOCKWISE) ? true : false;
 }
 
-ConvexHullCalculator::ConvexHullCalculator(vector<Point> vectorPoints)
+ConvexHullCalculator::ConvexHullCalculator(std::vector<Point> vectorPoints)
   : m_vectorPoints(vectorPoints)
   , m_pointMostLeftBottom()
   , m_vectorConvexHull() {
@@ -160,22 +158,22 @@ double ConvexHullCalculator::calculateConvexHullArea() {
 
 int main() {
   size_t sNumberOfBacons;
-  cin >> sNumberOfBacons;
+  std::cin >> sNumberOfBacons;
 
   int iX;
   int iY;
   while (sNumberOfBacons != 0) {
-    vector<Point> vectorPoints(sNumberOfBacons);
+    std::vector<Point> vectorPoints(sNumberOfBacons);
     for (size_t sPos = 0; sPos < sNumberOfBacons; ++sPos) {
-      cin >> iX >> iY;
+      std::cin >> iX >> iY;
       vectorPoints[sPos] = Point{iX, iY};
     }
 
     ConvexHullCalculator convexHullCalculator(vectorPoints);
     convexHullCalculator.calculateConvexHull();
-    cout << convexHullCalculator.calculateConvexHullArea() << endl;
+    std::cout << convexHullCalculator.calculateConvexHullArea() << "\n";
 
-    cin >> sNumberOfBacons;
+    std::cin >> sNumberOfBacons;
   }
 
   return 0;
