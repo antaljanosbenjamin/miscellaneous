@@ -20,13 +20,13 @@ enum Orientation { COLLINEAR, CLOCKWISE, COUNTERCLOCKWISE };
 struct Point {
   int iX, iY;
 
-  const Point operator+(const Point &rhs) const;
-  const Point operator-(const Point &rhs) const;
+  Point operator+(const Point &rhs) const;
+  Point operator-(const Point &rhs) const;
   // Cross-product
-  const int operator%(const Point &rhs) const;
-  const bool operator==(const Point &rhs) const;
+  int operator%(const Point &rhs) const;
+  bool operator==(const Point &rhs) const;
 
-  const int getLengthSquare() const;
+  int getLengthSquare() const;
 
   static Orientation getOrientation(const Point &pointSource, const Point &pointFirst, const Point &pointSecond);
 
@@ -48,24 +48,24 @@ public:
   double calculateConvexHullArea();
 };
 
-const Point Point::operator+(const Point &rhs) const {
+Point Point::operator+(const Point &rhs) const {
   return Point{iX + rhs.iX, iY + rhs.iY};
 }
 
-const bool Point::operator==(const Point &rhs) const {
+bool Point::operator==(const Point &rhs) const {
   return iX == rhs.iX && iY == rhs.iY;
 }
 
-const Point Point::operator-(const Point &rhs) const {
+Point Point::operator-(const Point &rhs) const {
   return Point{iX - rhs.iX, iY - rhs.iY};
 }
 
 // Cross-product
-const int Point::operator%(const Point &rhs) const {
+int Point::operator%(const Point &rhs) const {
   return iX * rhs.iY - iY * rhs.iX;
 }
 
-const int Point::getLengthSquare() const {
+int Point::getLengthSquare() const {
   return iX * iX + iY * iY;
 }
 

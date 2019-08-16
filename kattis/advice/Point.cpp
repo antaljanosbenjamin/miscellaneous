@@ -12,7 +12,7 @@ const Point &operator+=(Point &lhs, const Point &rhs) {
   return lhs;
 }
 
-const bool operator==(const Point &lhs, const Point &rhs) {
+bool operator==(const Point &lhs, const Point &rhs) {
   return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
@@ -39,6 +39,6 @@ Point &RotateByDegree(Point &point, double dAngleInDegree) {
   return point;
 }
 
-const double GetLength(const Point &point) {
+double GetLength(const Point &point) {
   return sqrt(point.x * point.x + point.y * point.y);
 }

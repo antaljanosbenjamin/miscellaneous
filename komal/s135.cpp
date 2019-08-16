@@ -59,9 +59,13 @@ public:
   size_t getD();
 
 private:
-  size_t getFieldId(size_t x, size_t y) { return y * this->size + x; }
+  size_t getFieldId(size_t x, size_t y) {
+    return y * this->size + x;
+  }
 
-  void setDifference(size_t from, Height difference, size_t to) { edges.emplace_back(Edge{from, difference, to}); }
+  void setDifference(size_t from, Height difference, size_t to) {
+    edges.emplace_back(Edge{from, difference, to});
+  }
 
   void calculateNorthSouthDifference() {
     for (auto x = 0u; x <= this->size - 1; ++x) {
@@ -109,7 +113,7 @@ private:
   void mergeComponents(size_t componentIdToExtend, size_t componentIdToMerge) {
     auto &componentToExtend = this->components[componentIdToExtend];
     auto &componentToMerge = this->components[componentIdToMerge];
-    for (auto &fieldID : componentToMerge) {
+    for (auto &fieldID: componentToMerge) {
       this->fieldToComponent[fieldID] = componentIdToExtend;
     }
 
@@ -138,13 +142,14 @@ size_t Table::getD() {
   }
   return this->edges[i - 1].difference;
 }
-#endif
 
-int main(int argc, char *argv[]) {
-#ifndef GENERATE_INPUT
+int main() {
   Table t(std::cin);
   std::cout << t.getD() << '\n';
+  return 0;
+}
 #else
+int main(int argc, char *argv[]) {
   if (argc < 2) {
     std::cerr << "Specify output file name as first command line argument!\n";
     return -1;
@@ -166,7 +171,8 @@ int main(int argc, char *argv[]) {
     outputFile << '\n';
   }
   outputFile.close();
-#endif
 
   return 0;
 }
+
+#endif

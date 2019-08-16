@@ -35,6 +35,7 @@ public:
 
   virtual void apply(LocationInfo &locationInfo) = 0;
 
+  virtual ~Advice();
 protected:
   Advice(AdviceType adviceTypeInitial);
 

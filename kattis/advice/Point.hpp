@@ -7,10 +7,10 @@ struct Point {
 
 Point &RotateByDegree(Point &point, double dAngleInDegree);
 
-const double GetLength(const Point &point);
+double GetLength(const Point &point);
 
 const Point operator+(const Point &lhs, const Point &rhs);
 const Point &operator+=(Point &lhs, const Point &rhs);
 const Point operator-(const Point &lhs, const Point &rhs);
 const Point &operator-=(Point &lhs, const Point &rhs);
-const bool operator==(const Point &lhs, const Point &rhs);
+bool operator==(const Point &lhs, const Point &rhs);
