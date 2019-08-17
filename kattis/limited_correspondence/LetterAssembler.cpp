@@ -1,5 +1,3 @@
-﻿#pragma once
-
 #include "LetterAssembler.hpp"
 
 #include <algorithm>
