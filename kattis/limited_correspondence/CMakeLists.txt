@@ -1,5 +1,6 @@
 set (LIMITED_CORREPONDENCE_SOURCES
 		${CMAKE_SOURCE_DIR}/.clang-format
+		LetterAssembler.cpp
 		LetterAssembler.hpp
 		main.cpp
 		)

@@ -1,4 +1,4 @@
-// https://open.kattis.com/submissions/4374599
+﻿// https://open.kattis.com/submissions/4374599
 
 #include "LetterAssembler.hpp"
 #include <fstream>
@@ -7,11 +7,10 @@
 int main() {
   auto caseNumber = 1u;
 
-  while (std::cin.good() == true) {
+  while (std::cin.good()) {
     LetterAssembler letterAssembler;
-    if (letterAssembler.read(std::cin)) {
-      std::cout << "Case " << caseNumber++ << ": " << letterAssembler.assemble() << std::endl;
-    }
+    letterAssembler.read(std::cin);
+    std::cout << "Case " << caseNumber++ << ": " << letterAssembler.assemble() << std::endl;
   }
   return 0;
 }
