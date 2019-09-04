@@ -5,8 +5,7 @@ add_executable (task_systems main.cpp
                 MultiQueuedTaskSystem.cpp
                 NotificationQueue.h
                 NotificationQueue.cpp
-                TaskStealingTaskSystem.h
-                TaskStealingTaskSystem.cpp)
+                TaskStealingTaskSystem.h)
 
 set_target_properties(task_systems PROPERTIES FOLDER "TaskSystems")
 find_package (Threads)

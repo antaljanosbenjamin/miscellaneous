@@ -12,6 +12,10 @@ else()
     add_compile_options(-Wall -Wextra -pedantic)
 endif()
 
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+    add_definitions(-DMY_DEBUG)
+endif()
+
 add_subdirectory (komal)
 add_subdirectory (kattis)
 add_subdirectory (others)
