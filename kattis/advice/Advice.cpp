@@ -1,4 +1,4 @@
-﻿#include "Advice.hpp"
+#include "Advice.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -35,7 +35,7 @@ std::shared_ptr<Advice> Advice::createAdvice(const std::string &adviceName, cons
   return createFunction(param);
 }
 
-Advice::~Advice(){};
+Advice::~Advice(){}
 
 Advice::Advice(AdviceType adviceTypeInitial)
   : adviceType(adviceTypeInitial) {
