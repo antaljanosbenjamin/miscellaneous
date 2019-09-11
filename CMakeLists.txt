@@ -16,12 +16,6 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
   add_definitions(-DMY_DEBUG)
 endif ()
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-
-find_package(Catch2 REQUIRED CONFIG)
-include(Catch)
-
 add_subdirectory(komal)
 add_subdirectory(kattis)
 add_subdirectory(others)
