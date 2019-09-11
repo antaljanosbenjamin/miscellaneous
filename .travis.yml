@@ -10,7 +10,7 @@ matrix:
             - gcc-8
             - g++-8
       env:
-        - MATRIX_EVAL="CC=gcc-8.0 && CXX=g++-8.0"
+        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
       compiler: gcc-8
     - os: linux
       dist: bionic
