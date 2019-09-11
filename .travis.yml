@@ -6,8 +6,6 @@ matrix:
       dist: bionic
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
           packages:
             - gcc-8
             - g++-8
@@ -19,7 +17,6 @@ matrix:
       addons:
         apt:
           sources:
-            - ubuntu-toolchain-r-test
             - llvm-toolchain-bionic-8
           packages:
             - clang-8
