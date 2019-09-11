@@ -4,10 +4,23 @@ matrix:
   include:
     - os: linux
       dist: trusty
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-8
+            - g++-8
       compiler: gcc
     - os: linux
       dist: trusty
       compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-8
     - os: windows
     - os: windows
       compiler: clang
