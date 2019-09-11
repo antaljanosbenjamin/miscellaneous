@@ -89,4 +89,4 @@ int main(int argc, char **argv) {
 #endif
 
   std::cout << "Running time: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count() << "ms\n";
-};
+}
