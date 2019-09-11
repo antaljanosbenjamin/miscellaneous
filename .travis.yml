@@ -16,8 +16,6 @@ matrix:
       dist: bionic
       addons:
         apt:
-          sources:
-            - llvm-toolchain-bionic-8
           packages:
             - clang-8
       compiler: clang-8
