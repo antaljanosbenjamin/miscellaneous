@@ -12,7 +12,7 @@ public:
     std::string best;
   };
 
-  void read(std::istream &inputStream);
+  bool read(std::istream &inputStream);
 
   std::string assemble();
 

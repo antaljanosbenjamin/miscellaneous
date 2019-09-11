@@ -1,16 +1,20 @@
-#include "LetterAssembler.hpp"
+﻿#include "LetterAssembler.hpp"
 
 #include <algorithm>
 #include <set>
 #include <tuple>
 
-void LetterAssembler::read(std::istream &inputStream) {
+bool LetterAssembler::read(std::istream &inputStream) {
   auto pairCount = 0u;
   auto sumFirstWordLength = 0;
   auto sumSecondWordLength = 0;
   this->wordPairs.clear();
 
   inputStream >> pairCount;
+
+  if (pairCount == 0) {
+    return false;
+  }
 
   this->wordPairs.reserve(pairCount);
 
@@ -30,6 +34,8 @@ void LetterAssembler::read(std::istream &inputStream) {
 
   std::sort(this->wordPairs.begin(), wordPairs.end());
   this->maximumPossibleLength = std::min(sumFirstWordLength, sumSecondWordLength);
+
+  return true;
 }
 
 std::string LetterAssembler::assemble() {
