@@ -1,5 +1,6 @@
 language: cpp
-      
+python: "3.7"
+
 matrix:
   include:
     - os: linux
@@ -28,7 +29,7 @@ matrix:
       compiler: clang
 
 install:
-  - pip install conan
+  - python -m pip install --user conan
   - conan user
 script:
   - conan install .
