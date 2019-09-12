@@ -9,4 +9,9 @@ set(
 )
 
 add_executable(advice ${ADVICE_SOURCES})
-set_target_properties(advice PROPERTIES FOLDER "kattis")
+set_target_properties(
+  advice
+  PROPERTIES
+    FOLDER
+    "kattis"
+)
