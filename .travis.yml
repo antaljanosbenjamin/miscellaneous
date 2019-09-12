@@ -1,5 +1,5 @@
 language: cpp
-python: "3.7"
+python: "3.7.1"
 
 matrix:
   include:
@@ -29,7 +29,7 @@ matrix:
       compiler: clang
 
 install:
-  - python -m pip install --user conan
+  - pip3 install --user conan
   - conan user
 script:
   - mkdir build
