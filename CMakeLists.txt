@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.0.2)
 
 # Use solution folders.
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(
+  GLOBAL
+  PROPERTY
+    USE_FOLDERS
+    ON
+)
 
 project(Snippets)
 set(CMAKE_CXX_STANDARD 17)
@@ -9,7 +14,11 @@ if (MSVC)
   add_compile_options(/W4)
 else ()
   # lots of warnings and all warnings as errors
-  add_compile_options(-Wall -Wextra -pedantic)
+  add_compile_options(
+    -Wall
+    -Wextra
+    -pedantic
+  )
 endif ()
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)

@@ -10,6 +10,14 @@ add_executable(
   TaskStealingTaskSystem.h
 )
 
-set_target_properties(task_systems PROPERTIES FOLDER "TaskSystems")
+set_target_properties(
+  task_systems
+  PROPERTIES
+    FOLDER
+    "TaskSystems"
+)
 find_package(Threads)
-target_link_libraries(task_systems ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(
+  task_systems
+  ${CMAKE_THREAD_LIBS_INIT}
+)

@@ -7,4 +7,9 @@ set(
 )
 
 add_executable(limited_correpondence ${LIMITED_CORREPONDENCE_SOURCES})
-set_target_properties(limited_correpondence PROPERTIES FOLDER "kattis")
+set_target_properties(
+  limited_correpondence
+  PROPERTIES
+    FOLDER
+    "kattis"
+)
