@@ -7,3 +7,11 @@ UseTab: Never
 SortIncludes: true
 AllowShortFunctionsOnASingleLine: false
 SpaceBeforeRangeBasedForLoopColon: false
+AlwaysBreakTemplateDeclarations: Yes
+IncludeCategories:
+  - Regex:           '^<catch2/.*>'
+    Priority:        0
+  - Regex:            '^<.*>'
+    Priority:        1
+  - Regex:           '^".*"'
+    Priority:        2
