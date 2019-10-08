@@ -40,7 +40,7 @@ matrix:
         - python -m pip install --upgrade pip
 
 install:
-  - pip3 install --user conan
+  - pip install --user conan
   - conan user
 script:
   - mkdir build
