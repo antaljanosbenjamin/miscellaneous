@@ -41,6 +41,7 @@ matrix:
 
 install:
   - pip install --user conan
+  - conan --version
   - conan user
 script:
   - mkdir build
