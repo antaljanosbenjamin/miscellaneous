@@ -31,25 +31,27 @@ matrix:
       name: 'Windows MSVC'
       before_install:
         - choco install python
-      env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+      env:
+        - PATH=/c/Python37:/c/Python37/Scripts:/c/Users/travis/AppData/Roaming/Python/Python37/Scripts:$PATH
     - os: windows
       name: 'Windows Clang'
       compiler: clang
       before_install:
         - choco install python
-      env: PATH=/c/Python37:/c/Python37/Scripts:/c/Users/travis/AppData/Roaming/Python/Python37/Scripts:$PATH
+      env:
+        - PATH=/c/Python37:/c/Python37/Scripts:/c/Users/travis/AppData/Roaming/Python/Python37/Scripts:$PATH
+        - CMAKE_OPTIONS="-TClangCL"
+
 
 install:
   - pip install --user conan
-  - conan --version
   - conan user
   - conan profile new default --detect 
-  - conan profile update settings.compiler.libcxx=libstdc++11 default
 script:
   - mkdir build
   - cd build
   - conan install ..
-  - cmake ..
+  - cmake .. $CMAKE_OPTIONS
   - cmake --build .
   
 notifications:
