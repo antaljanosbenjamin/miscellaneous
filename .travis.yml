@@ -1,10 +1,10 @@
 language: cpp
-python: "3.7.1"
 
 matrix:
   include:
     - os: linux
       name: 'Linux GCC'
+      python: 3.7
       dist: bionic
       addons:
         apt:
@@ -17,6 +17,7 @@ matrix:
       compiler: gcc-8
     - os: linux
       name: 'Linux Clang-8'
+      python: 3.7
       dist: bionic
       addons:
         apt:
@@ -39,7 +40,7 @@ matrix:
         - python -m pip install --upgrade pip
 
 install:
-  - python -m pip install --user conan
+  - pip3 install --user conan
   - conan user
 script:
   - mkdir build
