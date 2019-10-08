@@ -4,6 +4,7 @@ python: "3.7.1"
 matrix:
   include:
     - os: linux
+      name: 'Linux GCC'
       dist: bionic
       addons:
         apt:
@@ -15,6 +16,7 @@ matrix:
         - CXX=g++-8
       compiler: gcc-8
     - os: linux
+      name: 'Linux Clang-8'
       dist: bionic
       addons:
         apt:
@@ -25,11 +27,19 @@ matrix:
         - CC=clang-8
         - CXX=clang++-8
     - os: windows
+      name: 'Windows MSVC'
+      before_install:
+        - choco install python
+        - python -m pip install --upgrade pip      
     - os: windows
+      name: 'Windows Clang'
       compiler: clang
+      before_install:
+        - choco install python
+        - python -m pip install --upgrade pip
 
 install:
-  - pip3 install --user conan
+  - python -m pip install --user conan
   - conan user
 script:
   - mkdir build
