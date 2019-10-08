@@ -43,6 +43,8 @@ install:
   - pip install --user conan
   - conan --version
   - conan user
+  - conan profile new default --detect 
+  - conan profile update settings.compiler.libcxx=libstdc++11 default
 script:
   - mkdir build
   - cd build
