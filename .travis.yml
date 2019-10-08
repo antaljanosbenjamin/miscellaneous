@@ -40,7 +40,7 @@ matrix:
       env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
 
 install:
-  - pip install --user conan
+  - pip install conan
   - conan --version
   - conan user
 script:
