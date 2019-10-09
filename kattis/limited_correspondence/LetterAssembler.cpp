@@ -6,8 +6,8 @@
 
 bool LetterAssembler::read(std::istream &inputStream) {
   auto pairCount = 0u;
-  auto sumFirstWordLength = 0ul;
-  auto sumSecondWordLength = 0ul;
+  auto sumFirstWordLength = 0ull;
+  auto sumSecondWordLength = 0ull;
   this->wordPairs.clear();
 
   inputStream >> pairCount;
