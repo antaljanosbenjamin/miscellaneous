@@ -31,6 +31,7 @@ matrix:
       name: 'Windows MSVC'
       before_install:
         - choco install python
+        - choco install visualstudio2019community --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.VC.CMake.Project --no-includeRecommended"
       env:
         - PATH=/c/Python37:/c/Python37/Scripts:/c/Users/travis/AppData/Roaming/Python/Python37/Scripts:$PATH
     - os: windows
@@ -38,10 +39,10 @@ matrix:
       compiler: clang
       before_install:
         - choco install python
+        - choco install visualstudio2019community --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.VC.CMake.Project --add Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset --no-includeRecommended"
       env:
         - PATH=/c/Python37:/c/Python37/Scripts:/c/Users/travis/AppData/Roaming/Python/Python37/Scripts:$PATH
         - CMAKE_OPTIONS="-TClangCL"
-
 
 install:
   - pip install --user conan
