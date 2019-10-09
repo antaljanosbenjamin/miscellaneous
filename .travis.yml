@@ -21,6 +21,10 @@ matrix:
       dist: bionic
       addons:
         apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
             - clang-9
       compiler: clang-9
