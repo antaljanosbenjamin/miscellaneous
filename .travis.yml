@@ -16,17 +16,17 @@ matrix:
         - CXX=g++-8
       compiler: gcc-8
     - os: linux
-      name: 'Linux Clang-8'
+      name: 'Linux Clang-9'
       python: 3.7
       dist: bionic
       addons:
         apt:
           packages:
-            - clang-8
-      compiler: clang-8
+            - clang-9
+      compiler: clang-9
       env:
-        - CC=clang-8
-        - CXX=clang++-8
+        - CC=clang-9
+        - CXX=clang++-9
     - os: windows
       name: 'Windows MSVC'
       env:
