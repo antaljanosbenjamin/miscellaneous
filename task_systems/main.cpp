@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
   const uint64_t testCase = std::strtoull(argv[4], endPtr, 10);
   std::random_device dev;
   std::mt19937_64 rng(dev());
-  std::uniform_int_distribution<std::mt19937::result_type> dist(distMin, distMax);
+  std::uniform_int_distribution<std::mt19937_64::result_type> dist(distMin, distMax);
 
   std::vector<uint64_t> runningTimes;
   runningTimes.reserve(nrTasks);
