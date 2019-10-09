@@ -16,3 +16,10 @@ target_link_libraries(
   limited_correspondence_test
   limited_correspondence
 )
+
+set_target_properties(
+  limited_correspondence_test
+  PROPERTIES
+    FOLDER
+    "kattis"
+)
