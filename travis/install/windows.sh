@@ -13,6 +13,7 @@ then
   conan profile update settings.compiler.version=16 default
   conan profile remove settings.compiler.libcxx default
 elif [ "$COMPILER" = "clang" ]
+then
   conan profile update settings.compiler="clang" default
   conan profile update settings.compiler.version=9 default
   conan profile update settings.compiler.libcxx=libstdc++ default
