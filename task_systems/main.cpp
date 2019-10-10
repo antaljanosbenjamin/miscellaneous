@@ -10,7 +10,7 @@
 #include "TaskStealingTaskSystem.h"
 
 #ifdef MY_DEBUG
-std::atomic<int> NOT_USED;
+std::atomic<uint64_t> NOT_USED;
 std::atomic<int> task_count{0};
 std::mutex mutex;
 #endif
