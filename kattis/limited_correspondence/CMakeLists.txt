@@ -48,4 +48,3 @@ set_target_properties(
 # cmake-format: on
 
 add_subdirectory(tests)
-add_test(NAME TestLimitedCorrespondence COMMAND limited_correspondence_test)
