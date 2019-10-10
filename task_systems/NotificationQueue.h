@@ -16,7 +16,8 @@ public:
   bool pop(std::function<void()> &x);
   bool try_pop(std::function<void()> &x);
 
-  template <typename F> void push(F &&f) {
+  template <typename F>
+  void push(F &&f) {
     {
       std::unique_lock<std::mutex> lock{mutex_};
       q_.emplace_back(std::forward<F>(f));
@@ -24,7 +25,8 @@ public:
     ready_.notify_one();
   }
 
-  template <typename F> bool try_push(F &&f) {
+  template <typename F>
+  bool try_push(F &&f) {
     {
       std::unique_lock<std::mutex> lock{mutex_, std::try_to_lock};
       if (!lock)
