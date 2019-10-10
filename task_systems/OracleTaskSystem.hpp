@@ -4,7 +4,7 @@
 #include <thread>
 #include <vector>
 
-#include "NotificationQueue.h"
+#include "NotificationQueue.hpp"
 
 class OracleTaskSystem {
   const unsigned _count{std::thread::hardware_concurrency()};

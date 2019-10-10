@@ -7,7 +7,7 @@
 #include <mutex>
 #include <thread>
 
-#include "NotificationQueue.h"
+#include "NotificationQueue.hpp"
 
 class MultiQueuedTaskSystem {
   const unsigned count_{std::thread::hardware_concurrency()};
