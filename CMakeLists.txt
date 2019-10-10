@@ -22,6 +22,8 @@ else ()
   )
 endif ()
 
+include (CTest)
+
 if (CMAKE_BUILD_TYPE MATCHES Debug)
   add_definitions(-DMY_DEBUG)
 endif ()
