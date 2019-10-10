@@ -7,7 +7,7 @@
 #include <mutex>
 #include <thread>
 
-#include "NotificationQueue.h"
+#include "NotificationQueue.hpp"
 
 class MultiQueuedTaskSystem {
   const unsigned count_{std::thread::hardware_concurrency()};
@@ -21,7 +21,8 @@ public:
   MultiQueuedTaskSystem();
   ~MultiQueuedTaskSystem();
 
-  template <typename F> void async(F &&f) {
+  template <typename F>
+  void async(F &&f) {
     auto i = index_++;
     q_[i % count_].push(std::forward<F>(f));
   }
