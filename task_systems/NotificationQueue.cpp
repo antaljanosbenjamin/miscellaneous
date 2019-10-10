@@ -1,4 +1,4 @@
-#include "NotificationQueue.h"
+#include "NotificationQueue.hpp"
 
 void NotificationQueue::done() {
   {

@@ -7,7 +7,7 @@
 #include <mutex>
 #include <thread>
 
-#include "NotificationQueue.h"
+#include "NotificationQueue.hpp"
 
 template <size_t K>
 class TaskStealingTaskSystem {

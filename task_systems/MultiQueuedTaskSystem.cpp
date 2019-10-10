@@ -1,4 +1,4 @@
-#include "MultiQueuedTaskSystem.h"
+#include "MultiQueuedTaskSystem.hpp"
 
 void MultiQueuedTaskSystem::run(unsigned i) {
   while (true) {
