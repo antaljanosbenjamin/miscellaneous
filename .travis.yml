@@ -52,6 +52,7 @@ script:
   - conan install ..
   - cmake .. $CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Release
   - cmake --build . --config Release
+  - ctest . -C Release
   
 notifications:
   email: false
