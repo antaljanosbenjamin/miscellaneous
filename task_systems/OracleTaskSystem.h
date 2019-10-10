@@ -17,7 +17,8 @@ public:
   OracleTaskSystem();
   ~OracleTaskSystem();
 
-  template <typename F> void async(F &&f) {
+  template <typename F>
+  void async(F &&f) {
     q_.push(std::forward<F>(f));
   }
 };
