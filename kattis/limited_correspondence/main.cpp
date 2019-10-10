@@ -1,7 +1,7 @@
 ﻿// https://open.kattis.com/submissions/4374599
 
-#include "LetterAssembler.hpp"
 #include <iostream>
+#include "LetterAssembler.hpp"
 
 int main() {
   auto caseNumber = 1u;
