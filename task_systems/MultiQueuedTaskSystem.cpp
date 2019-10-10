@@ -10,9 +10,9 @@ void MultiQueuedTaskSystem::run(unsigned i) {
 }
 
 MultiQueuedTaskSystem::MultiQueuedTaskSystem() {
-    for (unsigned n = 0; n != count_; ++n) {
-      threads_.emplace_back([&, n] { run(n); });
-    }
+  for (unsigned n = 0; n != count_; ++n) {
+    threads_.emplace_back([&, n] { run(n); });
+  }
 }
 
 MultiQueuedTaskSystem::~MultiQueuedTaskSystem() {

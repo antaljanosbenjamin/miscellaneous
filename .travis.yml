@@ -1,8 +1,10 @@
 language: cpp
-      
+
 matrix:
   include:
     - os: linux
+      name: 'Linux GCC'
+      python: 3.7
       dist: bionic
       addons:
         apt:
@@ -14,24 +16,43 @@ matrix:
         - CXX=g++-8
       compiler: gcc-8
     - os: linux
+      name: 'Linux Clang-9'
+      python: 3.7
       dist: bionic
       addons:
         apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
-            - clang-8
-      compiler: clang-8
+            - clang-9
+      compiler: clang-9
       env:
-        - CC=clang-8
-        - CXX=clang++-8
+        - CC=clang-9
+        - CXX=clang++-9
     - os: windows
+      name: 'Windows MSVC'
+      env:
+        - COMPILER="MSVC"
     - os: windows
+      name: 'Windows Clang'
       compiler: clang
+      env:
+        - CMAKE_OPTIONS="-TClangCL"
+        - COMPILER=clang
 
+before_install:
+  - . travis/before_install/$TRAVIS_OS_NAME.sh
+install:
+  - . travis/install/$TRAVIS_OS_NAME.sh
 script:
   - mkdir build
   - cd build
-  - cmake ..
-  - cmake --build .
+  - conan install ..
+  - cmake .. $CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Release
+  - cmake --build . --config Release
+  - ctest . -C Release
   
 notifications:
   email: false

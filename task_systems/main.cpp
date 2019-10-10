@@ -1,8 +1,8 @@
 #include <atomic>
 #include <chrono>
 #include <iostream>
-#include <random>
 #include <memory>
+#include <random>
 #include <vector>
 
 #include "MultiQueuedTaskSystem.h"
@@ -10,7 +10,7 @@
 #include "TaskStealingTaskSystem.h"
 
 #ifdef MY_DEBUG
-std::atomic<int> NOT_USED;
+std::atomic<uint64_t> NOT_USED;
 std::atomic<int> task_count{0};
 std::mutex mutex;
 #endif
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
   const uint64_t testCase = std::strtoull(argv[4], endPtr, 10);
   std::random_device dev;
   std::mt19937_64 rng(dev());
-  std::uniform_int_distribution<std::mt19937::result_type> dist(distMin, distMax);
+  std::uniform_int_distribution<std::mt19937_64::result_type> dist(distMin, distMax);
 
   std::vector<uint64_t> runningTimes;
   runningTimes.reserve(nrTasks);

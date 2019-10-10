@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 
 class LetterAssembler {
 public:
