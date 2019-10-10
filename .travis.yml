@@ -50,8 +50,8 @@ script:
   - mkdir build
   - cd build
   - conan install ..
-  - cmake .. $CMAKE_OPTIONS
-  - cmake --build .
+  - cmake .. $CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Release
+  - cmake --build . --config Release
   
 notifications:
   email: false
