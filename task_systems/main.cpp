@@ -5,9 +5,9 @@
 #include <random>
 #include <vector>
 
-#include "MultiQueuedTaskSystem.h"
-#include "OracleTaskSystem.h"
-#include "TaskStealingTaskSystem.h"
+#include "MultiQueuedTaskSystem.hpp"
+#include "OracleTaskSystem.hpp"
+#include "TaskStealingTaskSystem.hpp"
 
 #ifdef MY_DEBUG
 std::atomic<uint64_t> NOT_USED;

@@ -7,7 +7,7 @@
 #include <mutex>
 #include <thread>
 
-#include "NotificationQueue.h"
+#include "NotificationQueue.hpp"
 
 template <size_t K>
 class TaskStealingTaskSystem {
@@ -43,7 +43,8 @@ public:
       e.join();
   }
 
-  template <typename F> void async(F &&f) {
+  template <typename F>
+  void async(F &&f) {
     auto i = index_++;
     for (unsigned n = 0; n != count_ * 8; ++n) {
       if (q_[(i + n) % count_].try_push(std::forward<F>(f)))

@@ -4,7 +4,7 @@
 #include <thread>
 #include <vector>
 
-#include "NotificationQueue.h"
+#include "NotificationQueue.hpp"
 
 class OracleTaskSystem {
   const unsigned _count{std::thread::hardware_concurrency()};
@@ -17,7 +17,8 @@ public:
   OracleTaskSystem();
   ~OracleTaskSystem();
 
-  template <typename F> void async(F &&f) {
+  template <typename F>
+  void async(F &&f) {
     q_.push(std::forward<F>(f));
   }
 };
