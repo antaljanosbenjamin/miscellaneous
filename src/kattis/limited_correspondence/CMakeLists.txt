@@ -35,16 +35,3 @@ set_target_properties(
     FOLDER
     "kattis"
 )
-
-# cmake-format: off
-# set(
-#   ${PROJECT_NAME}_INCLUDE_DIRS
-#   ${PROJECT_SOURCE_DIR}
-#   CACHE
-#     INTERNAL
-#     "${PROJECT_NAME}: Include Directories"
-#     FORCE
-# )
-# cmake-format: on
-
-add_subdirectory(tests)
