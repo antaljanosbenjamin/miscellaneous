@@ -1,9 +1,9 @@
-choco install python
+choco install python3 --params "/InstallDir:C:\Python"
 choco install visualstudio2019community --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.VC.CMake.Project --add Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset --no-includeRecommended"
 
-export PATH=/c/Python37:/c/Python37/Scripts:/c/Users/travis/AppData/Roaming/Python/Python37/Scripts:$PATH
+export PATH=/c/Python:/c/Python/Scripts:$PATH
 
-pip install --user conan
+pip install conan
 conan user
 conan profile new default --detect
 
