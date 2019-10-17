@@ -1,15 +1,15 @@
 {
 	// See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
 	// Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
-
 	// List of extensions which should be recommended for users of this workspace.
 	"recommendations": [
+		"alefragnani.bookmarks",
 		"cheshirekow.cmake-format",
 		"ms-python.python",
+		"ms-vscode.cpptools",
 		"ms-vscode-remote.remote-ssh",
 		"ms-vscode-remote.remote-ssh-edit",
 		"ms-vscode-remote.remote-ssh-explorer",
-		"ms-vscode.cpptools",
 		"streetsidesoftware.code-spell-checker",
 		"twxs.cmake",
 		"vadimcn.vscode-lldb",
@@ -17,7 +17,5 @@
 		"xaver.clang-format"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
-	"unwantedRecommendations": [
-		
-	]
+	"unwantedRecommendations": []
 }
