@@ -1,5 +1,7 @@
 [requires]
 Catch2/2.9.2@catchorg/stable
+qt/5.11.3@bincrafters/stable
 
 [generators]
 cmake
+txt
