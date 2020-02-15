@@ -6,9 +6,7 @@ set(
   ADVICE_SOURCES
   ${CMAKE_SOURCE_DIR}/.clang-format
   Advice.cpp
-  Advice.hpp
   Point.cpp
-  Point.hpp
 )
 
 set(ADVICE_DEMO_SOURCES main.cpp)
