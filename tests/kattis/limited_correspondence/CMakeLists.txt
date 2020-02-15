@@ -17,11 +17,10 @@ target_link_libraries(
   limited_correspondence
 )
 
-add_test(NAME TestLimitedCorrespondence COMMAND limited_correspondence_test)
-
 set_target_properties(
   limited_correspondence_test
   PROPERTIES
     FOLDER
     "kattis"
 )
+ParseAndAddCatchTests(limited_correspondence_test)
