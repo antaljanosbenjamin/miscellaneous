@@ -17,7 +17,7 @@ bool checkInput(const size_t &pathCount, const std::string &pathes, const Point 
   CHECK(pointAverage.y == Approx(expectedAverage.y));
   CHECK(calculator.getLongestDistance() == Approx(expectedLongestDistance));
   return false;
-};
+}
 
 TEST_CASE("Simple route") {
   constexpr auto pathCount = 1u;
@@ -25,7 +25,7 @@ TEST_CASE("Simple route") {
   constexpr Point expectedAverage{97.342, 34.30};
   constexpr auto expectedLongestDistance = 0.0;
   REQUIRE_NOTHROW(checkInput(pathCount, pathes, expectedAverage, expectedLongestDistance));
-};
+}
 
 TEST_CASE("Long route") {
   constexpr auto pathCount = 1u;
@@ -34,7 +34,7 @@ TEST_CASE("Long route") {
   constexpr Point expectedAverage{191.9022, 138.6574};
   constexpr auto expectedLongestDistance = 0.0;
   REQUIRE_NOTHROW(checkInput(pathCount, pathes, expectedAverage, expectedLongestDistance));
-};
+}
 
 TEST_CASE("Two routes") {
   constexpr auto pathCount = 2u;
@@ -43,7 +43,7 @@ TEST_CASE("Two routes") {
   constexpr Point expectedAverage{30, 45};
   constexpr auto expectedLongestDistance = 0;
   REQUIRE_NOTHROW(checkInput(pathCount, pathes, expectedAverage, expectedLongestDistance));
-};
+}
 
 TEST_CASE("Three routes") {
   constexpr auto pathCount = 3u;
@@ -53,4 +53,4 @@ TEST_CASE("Three routes") {
   constexpr Point expectedAverage{97.1547, 40.2334};
   constexpr auto expectedLongestDistance = 7.63097;
   REQUIRE_NOTHROW(checkInput(pathCount, pathes, expectedAverage, expectedLongestDistance));
-};
+}
