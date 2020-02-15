@@ -3,7 +3,7 @@ choco install visualstudio2019community --package-parameters "--add Microsoft.Vi
 
 export PATH=/c/Python:/c/Python/Scripts:$PATH
 
-pip install conan
+pip install conan configparser
 conan user
 conan profile new default --detect
 
