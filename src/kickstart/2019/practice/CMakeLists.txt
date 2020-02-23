@@ -1,2 +1,3 @@
+add_subdirectory(kickstart_alarm)
 add_subdirectory(mural)
 add_subdirectory(number_guessing)
