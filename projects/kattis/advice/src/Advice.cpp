@@ -43,17 +43,17 @@ Advice::Advice(AdviceType adviceTypeInitial)
 }
 
 StartAdvice::StartAdvice(Degree startDirection)
-  : Advice(START)
+  : Advice(AdviceType::Start)
   , startDirection(startDirection) {
 }
 
 TurnAdvice::TurnAdvice(Degree dTurnAngle)
-  : Advice(TURN)
+  : Advice(AdviceType::Turn)
   , turnAngle(dTurnAngle) {
 }
 
 WalkAdvice::WalkAdvice(double dWalkAdvice)
-  : Advice(WALK)
+  : Advice(AdviceType::Walk)
   , walkDistance(dWalkAdvice) {
 }
 
