@@ -1,13 +1,9 @@
 add_executable(
   task_systems
   main.cpp
-  OracleTaskSystem.hpp
   OracleTaskSystem.cpp
-  MultiQueuedTaskSystem.hpp
   MultiQueuedTaskSystem.cpp
-  NotificationQueue.hpp
   NotificationQueue.cpp
-  TaskStealingTaskSystem.hpp
 )
 
 set_target_properties(

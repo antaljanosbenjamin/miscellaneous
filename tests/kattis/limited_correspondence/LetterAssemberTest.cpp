@@ -1,7 +1,9 @@
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
 #include <array>
 #include <sstream>
+
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
+
 #include "LetterAssembler.hpp"
 
 TEST_CASE("Empty stream") {

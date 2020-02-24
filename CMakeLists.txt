@@ -12,13 +12,17 @@ set_property(
 
 set(CMAKE_CXX_STANDARD 17)
 if (MSVC)
-  add_compile_options(/W4)
+  add_compile_options(
+    /W4
+    /WX
+  )
 else ()
   # lots of warnings and all warnings as errors
   add_compile_options(
     -Wall
     -Wextra
     -pedantic
+    -Werror
   )
 endif ()
 
@@ -31,6 +35,6 @@ endif ()
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-add_subdirectory(src)
+add_subdirectory(projects)
 add_subdirectory(tests)
 add_subdirectory(experiments)
