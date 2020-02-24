@@ -2,7 +2,7 @@
 #include <numeric>
 #include <vector>
 
-using MyInt = size_t;
+using MyInt = uint64_t;
 
 int main() {
   MyInt T;
@@ -43,35 +43,56 @@ int main() {
         prevY = currentY;
       }
     }
-    std::vector<MyInt> currentPowers;
-    currentPowers.resize(N);
-    std::iota(currentPowers.begin(), currentPowers.end(), 1u);
 
-    auto modPower = [](const auto val) {
-      const auto powerModulo{1000000007u};
-      return val % powerModulo;
+    const auto powerModulo{1000000007u};
+
+    auto modPower = [&powerModulo](const auto val) { return val % powerModulo; };
+
+    auto quickPowerWithModulo = [&modPower](auto base, auto exp) {
+      auto t{1u};
+      while (exp != 0) {
+        if (exp % 2 == 1)
+          t = modPower(t * base);
+        base = modPower(base * base);
+        exp /= 2;
+      }
+      return t;
     };
 
-    const auto getPOWER = [&N, &A, &currentPowers, &modPower]() {
-      MyInt NDependentFactor{N + 1};
-      MyInt itemIndexDependentFactor{0u};
-      MyInt POWER{0u};
-      for (auto itemIndex{0u}; itemIndex < N; ++itemIndex) {
-        --NDependentFactor;
-        itemIndexDependentFactor = modPower(itemIndexDependentFactor + currentPowers[itemIndex]);
-        POWER = POWER + modPower(modPower(NDependentFactor * itemIndexDependentFactor) * A[itemIndex]);
-      }
-      return POWER;
+    auto moduloInverse = [&powerModulo, &quickPowerWithModulo](const auto val) {
+      return quickPowerWithModulo(val, powerModulo - 2u);
     };
 
-    auto totalPOWER{0u};
-    for (auto i{1u}; i <= K; ++i) {
-      const auto ithPOWER{getPOWER()};
-      totalPOWER = modPower(totalPOWER + ithPOWER);
-      for (auto j{1u}; j <= N; ++j) {
-        currentPowers[j - 1] = modPower(currentPowers[j - 1] * j);
+    MyInt POWER{0u};
+    MyInt totalSumOfGeometricProgressions{K};
+    // POWER_K(A) = power_1(A) + power_2(A) + ... + power_K(A) =
+    // = (N + 1 - 1)(1^1)A_1 + (N + 1 - 2)(1^1 + 2^1)A_2 + ... (N + 1 - N)(1^1 + 2^1 + ... + N^1)A_N +
+    // + (N + 1 - 1)(1^2)A_1 + (N + 1 - 2)(1^2 + 2^2)A_2 + ... (N + 1 - N)(1^2 + 2^2 + ... + N^2)A_N +
+    // + ... +
+    // + (N + 1 - 1)(1^K)A_1 + (N + 1 - 2)(1^K + 2^K)A_2 + ... (N + 1 - N)(1^K + 2^K + ... + N^K)A_N =
+    // = (N + 1 - 1)(1^1 + 1^2 + ... + 1^K)A_1 +
+    // + (N + 1 - 2)(1^1 + 1^2 + ... + 1^K + 2^1 + 2^2 + ... + 2^K)A_2 +
+    // + ... +
+    // + (N + 1 - N)(1^1 + 1^2 + ... + 1^K + 2^1 + 2^2 + ... + 2^K + ... + N^1 + N^2 + ... + N^K)A_N
+    for (MyInt x{1u}; x <= N; ++x) {
+      if (x != 1u) {
+        // Sum of geometric progression
+        // x^1 + x^2 + ... + x^K =
+        // = x(1 - x^K)/(1 - x) =
+        // = (x - x^(K + 1))/(1 - x) =
+        // = (x^(K+1) - x)/(x - 1) =
+        // = (x^(K+1) - x)(x - 1)^(-1)
+        //   |      t1   ||     t2   |
+        const auto t1 = powerModulo + quickPowerWithModulo(x, K + 1u) - x;
+        // Calculate modular inverse using Euler-theorem
+        // (x - 1)^(-1) mod M = (x - 1)^(M - 2) mod M
+        const auto t2 = moduloInverse(MyInt{x - 1u});
+        const auto sumOfSingleGeometricProgression = modPower(t1 * t2);
+        totalSumOfGeometricProgressions = modPower(totalSumOfGeometricProgressions + sumOfSingleGeometricProgression);
       }
+      POWER = modPower(POWER + modPower(modPower(totalSumOfGeometricProgressions * A[x - 1u]) * (N + 1u - x)));
     }
-    std::cout << "Case #" << testCase << ": " << totalPOWER << '\n';
+
+    std::cout << "Case #" << testCase << ": " << POWER << '\n';
   }
 }
