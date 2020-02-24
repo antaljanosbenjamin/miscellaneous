@@ -5,17 +5,24 @@ enable_testing()
 set(
   ADVICE_SOURCES
   ${CMAKE_SOURCE_DIR}/.clang-format
-  Advice.cpp
-  Point.cpp
+  src/Advice.cpp
+  src/Point.cpp
 )
 
-set(ADVICE_DEMO_SOURCES main.cpp)
+set(ADVICE_DEMO_SOURCES src/main.cpp)
 
 add_library(advice ${ADVICE_SOURCES})
 add_executable(
   advice_demo
   ${ADVICE_DEMO_SOURCES}
 )
+
+target_include_directories(
+  advice
+  PUBLIC
+  include
+)
+
 target_link_libraries(
   advice_demo
   advice
