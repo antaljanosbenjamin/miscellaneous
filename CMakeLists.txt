@@ -35,6 +35,6 @@ endif ()
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-add_subdirectory(src)
+add_subdirectory(projects)
 add_subdirectory(tests)
 add_subdirectory(experiments)
