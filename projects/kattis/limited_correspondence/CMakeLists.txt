@@ -4,16 +4,23 @@ enable_testing()
 set(
   LIMITED_CORRESPONDENCE_SOURCES
   ${CMAKE_SOURCE_DIR}/.clang-format
-  LetterAssembler.cpp
+  src/LetterAssembler.cpp
 )
 
-set(LIMITED_CORRESPONDENCE_DEMO_SOURCES main.cpp)
+set(LIMITED_CORRESPONDENCE_DEMO_SOURCES src/main.cpp)
 
 add_library(limited_correspondence ${LIMITED_CORRESPONDENCE_SOURCES})
 add_executable(
   limited_correspondence_demo
   ${LIMITED_CORRESPONDENCE_DEMO_SOURCES}
 )
+
+target_include_directories(
+  limited_correspondence
+  PUBLIC
+  include
+)
+
 target_link_libraries(
   limited_correspondence_demo
   limited_correspondence
