@@ -10,7 +10,7 @@
 
 typedef double Degree;
 
-enum AdviceType { START, WALK, TURN };
+enum class AdviceType { Start, Walk, Turn };
 
 struct LocationInfo {
   Point currentLocation;
