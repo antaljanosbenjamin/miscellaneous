@@ -9,9 +9,15 @@ set(
   src/Point.cpp
 )
 
+set(
+  ADVICE_HEADERS
+  include/Advice.hpp
+  include/Point.hpp
+)
+
 set(ADVICE_DEMO_SOURCES src/main.cpp)
 
-add_library(advice ${ADVICE_SOURCES})
+add_library(advice ${ADVICE_HEADERS} ${ADVICE_SOURCES})
 add_executable(
   advice_demo
   ${ADVICE_DEMO_SOURCES}
