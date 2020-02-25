@@ -12,7 +12,7 @@ int main() {
     std::string beautyScores;
     std::cin >> beautyScores;
     std::transform(beautyScores.begin(), beautyScores.end(), beautyScores.begin(),
-                   [](const auto &score) { return score - '0'; });
+                   [](const auto &score) { return char{score - '0'}; });
     const size_t windowSize = (N + 1) / 2;
     size_t numberOfWindows = N - windowSize + 1;
     auto sum = std::accumulate(beautyScores.begin(), beautyScores.begin() + windowSize, 0u);
