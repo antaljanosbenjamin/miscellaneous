@@ -24,7 +24,7 @@ static IntType quickPowerWithModulo(IntType base, IntType exp, IntType modulo) {
     exp /= 2;
   }
   return t;
-};
+}
 
 template <typename IntType>
 static IntType calculatePOWER_K(IntType N, IntType K, IntType x1, IntType y1, IntType C, IntType D, IntType E1,
@@ -108,4 +108,5 @@ static IntType calculatePOWER_K(IntType N, IntType K, IntType x1, IntType y1, In
   }
   return POWER_K;
 }
+
 }; // namespace KickStartAlarm
