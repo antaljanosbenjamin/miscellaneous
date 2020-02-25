@@ -203,3 +203,33 @@ TEST_CASE("Limits with resultModulo=67") {
   MyInt POWER_K = KickStartAlarm::calculatePOWER_K(N, K, x1, y1, C, D, E1, E2, F, resultModulo);
   CHECK(POWER_K == 7u);
 }
+
+TEST_CASE("Limits with resultModulo=17") {
+  MyInt N{1000000};
+  MyInt K{1000};
+  MyInt x1{99991};
+  MyInt y1{99992};
+  MyInt C{99993};
+  MyInt D{99994};
+  MyInt E1{99995};
+  MyInt E2{99996};
+  MyInt F{99999};
+  MyInt resultModulo{17u};
+  MyInt POWER_K = KickStartAlarm::calculatePOWER_K(N, K, x1, y1, C, D, E1, E2, F, resultModulo);
+  CHECK(POWER_K == 9u);
+}
+
+TEST_CASE("Limits with resultModulo=479001600") {
+  MyInt N{1000000};
+  MyInt K{1000};
+  MyInt x1{99991};
+  MyInt y1{99992};
+  MyInt C{99993};
+  MyInt D{99994};
+  MyInt E1{99995};
+  MyInt E2{99996};
+  MyInt F{99999};
+  MyInt resultModulo{479001600u}; // 2 * 3 * ... * 12
+  MyInt POWER_K = KickStartAlarm::calculatePOWER_K(N, K, x1, y1, C, D, E1, E2, F, resultModulo);
+  CHECK(POWER_K == 303022164);
+}
