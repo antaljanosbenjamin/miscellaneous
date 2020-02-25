@@ -109,4 +109,4 @@ static IntType calculatePOWER_K(IntType N, IntType K, IntType x1, IntType y1, In
   return POWER_K;
 }
 
-}; // namespace KickStartAlarm
+} // namespace KickStartAlarm
