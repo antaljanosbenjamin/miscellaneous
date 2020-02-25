@@ -2,6 +2,14 @@
 
 #include <vector>
 
+#ifdef MY_DEBUG
+//#define LOG_INTERNAL_RESULTS
+#endif
+
+#ifdef LOG_INTERNAL_RESULTS
+#include <iostream>
+#endif
+
 namespace KickStartAlarm {
 
 template <typename IntType>
@@ -80,8 +88,23 @@ static IntType calculatePOWER_K(IntType N, IntType K, IntType x1, IntType y1, In
       const auto t2 = moduloInverse(x - 1u);
       const auto sumOfSingleGeometricProgression = modResult(modResult(t1 * t2) + resultModulo - 1);
       totalSumOfGeometricProgressions = modResult(totalSumOfGeometricProgressions + sumOfSingleGeometricProgression);
+
+#ifdef LOG_INTERNAL_RESULTS
+      std::cout << "t1[" << x << "]: " << t1 << '\n';
+      std::cout << "t2[" << x << "]: " << t2 << '\n';
+#endif
     }
+
+#ifdef LOG_INTERNAL_RESULTS
+    std::cout << "A[" << x << "]: " << A[x - 1u] << '\n';
+    std::cout << "GP_sum[" << x << "]: " << totalSumOfGeometricProgressions << '\n';
+#endif
+
     POWER_K = modResult(POWER_K + modResult(modResult(totalSumOfGeometricProgressions * A[x - 1u]) * (N + 1u - x)));
+
+#ifdef LOG_INTERNAL_RESULTS
+    std::cout << "POWER[" << x << "]: " << POWER_K << '\n';
+#endif
   }
   return POWER_K;
 }
