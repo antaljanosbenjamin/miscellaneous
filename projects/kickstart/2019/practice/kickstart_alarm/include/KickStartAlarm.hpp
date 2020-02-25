@@ -70,16 +70,15 @@ static IntType calculatePOWER_K(IntType N, IntType K, IntType x1, IntType y1, In
     if (x != 1u) {
       // Sum of geometric progression
       // x^1 + x^2 + ... + x^K =
-      // = x(1 - x^K)/(1 - x) =
-      // = (x - x^(K + 1))/(1 - x) =
-      // = (x^(K+1) - x)/(x - 1) =
-      // = (x^(K+1) - x)(x - 1)^(-1)
+      // = (1 - x^(K+1))/(1 - x) =
+      // = (x^(K+1) - 1)/(x - 1) =
+      // = (x^(K+1) - 1)(x - 1)^(-1)
       //   |      t1   ||     t2   |
-      const auto t1 = resultModulo + quickPowerWithResultModulo(x, K + 1u) - x;
+      const auto t1 = modResult(quickPowerWithResultModulo(x, K + 1u) + resultModulo - 1);
       // Calculate modular inverse using Euler-theorem
       // (x - 1)^(-1) mod M = (x - 1)^(M - 2) mod M
       const auto t2 = moduloInverse(x - 1u);
-      const auto sumOfSingleGeometricProgression = modResult(t1 * t2);
+      const auto sumOfSingleGeometricProgression = modResult(modResult(t1 * t2) + resultModulo - 1);
       totalSumOfGeometricProgressions = modResult(totalSumOfGeometricProgressions + sumOfSingleGeometricProgression);
     }
     POWER_K = modResult(POWER_K + modResult(modResult(totalSumOfGeometricProgressions * A[x - 1u]) * (N + 1u - x)));
