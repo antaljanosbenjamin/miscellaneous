@@ -52,6 +52,8 @@ static IntType calculatePOWER_K(IntType N, IntType K, IntType x1, IntType y1, In
   };
 
   auto moduloInverse = [&resultModulo, &quickPowerWithResultModulo](const auto val) {
+    // Calculate modular inverse using Euler-theorem
+    // x^(-1) mod M = x^(M - 2) mod M
     return quickPowerWithResultModulo(val, resultModulo - 2u);
   };
 
@@ -75,8 +77,6 @@ static IntType calculatePOWER_K(IntType N, IntType K, IntType x1, IntType y1, In
       // = (x^(K+1) - 1)(x - 1)^(-1)
       //   |      t1   ||     t2   |
       const auto t1 = modResult(quickPowerWithResultModulo(x, K + 1u) + resultModulo - 1);
-      // Calculate modular inverse using Euler-theorem
-      // (x - 1)^(-1) mod M = (x - 1)^(M - 2) mod M
       const auto t2 = moduloInverse(x - 1u);
       const auto sumOfSingleGeometricProgression = modResult(modResult(t1 * t2) + resultModulo - 1);
       totalSumOfGeometricProgressions = modResult(totalSumOfGeometricProgressions + sumOfSingleGeometricProgression);
