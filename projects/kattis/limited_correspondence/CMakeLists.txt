@@ -7,9 +7,15 @@ set(
   src/LetterAssembler.cpp
 )
 
+set(
+  LIMITED_CORRESPONDENCE_HEADERS
+  include/LetterAssembler.hpp
+)
+
 set(LIMITED_CORRESPONDENCE_DEMO_SOURCES src/main.cpp)
 
-add_library(limited_correspondence ${LIMITED_CORRESPONDENCE_SOURCES})
+add_library(limited_correspondence ${LIMITED_CORRESPONDENCE_HEADERS} ${LIMITED_CORRESPONDENCE_SOURCES})
+
 add_executable(
   limited_correspondence_demo
   ${LIMITED_CORRESPONDENCE_DEMO_SOURCES}
