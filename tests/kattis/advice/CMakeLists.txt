@@ -16,8 +16,7 @@ target_link_libraries(
 
 set_target_properties(
   advice_test
-  PROPERTIES
-    FOLDER
-    "kattis"
+  PROPERTIES FOLDER
+             "kattis"
 )
-ParseAndAddCatchTests(advice_test)
+parseandaddcatchtests(advice_test)
