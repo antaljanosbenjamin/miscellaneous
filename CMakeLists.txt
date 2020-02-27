@@ -5,18 +5,17 @@ project(miscellaneous)
 # Use solution folders.
 set_property(
   GLOBAL
-  PROPERTY
-    USE_FOLDERS
-    ON
+  PROPERTY USE_FOLDERS
+           ON
 )
 
 set(CMAKE_CXX_STANDARD 17)
-if (MSVC)
+if(MSVC)
   add_compile_options(
     /W4
     /WX
   )
-else ()
+else()
   # lots of warnings and all warnings as errors
   add_compile_options(
     -Wall
@@ -24,13 +23,16 @@ else ()
     -pedantic
     -Werror
   )
-endif ()
+endif()
 
 include(CTest)
 
-if (CMAKE_BUILD_TYPE MATCHES Debug)
+if(CMAKE_BUILD_TYPE
+   MATCHES
+   Debug
+)
   add_definitions(-DMY_DEBUG)
-endif ()
+endif()
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
