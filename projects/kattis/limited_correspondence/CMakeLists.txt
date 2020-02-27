@@ -1,30 +1,30 @@
 project(limited_correspondence)
 enable_testing()
 
-set(
-  LIMITED_CORRESPONDENCE_SOURCES
-  ${CMAKE_SOURCE_DIR}/.clang-format
-  src/LetterAssembler.cpp
+# Library
+set(LIMITED_CORRESPONDENCE_SOURCES
+    ${CMAKE_SOURCE_DIR}/.clang-format
+    src/LetterAssembler.cpp
 )
+set(LIMITED_CORRESPONDENCE_HEADERS include/LetterAssembler.hpp)
 
-set(
-  LIMITED_CORRESPONDENCE_HEADERS
-  include/LetterAssembler.hpp
-)
-
-set(LIMITED_CORRESPONDENCE_DEMO_SOURCES src/main.cpp)
-
-add_library(limited_correspondence ${LIMITED_CORRESPONDENCE_HEADERS} ${LIMITED_CORRESPONDENCE_SOURCES})
-
-add_executable(
-  limited_correspondence_demo
-  ${LIMITED_CORRESPONDENCE_DEMO_SOURCES}
-)
-
-target_include_directories(
+add_library(
   limited_correspondence
-  PUBLIC
-  include
+  ${LIMITED_CORRESPONDENCE_HEADERS}
+  ${LIMITED_CORRESPONDENCE_SOURCES}
+)
+target_include_directories(limited_correspondence PUBLIC include/)
+
+set_target_properties(
+  limited_correspondence
+  PROPERTIES FOLDER
+             "kattis"
+)
+
+# Demo
+set(LIMITED_CORRESPONDENCE_DEMO_SOURCES src/main.cpp)
+add_executable(
+  limited_correspondence_demo ${LIMITED_CORRESPONDENCE_DEMO_SOURCES}
 )
 
 target_link_libraries(
@@ -33,15 +33,7 @@ target_link_libraries(
 )
 
 set_target_properties(
-  limited_correspondence
-  PROPERTIES
-    FOLDER
-    "kattis"
-)
-
-set_target_properties(
   limited_correspondence_demo
-  PROPERTIES
-    FOLDER
-    "kattis"
+  PROPERTIES FOLDER
+             "kattis"
 )

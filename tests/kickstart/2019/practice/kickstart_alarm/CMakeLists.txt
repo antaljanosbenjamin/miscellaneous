@@ -16,8 +16,7 @@ target_link_libraries(
 
 set_target_properties(
   kickstart_alarm_test
-  PROPERTIES
-    FOLDER
-    "kickstart/2019/practice"
+  PROPERTIES FOLDER
+             "kickstart/2019/practice"
 )
-ParseAndAddCatchTests(kickstart_alarm_test)
+parseandaddcatchtests(kickstart_alarm_test)

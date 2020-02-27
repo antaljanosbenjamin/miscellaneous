@@ -16,8 +16,7 @@ target_link_libraries(
 
 set_target_properties(
   limited_correspondence_test
-  PROPERTIES
-    FOLDER
-    "kattis"
+  PROPERTIES FOLDER
+             "kattis"
 )
-ParseAndAddCatchTests(limited_correspondence_test)
+parseandaddcatchtests(limited_correspondence_test)
