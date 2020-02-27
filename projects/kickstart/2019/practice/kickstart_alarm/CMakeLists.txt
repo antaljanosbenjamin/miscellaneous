@@ -15,13 +15,13 @@ add_library(
 
 # Dummy project to show the header-only lib in VS
 add_custom_target(
-  kickstart_alarm_proj
+  kickstart_alarm_
   EXCLUDE_FROM_ALL
   SOURCES include/KickStartAlarm.hpp
 )
 
 set_target_properties(
-  kickstart_alarm_proj
+  kickstart_alarm_
   PROPERTIES FOLDER
              "kickstart/2019/practice"
 )
