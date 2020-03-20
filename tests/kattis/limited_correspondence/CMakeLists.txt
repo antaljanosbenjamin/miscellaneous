@@ -1,22 +1,18 @@
-find_package(
-  Catch2
-  REQUIRED
-  CONFIG
-)
-
-include(ParseAndAddCatchTests)
-include(Catch)
-
 add_executable(limited_correspondence_test LetterAssemberTest.cpp)
 
 target_link_libraries(
   limited_correspondence_test
-  limited_correspondence
+  PRIVATE catch_main
+          project_options
+          project_warnings
+          limited_correspondence
 )
 
-set_target_properties(
+catch_discover_tests(
   limited_correspondence_test
-  PROPERTIES FOLDER
-             "kattis"
+  TEST_PREFIX
+  "unittests."
+  # EXTRA_ARGS -s --reporter=xml --out=tests.xml
 )
-parseandaddcatchtests(limited_correspondence_test)
+
+set_target_properties(limited_correspondence_test PROPERTIES FOLDER "kattis")
