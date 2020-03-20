@@ -1,41 +1,23 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.1.3)
 
 project(miscellaneous)
 
-# Use solution folders.
-set_property(
-  GLOBAL
-  PROPERTY USE_FOLDERS
-           ON
-)
+include(CMake/Warnings.cmake)
 
-set(CMAKE_CXX_STANDARD 17)
-if(MSVC)
-  add_compile_options(
-    /W4
-    /WX
-  )
-else()
-  # lots of warnings and all warnings as errors
-  add_compile_options(
-    -Wall
-    -Wextra
-    -pedantic
-    -Werror
-  )
-endif()
+add_library(project_options INTERFACE)
+target_compile_features(project_options INTERFACE cxx_std_17)
+
+add_library(project_warnings INTERFACE)
+set_project_warnings(project_warnings)
+
+include(CMake/Conan.cmake)
+run_conan()
 
 include(CTest)
 
-if(CMAKE_BUILD_TYPE
-   MATCHES
-   Debug
-)
-  add_definitions(-DMY_DEBUG)
-endif()
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMY_DEBUG")
 
 add_subdirectory(projects)
 add_subdirectory(tests)

@@ -1,22 +1,18 @@
-find_package(
-  Catch2
-  REQUIRED
-  CONFIG
-)
-
-include(ParseAndAddCatchTests)
-include(Catch)
-
 add_executable(advice_test AdviceTest.cpp)
 
 target_link_libraries(
   advice_test
-  advice
+  PRIVATE advice
+          catch_main
+          project_options
+          project_warnings
 )
 
-set_target_properties(
+catch_discover_tests(
   advice_test
-  PROPERTIES FOLDER
-             "kattis"
+  TEST_PREFIX
+  "unittests."
+  # EXTRA_ARGS -s --reporter=xml --out=tests.xml
 )
-parseandaddcatchtests(advice_test)
+
+set_target_properties(advice_test PROPERTIES FOLDER "kattis")

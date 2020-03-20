@@ -1,22 +1,18 @@
-find_package(
-  Catch2
-  REQUIRED
-  CONFIG
-)
-
-include(ParseAndAddCatchTests)
-include(Catch)
-
 add_executable(kickstart_alarm_test KickStartAlarmTest.cpp)
 
 target_link_libraries(
   kickstart_alarm_test
-  kickstart_alarm
+  PRIVATE kickstart_alarm
+          catch_main
+          project_options
+          project_warnings
 )
 
-set_target_properties(
+catch_discover_tests(
   kickstart_alarm_test
-  PROPERTIES FOLDER
-             "kickstart/2019/practice"
+  TEST_PREFIX
+  "unittests."
+  # EXTRA_ARGS -s --reporter=xml --out=tests.xml
 )
-parseandaddcatchtests(kickstart_alarm_test)
+
+set_target_properties(kickstart_alarm_test PROPERTIES FOLDER "kickstart/2019/practice")
