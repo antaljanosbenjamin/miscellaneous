@@ -39,7 +39,7 @@ matrix:
       name: 'Windows Clang'
       compiler: clang
       env:
-        - CMAKE_OPTIONS="-TClangCL"
+        - CMAKE_OPTIONS="-TClangCL -DWARNINGS_AS_ERRORS=0"
         - COMPILER=clang
 
 before_install:
@@ -49,9 +49,8 @@ install:
 script:
   - mkdir build
   - cd build
-  - conan install ..
   - cmake .. $CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Release
-  - cmake --build . --config Release
+  - cmake --build . --config Release -j 6
   - ctest . -C Release
   
 notifications:
