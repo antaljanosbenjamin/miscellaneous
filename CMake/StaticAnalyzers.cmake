@@ -14,15 +14,15 @@ if(ENABLE_CPPCHECK)
     --error-exitcode=1
     --language=c++
     --inline-suppr
-    --verbose
     --suppress=missingIncludeSystem
-    --template='{file}:{line},{severity},{id},{message}'
+    # cmake-format: off
+    --template='{file}:{line} [{severity}/{id}]: {message}'
+    # cmake-format: on
     --project=${CMAKE_BINARY_DIR}/compile_commands.json
-    ${CMAKE_SOURCE_DIR}/projects/
   )
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
   add_custom_target(
-    check
+    check ALL
     COMMAND ${CPPCHECK} ${CPPCHECK_ARGS}
     COMMENT "running cppcheck"
   )
