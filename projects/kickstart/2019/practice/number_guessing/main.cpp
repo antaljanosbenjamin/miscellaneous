@@ -10,9 +10,8 @@ int main() {
     ++A;
     size_t N;
     std::cin >> N;
-    size_t Q{0u};
     while (true) {
-      Q = (A + B) / 2;
+      size_t Q{(A + B) / 2};
       std::cout << Q << std::endl;
       std::string answer;
       std::cin >> answer;

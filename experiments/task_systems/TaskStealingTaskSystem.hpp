@@ -50,6 +50,7 @@ public:
       if (q_[(i + n) % count_].try_push(std::forward<F>(f)))
         return;
     }
+    // cppcheck-suppress accessForwarded
     q_[i % count_].push(std::forward<F>(f));
   }
 };

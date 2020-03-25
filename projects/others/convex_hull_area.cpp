@@ -41,11 +41,11 @@ public:
   Point m_pointMostLeftBottom;
   std::vector<Point> m_vectorConvexHull;
 
-  ConvexHullCalculator(std::vector<Point> vectorPoints);
+  explicit ConvexHullCalculator(std::vector<Point> vectorPoints);
 
   void calculateConvexHull();
 
-  double calculateConvexHullArea();
+  double calculateConvexHullArea() const;
 };
 
 Point Point::operator+(const Point &rhs) const {
@@ -90,8 +90,9 @@ bool Point::compare(const Point &pointSource, const Point &pointLhs, const Point
   return (orientation == COUNTERCLOCKWISE) ? true : false;
 }
 
+// cppcheck-suppress passedByValue
 ConvexHullCalculator::ConvexHullCalculator(std::vector<Point> vectorPoints)
-  : m_vectorPoints(vectorPoints)
+  : m_vectorPoints(std::move(vectorPoints))
   , m_pointMostLeftBottom()
   , m_vectorConvexHull() {
   m_pointMostLeftBottom = m_vectorPoints[0];
@@ -142,7 +143,7 @@ void ConvexHullCalculator::calculateConvexHull() {
   }
 }
 
-double ConvexHullCalculator::calculateConvexHullArea() {
+double ConvexHullCalculator::calculateConvexHullArea() const {
   double dSumArea = 0.0;
 
   for (size_t sPos = 1; sPos + 1 < m_vectorConvexHull.size(); ++sPos) {
@@ -169,7 +170,7 @@ int main() {
       vectorPoints[sPos] = Point{iX, iY};
     }
 
-    ConvexHullCalculator convexHullCalculator(vectorPoints);
+    ConvexHullCalculator convexHullCalculator(std::move(vectorPoints));
     convexHullCalculator.calculateConvexHull();
     std::cout << convexHullCalculator.calculateConvexHullArea() << "\n";
 

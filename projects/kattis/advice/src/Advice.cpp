@@ -12,20 +12,14 @@ void MakeUpper(std::string &str) {
   transform(str.begin(), str.end(), str.begin(), [](char c) { return static_cast<char>(toupper(c)); });
 }
 
-bool Advice::registerCreateFunction(std::string adviceName, AdviceCreatorFunc fCreateFunction) {
+bool Advice::registerCreateFunction(std::string adviceName, AdviceCreatorFunc creatorFunction) {
   MakeUpper(adviceName);
   if (createFunctions.find(adviceName) != createFunctions.end())
     return false;
 
-  createFunctions.emplace(adviceName, fCreateFunction);
+  createFunctions.emplace(adviceName, creatorFunction);
 
   return true;
-}
-
-bool Advice::hasAdviceWithName(const std::string &adviceName) {
-  auto upperName = adviceName;
-  MakeUpper(upperName);
-  return createFunctions.find(upperName) != createFunctions.end();
 }
 
 std::shared_ptr<Advice> Advice::createAdvice(const std::string &adviceName, const std::string &param) {
@@ -47,14 +41,14 @@ StartAdvice::StartAdvice(Degree startDirection)
   , startDirection(startDirection) {
 }
 
-TurnAdvice::TurnAdvice(Degree dTurnAngle)
+TurnAdvice::TurnAdvice(Degree turnAngle)
   : Advice(AdviceType::Turn)
-  , turnAngle(dTurnAngle) {
+  , turnAngle(turnAngle) {
 }
 
-WalkAdvice::WalkAdvice(double dWalkAdvice)
+WalkAdvice::WalkAdvice(double walkDistance)
   : Advice(AdviceType::Walk)
-  , walkDistance(dWalkAdvice) {
+  , walkDistance(walkDistance) {
 }
 
 void StartAdvice::apply(LocationInfo &locationInfo) {

@@ -2,24 +2,29 @@
 
 #include <cmath>
 
+// cppcheck-suppress unusedFunction
 const Point operator+(const Point &lhs, const Point &rhs) {
   return {lhs.x + rhs.x, lhs.y + rhs.y};
 }
 
+// cppcheck-suppress unusedFunction
 const Point &operator+=(Point &lhs, const Point &rhs) {
   lhs.x += rhs.x;
   lhs.y += rhs.y;
   return lhs;
 }
 
+// cppcheck-suppress unusedFunction
 bool operator==(const Point &lhs, const Point &rhs) {
   return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
+// cppcheck-suppress unusedFunction
 const Point operator-(const Point &lhs, const Point &rhs) {
   return Point{lhs.x - rhs.x, lhs.y - rhs.y};
 }
 
+// cppcheck-suppress unusedFunction
 const Point &operator-=(Point &lhs, const Point &rhs) {
   lhs.x -= rhs.x;
   lhs.y -= rhs.y;

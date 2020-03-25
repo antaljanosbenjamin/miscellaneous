@@ -55,7 +55,7 @@ public:
   unsigned int calculateSeaCoastLength();
 
 private:
-  FieldType getFieldType(char cField);
+  static FieldType getFieldType(char cField);
 
   FieldType &fieldAt(const Coord &coordField);
 
