@@ -23,10 +23,10 @@ void setBitToOne(unsigned int &uiNumber, unsigned int uiBitNumber) {
 
 unsigned int reverseBits(unsigned int uiNumberToReverse) {
   unsigned int uiValuableBits = getValuableBitCount(uiNumberToReverse);
-  unsigned int uiRevertedNumber = 0, uiActualBitNumber, uiActualBitValue;
+  unsigned int uiRevertedNumber = 0, uiActualBitNumber;
 
   for (uiActualBitNumber = 0; uiActualBitNumber < uiValuableBits; uiActualBitNumber++) {
-    uiActualBitValue = (uiNumberToReverse & (1 << uiActualBitNumber));
+    unsigned int uiActualBitValue = (uiNumberToReverse & (1 << uiActualBitNumber));
     if (uiActualBitValue)
       setBitToOne(uiRevertedNumber, (uiValuableBits - 1) - uiActualBitNumber);
   }

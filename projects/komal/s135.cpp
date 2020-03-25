@@ -44,7 +44,7 @@ struct Edge {
 
 class Table {
 public:
-  Table(std::istream &inputStream) {
+  explicit Table(std::istream &inputStream) {
     inputStream >> this->size;
     this->heights = std::vector<Height>(this->size * this->size, 0);
     this->components.reserve(this->size);
@@ -59,7 +59,7 @@ public:
   size_t getD();
 
 private:
-  size_t getFieldId(size_t x, size_t y) {
+  size_t getFieldId(size_t x, size_t y) const {
     return y * this->size + x;
   }
 
@@ -106,7 +106,7 @@ private:
     return this->maxComponentSize >= minSize;
   }
 
-  bool isInSameComponent(size_t field1, size_t field2) {
+  bool isInSameComponent(size_t field1, size_t field2) const {
     return this->fieldToComponent[field1] == this->fieldToComponent[field2];
   }
 

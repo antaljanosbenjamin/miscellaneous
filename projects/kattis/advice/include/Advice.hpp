@@ -23,13 +23,11 @@ using AdviceCreatorFunc = std::function<std::shared_ptr<Advice>(const std::strin
 
 class Advice {
 public:
-  AdviceType getType() {
+  AdviceType getType() const {
     return adviceType;
   }
 
   static bool registerCreateFunction(std::string adviceName, AdviceCreatorFunc creatorFunction);
-
-  static bool hasAdviceWithName(const std::string &adviceName);
 
   static std::shared_ptr<Advice> createAdvice(const std::string &adviceName, const std::string &param);
 
@@ -38,7 +36,7 @@ public:
   virtual ~Advice();
 
 protected:
-  Advice(AdviceType adviceTypeInitial);
+  explicit Advice(AdviceType adviceTypeInitial);
 
 private:
   AdviceType adviceType;
@@ -46,7 +44,7 @@ private:
 
 class StartAdvice : public Advice {
 public:
-  StartAdvice(Degree initialDirection);
+  explicit StartAdvice(Degree startDirection);
 
   static std::shared_ptr<Advice> createStartAdvice(const std::string &param);
 
@@ -58,7 +56,7 @@ private:
 
 class TurnAdvice : public Advice {
 public:
-  TurnAdvice(Degree turnAngle);
+  explicit TurnAdvice(Degree turnAngle);
 
   static std::shared_ptr<Advice> createTurnAdvice(const std::string &param);
 
@@ -70,7 +68,7 @@ private:
 
 struct WalkAdvice : public Advice {
 public:
-  WalkAdvice(double walkDistance);
+  explicit WalkAdvice(double walkDistance);
 
   static std::shared_ptr<Advice> createWalkAdvice(const std::string &param);
 
@@ -88,7 +86,7 @@ struct PathInfo {
 
 class AdviceCalculator {
 public:
-  AdviceCalculator(size_t sPathCount);
+  explicit AdviceCalculator(size_t pathCount);
 
   void readDatas(std::istream &is);
   void calculate();
