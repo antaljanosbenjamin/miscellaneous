@@ -41,6 +41,21 @@ matrix:
       env:
         - CMAKE_OPTIONS="-TClangCL -DWARNINGS_AS_ERRORS=0"
         - COMPILER=clang
+    - os: linux
+      name: 'Cppcheck'
+      python: 3.7
+      dist: bionic
+      addons:
+        apt:
+          packages:
+            - gcc-8
+            - g++-8
+            - cppcheck
+      env:
+        - CC=gcc-8
+        - CXX=g++-8
+        - CMAKE_OPTIONS="-DCMAKE_ENABLE_CPPCHECK=1"
+      compiler: gcc-8
 
 before_install:
   - . travis/before_install/$TRAVIS_OS_NAME.sh
