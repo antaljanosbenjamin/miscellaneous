@@ -54,7 +54,7 @@ matrix:
       env:
         - CC=gcc-8
         - CXX=g++-8
-        - CMAKE_OPTIONS="-DCMAKE_ENABLE_CPPCHECK=1"
+        - CMAKE_OPTIONS="-DENABLE_CPPCHECK=1"
       compiler: gcc-8
 
 before_install:
