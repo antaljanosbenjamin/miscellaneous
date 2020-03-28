@@ -25,7 +25,7 @@ bool Advice::registerCreateFunction(std::string adviceName, AdviceCreatorFunc cr
 std::shared_ptr<Advice> Advice::createAdvice(const std::string &adviceName, const std::string &param) {
   auto upperName = adviceName;
   MakeUpper(upperName);
-  auto &createFunction = createFunctions[upperName];
+  const auto &createFunction = createFunctions[upperName];
   return createFunction(param);
 }
 
