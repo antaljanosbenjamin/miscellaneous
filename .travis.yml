@@ -59,9 +59,9 @@ matrix:
         - travis/before_install/install_cppcheck.sh
 
 before_install:
-  - . travis/before_install/$TRAVIS_OS_NAME.sh
+  - travis/before_install/$TRAVIS_OS_NAME.sh
 install:
-  - . travis/install/$TRAVIS_OS_NAME.sh
+  - travis/install/$TRAVIS_OS_NAME.sh
 script:
   - mkdir build
   - cd build
