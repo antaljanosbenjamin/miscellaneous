@@ -13,7 +13,7 @@
 		"streetsidesoftware.code-spell-checker",
 		"twxs.cmake",
 		"vadimcn.vscode-lldb",
-		"vector-of-bool.cmake-tools",
+		"ms-vscode.cmake-tools",
 		"xaver.clang-format"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
