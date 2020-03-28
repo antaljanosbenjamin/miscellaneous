@@ -79,9 +79,9 @@ private:
 };
 
 struct PathInfo {
-  Point source;
-  std::vector<std::shared_ptr<Advice>> advices;
-  Point destination;
+  Point source{0, 0};
+  std::vector<std::shared_ptr<Advice>> advices{};
+  Point destination{0, 0};
 };
 
 class AdviceCalculator {
