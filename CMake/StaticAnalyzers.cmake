@@ -5,7 +5,7 @@ option(
 )
 
 if(ENABLE_CPPCHECK)
-  find_program(CPPCHECK cppcheck)
+  find_program(CPPCHECK cppcheck HINTS /usr/local/bin)
   list(
     APPEND
     CPPCHECK_ARGS
@@ -14,7 +14,6 @@ if(ENABLE_CPPCHECK)
     --error-exitcode=1
     --language=c++
     --inline-suppr
-    --suppress=missingIncludeSystem
     # cmake-format: off
     --template='{file}:{line} [{severity}/{id}]: {message}'
     # cmake-format: on
