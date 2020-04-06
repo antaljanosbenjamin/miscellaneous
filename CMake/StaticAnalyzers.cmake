@@ -8,10 +8,9 @@ option(
   "Enable static analysis with clang-tidy"
   OFF
 )
-option(
-  CLANG_TIDY_RUNNER
-  "Name of clang-tidy runner"
-  "run-clang-tidy-9"
+set(CLANG_TIDY_RUNNER
+    "run-clang-tidy-9"
+    CACHE STRING "Name of clang-tidy runner"
 )
 
 if(ENABLE_CPPCHECK)
