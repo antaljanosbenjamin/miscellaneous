@@ -1,7 +1,7 @@
 ---
 Checks:           '*,-fuchsia-overloaded-operator,-fuchsia-default-arguments-calls,-modernize-use-trailing-return-type,-hicpp-use-emplace,-modernize-use-emplace,-google-runtime-references,-fuchsia-statically-constructed-objects,-readability-redundant-member-init,-readability-simplify-boolean-expr,-cppcoreguidelines-avoid-magic-numbers'
 WarningsAsErrors: '*'
-HeaderFilterRegex: ''
+HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
 FormatStyle:     none
 User:            kovi
