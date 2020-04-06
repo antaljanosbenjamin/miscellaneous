@@ -27,13 +27,13 @@ public:
     return adviceType;
   }
 
-  static bool registerCreateFunction(std::string adviceName, AdviceCreatorFunc creatorFunction);
+  static bool registerCreateFunction(std::string adviceName, const AdviceCreatorFunc &creatorFunction);
 
   static std::shared_ptr<Advice> createAdvice(const std::string &adviceName, const std::string &param);
 
   virtual void apply(LocationInfo &locationInfo) = 0;
 
-  virtual ~Advice();
+  virtual ~Advice() = default;
 
 protected:
   explicit Advice(AdviceType adviceTypeInitial);

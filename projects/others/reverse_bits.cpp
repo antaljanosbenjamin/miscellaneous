@@ -8,9 +8,9 @@
 // 11           | 0x1011
 
 unsigned int getValuableBitCount(unsigned int uiNumber) {
-  unsigned int uiValuableBitCount = 0;
+  unsigned int uiValuableBitCount = 0U;
   while (uiNumber > 0) {
-    uiNumber >>= 1;
+    uiNumber >>= 1U;
     uiValuableBitCount++;
   }
 
@@ -18,17 +18,19 @@ unsigned int getValuableBitCount(unsigned int uiNumber) {
 }
 
 void setBitToOne(unsigned int &uiNumber, unsigned int uiBitNumber) {
-  uiNumber |= (1 << uiBitNumber);
+  uiNumber |= (1U << uiBitNumber);
 }
 
 unsigned int reverseBits(unsigned int uiNumberToReverse) {
   unsigned int uiValuableBits = getValuableBitCount(uiNumberToReverse);
-  unsigned int uiRevertedNumber = 0, uiActualBitNumber;
+  unsigned int uiRevertedNumber = 0U;
+  unsigned int uiActualBitNumber;
 
-  for (uiActualBitNumber = 0; uiActualBitNumber < uiValuableBits; uiActualBitNumber++) {
-    unsigned int uiActualBitValue = (uiNumberToReverse & (1 << uiActualBitNumber));
-    if (uiActualBitValue)
+  for (uiActualBitNumber = 0U; uiActualBitNumber < uiValuableBits; uiActualBitNumber++) {
+    unsigned int uiActualBitValue = (uiNumberToReverse & (1U << uiActualBitNumber));
+    if (uiActualBitValue > 0U) {
       setBitToOne(uiRevertedNumber, (uiValuableBits - 1) - uiActualBitNumber);
+    }
   }
 
   return uiRevertedNumber;

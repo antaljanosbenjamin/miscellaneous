@@ -1,6 +1,6 @@
 #include "OracleTaskSystem.hpp"
 
-void OracleTaskSystem::run(unsigned) {
+void OracleTaskSystem::run(unsigned /*i*/) {
   std::function<void()> f;
   while (q_.pop(f)) {
     f();
@@ -15,6 +15,7 @@ OracleTaskSystem::OracleTaskSystem() {
 
 OracleTaskSystem::~OracleTaskSystem() {
   q_.done();
-  for (auto &e: threads_)
+  for (auto &e: threads_) {
     e.join();
+  }
 }

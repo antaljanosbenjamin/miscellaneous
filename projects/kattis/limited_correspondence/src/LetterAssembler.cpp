@@ -5,9 +5,9 @@
 #include <tuple>
 
 bool LetterAssembler::read(std::istream &inputStream) {
-  auto pairCount = 0u;
-  auto sumFirstWordLength = 0ull;
-  auto sumSecondWordLength = 0ull;
+  auto pairCount = 0U;
+  auto sumFirstWordLength = 0ULL;
+  auto sumSecondWordLength = 0ULL;
   this->wordPairs.clear();
 
   inputStream >> pairCount;
@@ -46,14 +46,13 @@ std::string LetterAssembler::assemble() {
   this->recursiveSearch(state);
   if (state.best.empty()) {
     return "IMPOSSIBLE";
-  } else {
-    return state.best;
   }
+  return state.best;
 }
 
 void LetterAssembler::recursiveSearch(AssemblerState &state) {
   auto actualPos = std::min(state.firstLetter.length(), state.secondLetter.length());
-  for (auto i = 0u; i < this->wordPairs.size(); ++i) {
+  for (auto i = 0U; i < this->wordPairs.size(); ++i) {
     if (!state.used[i]) {
       state.used[i] = true;
       const auto &firstWord = this->wordPairs[i].first;
