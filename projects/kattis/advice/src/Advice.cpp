@@ -12,10 +12,11 @@ void MakeUpper(std::string &str) {
   transform(str.begin(), str.end(), str.begin(), [](char c) { return static_cast<char>(toupper(c)); });
 }
 
-bool Advice::registerCreateFunction(std::string adviceName, AdviceCreatorFunc creatorFunction) {
+bool Advice::registerCreateFunction(std::string adviceName, const AdviceCreatorFunc &creatorFunction) {
   MakeUpper(adviceName);
-  if (createFunctions.find(adviceName) != createFunctions.end())
+  if (createFunctions.find(adviceName) != createFunctions.end()) {
     return false;
+  }
 
   createFunctions.emplace(adviceName, creatorFunction);
 
@@ -27,9 +28,6 @@ std::shared_ptr<Advice> Advice::createAdvice(const std::string &adviceName, cons
   MakeUpper(upperName);
   const auto &createFunction = createFunctions[upperName];
   return createFunction(param);
-}
-
-Advice::~Advice() {
 }
 
 Advice::Advice(AdviceType adviceTypeInitial)
@@ -92,13 +90,14 @@ AdviceCalculator::AdviceCalculator(size_t pathCount)
 }
 
 void AdviceCalculator::readDatas(std::istream &is) {
-  if (paths.size() != 0)
+  if (!paths.empty()) {
     return;
+  }
 
   std::string pathLine;
   std::string strNextWord;
 
-  for (auto sPathPos = 0u; sPathPos < pathCount; ++sPathPos) {
+  for (auto sPathPos = 0U; sPathPos < pathCount; ++sPathPos) {
     std::getline(is, pathLine);
     std::stringstream ss(pathLine);
 
@@ -136,23 +135,26 @@ void AdviceCalculator::calculate() {
 }
 
 Point AdviceCalculator::getAverageDestination() {
-  if (calculated == false)
+  if (calculated == false) {
     calculate();
+  }
 
   return averagePoint;
 }
 
 double AdviceCalculator::getLongestDistance() {
-  if (calculated == false)
+  if (calculated == false) {
     calculate();
+  }
 
   double dWorstDirectionDistance = GetLength((averagePoint - paths[0].destination));
 
   for (const auto &pathInfo: paths) {
     double dActualDirectionDistance = GetLength(averagePoint - pathInfo.destination);
 
-    if (dActualDirectionDistance > dWorstDirectionDistance)
+    if (dActualDirectionDistance > dWorstDirectionDistance) {
       dWorstDirectionDistance = dActualDirectionDistance;
+    }
   }
 
   return dWorstDirectionDistance;

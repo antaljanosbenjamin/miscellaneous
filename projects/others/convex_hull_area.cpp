@@ -17,36 +17,64 @@
 
 enum Orientation { COLLINEAR, CLOCKWISE, COUNTERCLOCKWISE };
 
-struct Point {
-  int iX, iY;
+class Point {
+public:
+  Point(int x, int y);
 
+  Point() = default;
+  Point(const Point &) = default;
+  Point(Point &&) = default;
+  Point &operator=(const Point &) = default;
+  Point &operator=(Point &&) = default;
+  ~Point() = default;
+
+  [[nodiscard]] int getX() const;
+  [[nodiscard]] int getY() const;
   Point operator+(const Point &rhs) const;
   Point operator-(const Point &rhs) const;
   // Cross-product
   int operator%(const Point &rhs) const;
   bool operator==(const Point &rhs) const;
 
-  int getLengthSquare() const;
+  [[nodiscard]] int getLengthSquare() const;
 
   static Orientation getOrientation(const Point &pointSource, const Point &pointFirst, const Point &pointSecond);
 
   static bool compare(const Point &pointSource, const Point &pointLhs, const Point &pointRhs);
+
+private:
+  int iX{0U};
+  int iY{0U};
 };
 
 using Vector = Point;
 
 class ConvexHullCalculator {
 public:
-  std::vector<Point> m_vectorPoints;
-  Point m_pointMostLeftBottom;
-  std::vector<Point> m_vectorConvexHull;
-
   explicit ConvexHullCalculator(std::vector<Point> vectorPoints);
 
   void calculateConvexHull();
 
-  double calculateConvexHullArea() const;
+  [[nodiscard]] double calculateConvexHullArea() const;
+
+private:
+  std::vector<Point> m_vectorPoints;
+  Point m_pointMostLeftBottom;
+  std::vector<Point> m_vectorConvexHull;
 };
+
+Point::Point(int x, int y)
+  : iX{x}
+  , iY{y} {
+}
+
+int Point::getX() const {
+  return iX;
+}
+
+int Point::getY() const {
+  return iY;
+}
 
 Point Point::operator+(const Point &rhs) const {
   return Point{iX + rhs.iX, iY + rhs.iY};
@@ -75,8 +103,9 @@ Orientation Point::getOrientation(const Point &pointSource, const Point &pointFi
 
   int iCrossProduct = vecFromSourceToFirst % vecFromSourceToSecond;
 
-  if (iCrossProduct == 0)
+  if (iCrossProduct == 0) {
     return COLLINEAR;
+  }
 
   return (iCrossProduct > 0) ? COUNTERCLOCKWISE : CLOCKWISE;
 }
@@ -84,8 +113,9 @@ Orientation Point::getOrientation(const Point &pointSource, const Point &pointFi
 bool Point::compare(const Point &pointSource, const Point &pointLhs, const Point &pointRhs) {
   Orientation orientation = getOrientation(pointSource, pointLhs, pointRhs);
 
-  if (orientation == 0)
+  if (orientation == 0) {
     return (pointLhs.getLengthSquare() < pointRhs.getLengthSquare()) ? true : false;
+  }
 
   return (orientation == COUNTERCLOCKWISE) ? true : false;
 }
@@ -98,10 +128,10 @@ ConvexHullCalculator::ConvexHullCalculator(std::vector<Point> vectorPoints)
   m_pointMostLeftBottom = m_vectorPoints[0];
   size_t sMostLeftBottomIndex = 0;
   for (size_t sPointPos = 1; sPointPos < m_vectorPoints.size(); ++sPointPos) {
-    int iActualY = m_vectorPoints[sPointPos].iY;
+    int iActualY = m_vectorPoints[sPointPos].getY();
 
-    if ((iActualY < m_pointMostLeftBottom.iY) ||
-        (iActualY == m_pointMostLeftBottom.iY && m_vectorPoints[sPointPos].iX < m_pointMostLeftBottom.iX)) {
+    if ((iActualY < m_pointMostLeftBottom.getY()) ||
+        (iActualY == m_pointMostLeftBottom.getY() && m_vectorPoints[sPointPos].getX() < m_pointMostLeftBottom.getX())) {
       m_pointMostLeftBottom = m_vectorPoints[sPointPos];
       sMostLeftBottomIndex = sPointPos;
     }
@@ -119,14 +149,16 @@ void ConvexHullCalculator::calculateConvexHull() {
 
   for (size_t sActualPos = 1; sActualPos < m_vectorPoints.size() - 1;) {
     if (Point::getOrientation(m_pointMostLeftBottom, m_vectorPoints[sActualPos], m_vectorPoints[sActualPos + 1]) ==
-        COLLINEAR)
+        COLLINEAR) {
       m_vectorPoints.erase(m_vectorPoints.begin() + sActualPos);
-    else
+    } else {
       ++sActualPos;
+    }
   }
 
-  if (m_vectorPoints.size() < 3)
+  if (m_vectorPoints.size() < 3) {
     return;
+  }
 
   m_vectorConvexHull.push_back(m_vectorPoints[0]);
   m_vectorConvexHull.push_back(m_vectorPoints[1]);
@@ -151,6 +183,7 @@ double ConvexHullCalculator::calculateConvexHullArea() const {
     Point pointSecondSide = m_vectorConvexHull[sPos + 1] - m_pointMostLeftBottom;
 
     int iCrossProductMagnitude = pointFirstSide % pointSecondSide;
+    // NOLINTNEXTLINE(readability-magic-numbers)
     dSumArea += iCrossProductMagnitude / 2.0;
   }
 

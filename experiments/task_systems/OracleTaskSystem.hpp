@@ -11,7 +11,7 @@ class OracleTaskSystem {
   std::vector<std::thread> threads_;
   NotificationQueue q_;
 
-  void run(unsigned);
+  void run(unsigned /*i*/);
 
 public:
   OracleTaskSystem();
