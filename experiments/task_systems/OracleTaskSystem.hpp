@@ -17,6 +17,11 @@ public:
   OracleTaskSystem();
   ~OracleTaskSystem();
 
+  OracleTaskSystem(const OracleTaskSystem &) = delete;
+  OracleTaskSystem(OracleTaskSystem &&) = delete;
+  OracleTaskSystem &operator=(const OracleTaskSystem &) = delete;
+  OracleTaskSystem &operator=(OracleTaskSystem &&) = delete;
+
   template <typename F>
   void async(F &&f) {
     q_.push(std::forward<F>(f));

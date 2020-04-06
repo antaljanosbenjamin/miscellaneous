@@ -1,5 +1,5 @@
 ---
-Checks:           '*,-fuchsia-overloaded-operator,-fuchsia-default-arguments-calls,-modernize-use-trailing-return-type,-hicpp-use-emplace,-modernize-use-emplace,-google-runtime-references,-fuchsia-statically-constructed-objects,-readability-redundant-member-init,-readability-simplify-boolean-expr,-cppcoreguidelines-avoid-magic-numbers'
+Checks:           '*,-fuchsia-overloaded-operator,-fuchsia-default-arguments-calls,-modernize-use-trailing-return-type,-hicpp-use-emplace,-modernize-use-emplace,-google-runtime-references,-fuchsia-statically-constructed-objects,-readability-redundant-member-init,-readability-simplify-boolean-expr,-cppcoreguidelines-avoid-magic-numbers,-llvm-header-guard,-readability-avoid-const-params-in-decls,-cppcoreguidelines-non-private-member-variables-in-classes'
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
@@ -12,7 +12,7 @@ CheckOptions:
     value:           '0'
   - key:             cppcoreguidelines-explicit-virtual-functions.IgnoreDestructors
     value:           '1'
-  - key:             cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+  - key:             misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
     value:           '1'
   - key:             google-readability-braces-around-statements.ShortStatementLines
     value:           '1'

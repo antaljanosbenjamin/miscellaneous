@@ -30,8 +30,9 @@ public:
   bool try_push(F &&f) {
     {
       std::unique_lock<std::mutex> lock{mutex_, std::try_to_lock};
-      if (!lock)
+      if (!lock) {
         return false;
+      }
       q_.emplace_back(std::forward<F>(f));
     }
     ready_.notify_one();

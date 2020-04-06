@@ -20,11 +20,13 @@ class TaskStealingTaskSystem {
     while (true) {
       std::function<void()> f;
       for (unsigned n = 0; n != count_ * K; ++n) {
-        if (q_[(i + n) % count_].try_pop(f))
+        if (q_[(i + n) % count_].try_pop(f)) {
           break;
+        }
       }
-      if (!f && !q_[i].pop(f))
+      if (!f && !q_[i].pop(f)) {
         break;
+      }
       f();
     }
   }
@@ -37,20 +39,28 @@ public:
   }
 
   ~TaskStealingTaskSystem() {
-    for (auto &e: q_)
+    for (auto &e: q_) {
       e.done();
-    for (auto &e: threads_)
+    }
+    for (auto &e: threads_) {
       e.join();
+    }
   }
+
+  TaskStealingTaskSystem(const TaskStealingTaskSystem &) = delete;
+  TaskStealingTaskSystem(TaskStealingTaskSystem &&) = delete;
+  TaskStealingTaskSystem &operator=(const TaskStealingTaskSystem &) = delete;
+  TaskStealingTaskSystem &operator=(TaskStealingTaskSystem &&) = delete;
 
   template <typename F>
   void async(F &&f) {
     auto i = index_++;
-    for (unsigned n = 0; n != count_ * 8; ++n) {
-      if (q_[(i + n) % count_].try_push(std::forward<F>(f)))
+    for (unsigned n = 0; n != count_ * K; ++n) {
+      if (q_[(i + n) % count_].try_push(std::forward<F>(f))) {
         return;
+      }
     }
     // cppcheck-suppress accessForwarded
-    q_[i % count_].push(std::forward<F>(f));
+    q_[i % count_].push(std::forward<F>(f)); // NOLINT(clang-analyzer-core.DivideZero)
   }
 };
