@@ -18,8 +18,9 @@ static IntType quickPowerWithModulo(IntType base, IntType exp, IntType modulo) {
 
   IntType t{1U};
   while (exp != 0) {
-    if (exp % 2 == 1)
+    if (exp % 2 == 1) {
       t = mod(t * base);
+    }
     base = mod(base * base);
     exp /= 2;
   }

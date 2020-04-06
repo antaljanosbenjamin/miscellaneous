@@ -8,7 +8,7 @@
 
 #include "Point.hpp"
 
-typedef double Degree;
+using Degree = double;
 
 enum class AdviceType { Start, Walk, Turn };
 
@@ -23,7 +23,7 @@ using AdviceCreatorFunc = std::function<std::shared_ptr<Advice>(const std::strin
 
 class Advice {
 public:
-  AdviceType getType() const {
+  [[nodiscard]] AdviceType getType() const {
     return adviceType;
   }
 
@@ -37,6 +37,11 @@ public:
 
 protected:
   explicit Advice(AdviceType adviceTypeInitial);
+
+  Advice(const Advice &) = default;
+  Advice(Advice &&) = default;
+  Advice &operator=(const Advice &) = default;
+  Advice &operator=(Advice &&) = default;
 
 private:
   AdviceType adviceType;
