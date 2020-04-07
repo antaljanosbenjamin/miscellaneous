@@ -76,10 +76,11 @@ matrix:
         - CXX=clang++-9
         - CMAKE_OPTIONS="-DENABLE_CLANG_TIDY=ON"
 
+# these scripts must run in the current shell, as they might modify some environment variables
 before_install:
-  - travis/before_install/$TRAVIS_OS_NAME.sh
+  - . travis/before_install/$TRAVIS_OS_NAME.sh
 install:
-  - travis/install/$TRAVIS_OS_NAME.sh
+  - . travis/install/$TRAVIS_OS_NAME.sh
 script:
   - mkdir build
   - cd build
