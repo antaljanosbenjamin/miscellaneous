@@ -5,12 +5,13 @@ struct Point {
   double y;
 };
 
-Point &RotateByDegree(Point &point, double dAngleInDegree);
+Point &RotateByDegree(Point &point, const double dAngleInDegree);
 
 double GetLength(const Point &point);
 
-const Point operator+(const Point &lhs, const Point &rhs);
-const Point &operator+=(Point &lhs, const Point &rhs);
-const Point operator-(const Point &lhs, const Point &rhs);
-const Point &operator-=(Point &lhs, const Point &rhs);
+// cppcheck-suppress unusedFunction
+Point operator+(const Point &lhs, const Point &rhs);
+Point &operator+=(Point &lhs, const Point &rhs);
+Point operator-(const Point &lhs, const Point &rhs);
+Point &operator-=(Point &lhs, const Point &rhs);
 bool operator==(const Point &lhs, const Point &rhs);

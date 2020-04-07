@@ -21,6 +21,11 @@ public:
   MultiQueuedTaskSystem();
   ~MultiQueuedTaskSystem();
 
+  MultiQueuedTaskSystem(const MultiQueuedTaskSystem &) = delete;
+  MultiQueuedTaskSystem(MultiQueuedTaskSystem &&) = delete;
+  MultiQueuedTaskSystem &operator=(const MultiQueuedTaskSystem &) = delete;
+  MultiQueuedTaskSystem &operator=(MultiQueuedTaskSystem &&) = delete;
+
   template <typename F>
   void async(F &&f) {
     auto i = index_++;

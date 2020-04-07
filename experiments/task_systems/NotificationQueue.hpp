@@ -5,11 +5,12 @@
 #include <functional>
 #include <mutex>
 
+// cppcheck-suppress noConstructor
 class NotificationQueue {
-  std::deque<std::function<void()>> q_;
+  std::deque<std::function<void()>> q_{};
   bool done_{false};
-  std::mutex mutex_;
-  std::condition_variable ready_;
+  std::mutex mutex_{};
+  std::condition_variable ready_{};
 
 public:
   void done();
@@ -29,8 +30,9 @@ public:
   bool try_push(F &&f) {
     {
       std::unique_lock<std::mutex> lock{mutex_, std::try_to_lock};
-      if (!lock)
+      if (!lock) {
         return false;
+      }
       q_.emplace_back(std::forward<F>(f));
     }
     ready_.notify_one();

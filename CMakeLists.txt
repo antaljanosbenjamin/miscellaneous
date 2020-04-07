@@ -4,6 +4,8 @@ project(miscellaneous)
 
 include(CMake/Warnings.cmake)
 
+include(CMake/StaticAnalyzers.cmake)
+
 add_library(project_options INTERFACE)
 target_compile_features(project_options INTERFACE cxx_std_17)
 

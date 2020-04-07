@@ -2,34 +2,44 @@
 
 #include <cmath>
 
-const Point operator+(const Point &lhs, const Point &rhs) {
+// cppcheck-suppress unusedFunction
+Point operator+(const Point &lhs, const Point &rhs) {
   return {lhs.x + rhs.x, lhs.y + rhs.y};
 }
 
-const Point &operator+=(Point &lhs, const Point &rhs) {
+// cppcheck-suppress unusedFunction
+Point &operator+=(Point &lhs, const Point &rhs) {
   lhs.x += rhs.x;
   lhs.y += rhs.y;
   return lhs;
 }
 
+// cppcheck-suppress unusedFunction
 bool operator==(const Point &lhs, const Point &rhs) {
   return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
-const Point operator-(const Point &lhs, const Point &rhs) {
+// cppcheck-suppress unusedFunction
+Point operator-(const Point &lhs, const Point &rhs) {
   return Point{lhs.x - rhs.x, lhs.y - rhs.y};
 }
 
-const Point &operator-=(Point &lhs, const Point &rhs) {
+// cppcheck-suppress unusedFunction
+Point &operator-=(Point &lhs, const Point &rhs) {
   lhs.x -= rhs.x;
   lhs.y -= rhs.y;
   return lhs;
 }
 
-const auto PI = std::acos(-1);
+// NOLINTNEXTLINE(cert-err58-cpp)
 
-Point &RotateByDegree(Point &point, double dAngleInDegree) {
-  double dAngleInRadian = dAngleInDegree / 180 * PI;
+Point &RotateByDegree(Point &point, const double dAngleInDegree) {
+  auto angleInRadian = [](const double angle) {
+    const auto PI = std::acos(-1);
+    const auto arcOfPI = 180;
+    return angle / arcOfPI * PI;
+  };
+  double dAngleInRadian = angleInRadian(dAngleInDegree);
   double dNewX = point.x * cos(dAngleInRadian) - point.y * sin(dAngleInRadian);
   double dNewY = point.x * sin(dAngleInRadian) + point.y * cos(dAngleInRadian);
 

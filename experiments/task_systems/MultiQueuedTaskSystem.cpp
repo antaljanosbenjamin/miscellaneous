@@ -3,8 +3,9 @@
 void MultiQueuedTaskSystem::run(unsigned i) {
   while (true) {
     std::function<void()> f;
-    if (!q_[i].pop(f))
+    if (!q_[i].pop(f)) {
       break;
+    }
     f();
   }
 }
@@ -16,8 +17,10 @@ MultiQueuedTaskSystem::MultiQueuedTaskSystem() {
 }
 
 MultiQueuedTaskSystem::~MultiQueuedTaskSystem() {
-  for (auto &e: q_)
+  for (auto &e: q_) {
     e.done();
-  for (auto &e: threads_)
+  }
+  for (auto &e: threads_) {
     e.join();
+  }
 }

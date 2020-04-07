@@ -1,10 +1,11 @@
 ﻿// https://open.kattis.com/submissions/4374599
 
 #include <iostream>
+
 #include "LetterAssembler.hpp"
 
 int main() {
-  auto caseNumber = 1u;
+  auto caseNumber = 1U;
 
   while (std::cin.good()) {
     LetterAssembler letterAssembler;
