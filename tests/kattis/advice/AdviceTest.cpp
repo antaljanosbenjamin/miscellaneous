@@ -19,7 +19,7 @@ bool checkInput(const size_t &pathCount, const std::string &pathes, const Point 
 }
 
 TEST_CASE("Simple route") {
-  constexpr auto pathCount = 1u;
+  constexpr auto pathCount = 1U;
   const auto pathes = "87.342 34.30 start 0 walk 10.0\n";
   constexpr Point expectedAverage{97.342, 34.30};
   constexpr auto expectedLongestDistance = 0.0;
@@ -27,7 +27,7 @@ TEST_CASE("Simple route") {
 }
 
 TEST_CASE("Long route") {
-  constexpr auto pathCount = 1u;
+  constexpr auto pathCount = 1U;
   const auto pathes =
       "87.342 34.30 start 0 walk 10.0 walk 40 turn 40.0 walk 60  walk 50 turn 90 walk 40 turn 13 walk 5\n";
   constexpr Point expectedAverage{191.9022, 138.6574};
@@ -36,7 +36,7 @@ TEST_CASE("Long route") {
 }
 
 TEST_CASE("Two routes") {
-  constexpr auto pathCount = 2u;
+  constexpr auto pathCount = 2U;
   const auto pathes = "30 40 start 90 walk 5\n"
                       "40 50 start 180 walk 10 turn 90 walk 5\n";
   constexpr Point expectedAverage{30, 45};
@@ -45,7 +45,7 @@ TEST_CASE("Two routes") {
 }
 
 TEST_CASE("Three routes") {
-  constexpr auto pathCount = 3u;
+  constexpr auto pathCount = 3U;
   const auto pathes = "87.342 34.30 start 0 walk 10.0\n"
                       "2.6762 75.2811 start -45.0 walk 40 turn 40.0 walk 60\n"
                       "58.518 93.508 start 270 walk 50 turn 90 walk 40 turn 13 walk 5\n";

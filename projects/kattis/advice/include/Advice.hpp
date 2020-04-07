@@ -8,7 +8,7 @@
 
 #include "Point.hpp"
 
-typedef double Degree;
+using Degree = double;
 
 enum class AdviceType { Start, Walk, Turn };
 
@@ -23,22 +23,25 @@ using AdviceCreatorFunc = std::function<std::shared_ptr<Advice>(const std::strin
 
 class Advice {
 public:
-  AdviceType getType() {
+  [[nodiscard]] AdviceType getType() const {
     return adviceType;
   }
 
-  static bool registerCreateFunction(std::string adviceName, AdviceCreatorFunc creatorFunction);
-
-  static bool hasAdviceWithName(const std::string &adviceName);
+  static bool registerCreateFunction(std::string adviceName, const AdviceCreatorFunc &creatorFunction);
 
   static std::shared_ptr<Advice> createAdvice(const std::string &adviceName, const std::string &param);
 
   virtual void apply(LocationInfo &locationInfo) = 0;
 
-  virtual ~Advice();
+  virtual ~Advice() = default;
 
 protected:
-  Advice(AdviceType adviceTypeInitial);
+  explicit Advice(AdviceType adviceTypeInitial);
+
+  Advice(const Advice &) = default;
+  Advice(Advice &&) = default;
+  Advice &operator=(const Advice &) = default;
+  Advice &operator=(Advice &&) = default;
 
 private:
   AdviceType adviceType;
@@ -46,7 +49,7 @@ private:
 
 class StartAdvice : public Advice {
 public:
-  StartAdvice(Degree initialDirection);
+  explicit StartAdvice(Degree startDirection);
 
   static std::shared_ptr<Advice> createStartAdvice(const std::string &param);
 
@@ -58,7 +61,7 @@ private:
 
 class TurnAdvice : public Advice {
 public:
-  TurnAdvice(Degree turnAngle);
+  explicit TurnAdvice(Degree turnAngle);
 
   static std::shared_ptr<Advice> createTurnAdvice(const std::string &param);
 
@@ -70,7 +73,7 @@ private:
 
 struct WalkAdvice : public Advice {
 public:
-  WalkAdvice(double walkDistance);
+  explicit WalkAdvice(double walkDistance);
 
   static std::shared_ptr<Advice> createWalkAdvice(const std::string &param);
 
@@ -81,14 +84,14 @@ private:
 };
 
 struct PathInfo {
-  Point source;
-  std::vector<std::shared_ptr<Advice>> advices;
-  Point destination;
+  Point source{0, 0};
+  std::vector<std::shared_ptr<Advice>> advices{};
+  Point destination{0, 0};
 };
 
 class AdviceCalculator {
 public:
-  AdviceCalculator(size_t sPathCount);
+  explicit AdviceCalculator(size_t pathCount);
 
   void readDatas(std::istream &is);
   void calculate();

@@ -44,11 +44,11 @@ struct Edge {
 
 class Table {
 public:
-  Table(std::istream &inputStream) {
+  explicit Table(std::istream &inputStream) {
     inputStream >> this->size;
     this->heights = std::vector<Height>(this->size * this->size, 0);
     this->components.reserve(this->size);
-    for (auto i = 0u; i < this->size * this->size; ++i) {
+    for (auto i = 0U; i < this->size * this->size; ++i) {
       inputStream >> this->heights[i];
       this->components.push_back(std::vector<size_t>{i});
     }
@@ -59,7 +59,7 @@ public:
   size_t getD();
 
 private:
-  size_t getFieldId(size_t x, size_t y) {
+  [[nodiscard]] size_t getFieldId(size_t x, size_t y) const {
     return y * this->size + x;
   }
 
@@ -68,8 +68,8 @@ private:
   }
 
   void calculateNorthSouthDifference() {
-    for (auto x = 0u; x <= this->size - 1; ++x) {
-      for (auto y = 1u; y <= this->size - 1; ++y) {
+    for (auto x = 0U; x <= this->size - 1; ++x) {
+      for (auto y = 1U; y <= this->size - 1; ++y) {
         auto fieldIdFrom = this->getFieldId(x, y);
         auto fieldIdTo = this->getFieldId(x, y - 1);
         this->setDifference(fieldIdFrom, abs(this->heights[fieldIdFrom] - this->heights[fieldIdTo]), fieldIdTo);
@@ -78,8 +78,8 @@ private:
   }
 
   void calculateEastWestDifference() {
-    for (auto x = 1u; x <= this->size - 1; ++x) {
-      for (auto y = 0u; y <= this->size - 1; ++y) {
+    for (auto x = 1U; x <= this->size - 1; ++x) {
+      for (auto y = 0U; y <= this->size - 1; ++y) {
         auto fieldIdFrom = this->getFieldId(x, y);
         auto fieldIdTo = this->getFieldId(x - 1, y);
         this->setDifference(fieldIdFrom, abs(this->heights[fieldIdFrom] - this->heights[fieldIdTo]), fieldIdTo);
@@ -101,12 +101,12 @@ private:
     }
   }
 
-  bool hasBigEnoughComponent() const {
+  [[nodiscard]] bool hasBigEnoughComponent() const {
     static auto minSize = (this->size * this->size + 1) / 2;
     return this->maxComponentSize >= minSize;
   }
 
-  bool isInSameComponent(size_t field1, size_t field2) {
+  [[nodiscard]] bool isInSameComponent(size_t field1, size_t field2) const {
     return this->fieldToComponent[field1] == this->fieldToComponent[field2];
   }
 
@@ -122,18 +122,18 @@ private:
     this->setNewestComponentSize(componentToExtend.size());
   }
 
-  std::vector<std::vector<size_t>> components;
-  std::vector<size_t> fieldToComponent;
-  std::vector<Height> heights;
-  size_t size;
-  size_t maxComponentSize = 0u;
-  std::vector<Edge> edges;
+  std::vector<std::vector<size_t>> components{};
+  std::vector<size_t> fieldToComponent{};
+  std::vector<Height> heights{};
+  size_t size{0U};
+  size_t maxComponentSize{0U};
+  std::vector<Edge> edges{};
 };
 
 size_t Table::getD() {
   this->calculateDifferences();
 
-  auto i = 0u;
+  auto i = 0U;
   while (!this->hasBigEnoughComponent()) {
     auto &e = this->edges[i++];
     if (!this->isInSameComponent(e.from, e.to)) {
@@ -156,17 +156,21 @@ int main(int argc, char *argv[]) {
   }
 
   std::ofstream outputFile;
-  outputFile.open(argv[1]);
+  outputFile.open(argv[1]); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
   outputFile << "500\n";
 
   std::random_device dev;
   std::mt19937 rng(dev());
-  std::uniform_int_distribution<std::mt19937::result_type> dist6(1, 1000000);
+  constexpr auto minElevation{1U};
+  constexpr auto maxElevation{1000000U};
+  std::uniform_int_distribution<std::mt19937::result_type> distribution(minElevation, maxElevation);
 
-  std::cout << dist6(rng) << std::endl;
-  for (auto i = 0; i < 500; ++i) {
-    for (auto j = 0; j < 500; ++j) {
-      outputFile << dist6(rng) << ' ';
+  std::cout << distribution(rng) << std::endl;
+  constexpr auto width{500};
+  constexpr auto height{width};
+  for (auto i = 0; i < height; ++i) {
+    for (auto j = 0; j < width; ++j) {
+      outputFile << distribution(rng) << ' ';
     }
     outputFile << '\n';
   }

@@ -1,14 +1,15 @@
 #include <iostream>
+
 #include "KickStartAlarm.hpp"
 
 using MyInt = uint64_t;
 
-MyInt resultModulo = 1000000007;
+const MyInt resultModulo{1000000007U};
 
 int main() {
   MyInt T;
   std::cin >> T;
-  for (auto testCase{1u}; testCase <= T; ++testCase) {
+  for (auto testCase{1U}; testCase <= T; ++testCase) {
     MyInt N;
     MyInt K;
     MyInt x1;

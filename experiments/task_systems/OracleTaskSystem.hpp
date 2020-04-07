@@ -11,11 +11,16 @@ class OracleTaskSystem {
   std::vector<std::thread> threads_;
   NotificationQueue q_;
 
-  void run(unsigned);
+  void run(unsigned /*i*/);
 
 public:
   OracleTaskSystem();
   ~OracleTaskSystem();
+
+  OracleTaskSystem(const OracleTaskSystem &) = delete;
+  OracleTaskSystem(OracleTaskSystem &&) = delete;
+  OracleTaskSystem &operator=(const OracleTaskSystem &) = delete;
+  OracleTaskSystem &operator=(OracleTaskSystem &&) = delete;
 
   template <typename F>
   void async(F &&f) {

@@ -20,8 +20,10 @@ public:
 protected:
   void recursiveSearch(AssemblerState &state);
 
-  std::vector<std::pair<std::string, std::string>> wordPairs;
-  size_t maximumPossibleLength;
+  // NOLINTNEXTLINE(misc-non-private-member-variables-in-classes)
+  std::vector<std::pair<std::string, std::string>> wordPairs{};
+  // NOLINTNEXTLINE(misc-non-private-member-variables-in-classes)
+  size_t maximumPossibleLength{0U};
 };
 
 void AddResult(LetterAssembler::AssemblerState &state);

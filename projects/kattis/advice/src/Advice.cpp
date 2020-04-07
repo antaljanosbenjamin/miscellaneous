@@ -12,30 +12,22 @@ void MakeUpper(std::string &str) {
   transform(str.begin(), str.end(), str.begin(), [](char c) { return static_cast<char>(toupper(c)); });
 }
 
-bool Advice::registerCreateFunction(std::string adviceName, AdviceCreatorFunc fCreateFunction) {
+bool Advice::registerCreateFunction(std::string adviceName, const AdviceCreatorFunc &creatorFunction) {
   MakeUpper(adviceName);
-  if (createFunctions.find(adviceName) != createFunctions.end())
+  if (createFunctions.find(adviceName) != createFunctions.end()) {
     return false;
+  }
 
-  createFunctions.emplace(adviceName, fCreateFunction);
+  createFunctions.emplace(adviceName, creatorFunction);
 
   return true;
-}
-
-bool Advice::hasAdviceWithName(const std::string &adviceName) {
-  auto upperName = adviceName;
-  MakeUpper(upperName);
-  return createFunctions.find(upperName) != createFunctions.end();
 }
 
 std::shared_ptr<Advice> Advice::createAdvice(const std::string &adviceName, const std::string &param) {
   auto upperName = adviceName;
   MakeUpper(upperName);
-  auto &createFunction = createFunctions[upperName];
+  const auto &createFunction = createFunctions[upperName];
   return createFunction(param);
-}
-
-Advice::~Advice() {
 }
 
 Advice::Advice(AdviceType adviceTypeInitial)
@@ -47,14 +39,14 @@ StartAdvice::StartAdvice(Degree startDirection)
   , startDirection(startDirection) {
 }
 
-TurnAdvice::TurnAdvice(Degree dTurnAngle)
+TurnAdvice::TurnAdvice(Degree turnAngle)
   : Advice(AdviceType::Turn)
-  , turnAngle(dTurnAngle) {
+  , turnAngle(turnAngle) {
 }
 
-WalkAdvice::WalkAdvice(double dWalkAdvice)
+WalkAdvice::WalkAdvice(double walkDistance)
   : Advice(AdviceType::Walk)
-  , walkDistance(dWalkAdvice) {
+  , walkDistance(walkDistance) {
 }
 
 void StartAdvice::apply(LocationInfo &locationInfo) {
@@ -98,13 +90,14 @@ AdviceCalculator::AdviceCalculator(size_t pathCount)
 }
 
 void AdviceCalculator::readDatas(std::istream &is) {
-  if (paths.size() != 0)
+  if (!paths.empty()) {
     return;
+  }
 
   std::string pathLine;
   std::string strNextWord;
 
-  for (auto sPathPos = 0u; sPathPos < pathCount; ++sPathPos) {
+  for (auto sPathPos = 0U; sPathPos < pathCount; ++sPathPos) {
     std::getline(is, pathLine);
     std::stringstream ss(pathLine);
 
@@ -142,23 +135,26 @@ void AdviceCalculator::calculate() {
 }
 
 Point AdviceCalculator::getAverageDestination() {
-  if (calculated == false)
+  if (calculated == false) {
     calculate();
+  }
 
   return averagePoint;
 }
 
 double AdviceCalculator::getLongestDistance() {
-  if (calculated == false)
+  if (calculated == false) {
     calculate();
+  }
 
   double dWorstDirectionDistance = GetLength((averagePoint - paths[0].destination));
 
   for (const auto &pathInfo: paths) {
     double dActualDirectionDistance = GetLength(averagePoint - pathInfo.destination);
 
-    if (dActualDirectionDistance > dWorstDirectionDistance)
+    if (dActualDirectionDistance > dWorstDirectionDistance) {
       dWorstDirectionDistance = dActualDirectionDistance;
+    }
   }
 
   return dWorstDirectionDistance;

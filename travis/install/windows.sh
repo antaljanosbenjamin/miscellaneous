@@ -1,3 +1,5 @@
+#!/bin/bash
+
 choco install python3 --params "/InstallDir:C:\Python"
 choco install visualstudio2019community --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.VC.CMake.Project --add Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset --no-includeRecommended"
 
