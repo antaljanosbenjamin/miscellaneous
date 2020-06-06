@@ -1,3 +1,4 @@
+add_subdirectory(codility)
 add_subdirectory(kattis)
 add_subdirectory(kickstart)
 add_subdirectory(komal)
