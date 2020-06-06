@@ -5,7 +5,7 @@
 #include "Point.hpp"
 
 int main() {
-  size_t sPathCount;
+  size_t sPathCount{0};
   std::cin >> sPathCount;
   while (sPathCount > 0) {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

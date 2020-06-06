@@ -7,18 +7,18 @@ using MyInt = uint64_t;
 const MyInt resultModulo{1000000007U};
 
 int main() {
-  MyInt T;
+  MyInt T{0};
   std::cin >> T;
   for (auto testCase{1U}; testCase <= T; ++testCase) {
-    MyInt N;
-    MyInt K;
-    MyInt x1;
-    MyInt y1;
-    MyInt C;
-    MyInt D;
-    MyInt E1;
-    MyInt E2;
-    MyInt F;
+    MyInt N{0};
+    MyInt K{0};
+    MyInt x1{0};
+    MyInt y1{0};
+    MyInt C{0};
+    MyInt D{0};
+    MyInt E1{0};
+    MyInt E2{0};
+    MyInt F{0};
 
     std::cin >> N >> K >> x1 >> y1 >> C >> D >> E1 >> E2 >> F;
 

@@ -11,6 +11,8 @@ TEST_CASE("Empty stream") {
   REQUIRE_FALSE(assembler.read(ss));
 }
 
+using namespace std::string_literals;
+
 TEST_CASE("Example input") {
   auto input = R"(5
 are yo
@@ -34,7 +36,7 @@ abc ab
 3
 a ab
 b bb
-c cc)";
+c cc)"s;
   std::stringstream ss;
   ss << input;
   auto results = std::array<std::string, 4>{"dearalanhowareyou", "ienjoycorresponding", "abcd", "IMPOSSIBLE"};
