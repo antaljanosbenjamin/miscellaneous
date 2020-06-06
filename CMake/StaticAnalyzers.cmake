@@ -9,7 +9,7 @@ option(
   OFF
 )
 set(CLANG_TIDY_RUNNER
-    "run-clang-tidy-9"
+    "run-clang-tidy-10"
     CACHE STRING "Name of clang-tidy runner"
 )
 
