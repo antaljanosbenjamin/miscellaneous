@@ -191,15 +191,15 @@ double ConvexHullCalculator::calculateConvexHullArea() const {
 }
 
 int main() {
-  size_t sNumberOfBacons;
+  size_t sNumberOfBacons{0};
   std::cin >> sNumberOfBacons;
 
-  int iX;
-  int iY;
+  int iX{0};
+  int iY{0};
   while (sNumberOfBacons != 0) {
     std::vector<Point> vectorPoints(sNumberOfBacons);
     for (size_t sPos = 0; sPos < sNumberOfBacons; ++sPos) {
-      std::cin >> iX >> iY;
+    std::cin >> iX >> iY;
       vectorPoints[sPos] = Point{iX, iY};
     }
 

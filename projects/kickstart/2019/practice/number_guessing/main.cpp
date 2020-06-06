@@ -2,14 +2,14 @@
 #include <string>
 
 int main() {
-  size_t T;
+  size_t T{0};
   std::cin >> T;
   for (auto i{0U}; i < T; ++i) {
-    size_t A;
-    size_t B;
+    size_t A{0};
+    size_t B{0};
     std::cin >> A >> B;
     ++A;
-    size_t N;
+    size_t N{0};
     std::cin >> N;
     while (true) {
       size_t Q{(A + B) / 2};
