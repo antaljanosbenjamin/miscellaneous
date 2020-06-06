@@ -4,10 +4,10 @@
 #include <string>
 
 int main() {
-  size_t T;
+  size_t T{0};
   std::cin >> T;
   for (auto testCase{1U}; testCase <= T; ++testCase) {
-    size_t N;
+    size_t N{0};
     std::cin >> N;
     std::string beautyScores;
     std::cin >> beautyScores;

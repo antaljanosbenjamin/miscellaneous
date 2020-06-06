@@ -24,7 +24,7 @@ void setBitToOne(unsigned int &uiNumber, unsigned int uiBitNumber) {
 unsigned int reverseBits(unsigned int uiNumberToReverse) {
   unsigned int uiValuableBits = getValuableBitCount(uiNumberToReverse);
   unsigned int uiRevertedNumber = 0U;
-  unsigned int uiActualBitNumber;
+  unsigned int uiActualBitNumber = 0U;
 
   for (uiActualBitNumber = 0U; uiActualBitNumber < uiValuableBits; uiActualBitNumber++) {
     unsigned int uiActualBitValue = (uiNumberToReverse & (1U << uiActualBitNumber));
@@ -37,7 +37,7 @@ unsigned int reverseBits(unsigned int uiNumberToReverse) {
 }
 
 int main() {
-  unsigned int uiNumberToReverse;
+  unsigned int uiNumberToReverse = 0U;
   std::cin >> uiNumberToReverse;
   std::cout << reverseBits(uiNumberToReverse);
   return 0;

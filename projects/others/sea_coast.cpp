@@ -65,7 +65,6 @@ private:
 
   void processCoordsToBecameSea();
 
-private:
   size_t m_sRows{0U};
   size_t m_sCols{0U};
   size_t m_sRowsInside{0U};
@@ -114,7 +113,7 @@ void SeaCoastCounter::readInput(std::istream &inputSteam) {
 
   m_vectorMap = std::vector<std::vector<FieldType>>(m_sRows, std::vector<FieldType>(m_sCols, SEA));
 
-  char cField;
+  char cField{0};
   for (size_t sActualRow = 1; sActualRow < m_sRows - 1; ++sActualRow) {
     for (size_t sActualCol = 1; sActualCol < m_sCols - 1; ++sActualCol) {
       inputSteam >> cField;
