@@ -9,3 +9,7 @@ set_target_properties(ruthenium2019 PROPERTIES FOLDER "codility")
 add_executable(molybdenum2019 molybdenum2019.cpp)
 target_link_libraries(molybdenum2019 PRIVATE project_options project_warnings)
 set_target_properties(molybdenum2019 PROPERTIES FOLDER "codility")
+
+add_executable(niobium2019 niobium2019.cpp)
+target_link_libraries(niobium2019 PRIVATE project_options project_warnings)
+set_target_properties(niobium2019 PROPERTIES FOLDER "codility")
