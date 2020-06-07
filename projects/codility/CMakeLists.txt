@@ -21,3 +21,7 @@ set_target_properties(zirconium2019 PROPERTIES FOLDER "codility")
 add_executable(binary_gap binary_gap.cpp)
 target_link_libraries(binary_gap PRIVATE project_options project_warnings)
 set_target_properties(binary_gap PROPERTIES FOLDER "codility")
+
+add_executable(min_abs_sum_of_two min_abs_sum_of_two.cpp)
+target_link_libraries(min_abs_sum_of_two PRIVATE project_options project_warnings)
+set_target_properties(min_abs_sum_of_two PROPERTIES FOLDER "codility")
