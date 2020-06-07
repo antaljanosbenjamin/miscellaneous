@@ -25,3 +25,7 @@ set_target_properties(binary_gap PROPERTIES FOLDER "codility")
 add_executable(min_abs_sum_of_two min_abs_sum_of_two.cpp)
 target_link_libraries(min_abs_sum_of_two PRIVATE project_options project_warnings)
 set_target_properties(min_abs_sum_of_two PROPERTIES FOLDER "codility")
+
+add_executable(min_avg_two_slice min_avg_two_slice.cpp)
+target_link_libraries(min_avg_two_slice PRIVATE project_options project_warnings)
+set_target_properties(min_avg_two_slice PROPERTIES FOLDER "codility")
