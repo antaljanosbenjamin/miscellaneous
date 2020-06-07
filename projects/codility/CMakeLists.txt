@@ -29,3 +29,7 @@ set_target_properties(min_abs_sum_of_two PROPERTIES FOLDER "codility")
 add_executable(min_avg_two_slice min_avg_two_slice.cpp)
 target_link_libraries(min_avg_two_slice PRIVATE project_options project_warnings)
 set_target_properties(min_avg_two_slice PROPERTIES FOLDER "codility")
+
+add_executable(max_double_slice_sum max_double_slice_sum.cpp)
+target_link_libraries(max_double_slice_sum PRIVATE project_options project_warnings)
+set_target_properties(max_double_slice_sum PROPERTIES FOLDER "codility")
