@@ -13,3 +13,7 @@ set_target_properties(molybdenum2019 PROPERTIES FOLDER "codility")
 add_executable(niobium2019 niobium2019.cpp)
 target_link_libraries(niobium2019 PRIVATE project_options project_warnings)
 set_target_properties(niobium2019 PROPERTIES FOLDER "codility")
+
+add_executable(zirconium2019 zirconium2019.cpp)
+target_link_libraries(zirconium2019 PRIVATE project_options project_warnings)
+set_target_properties(zirconium2019 PROPERTIES FOLDER "codility")
