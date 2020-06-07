@@ -1,4 +1,5 @@
 
+#include <algorithm>
 #include <iostream>
 
 int solution(int N) {
