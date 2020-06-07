@@ -6,7 +6,7 @@
 
 class Interval {
 public:
-  Interval(const std::vector<int> &input)
+  explicit Interval(const std::vector<int> &input)
     : m_counters{}
     , m_mostFrequentNumber{input[0]}
     , m_nNumbers{static_cast<int>(input.size())} {
@@ -69,7 +69,7 @@ std::vector<int> solution(std::vector<int> &A, int K) {
 }
 
 std::ostream &operator<<(std::ostream &os, const std::vector<int> &values) {
-  if (values.size() == 0) {
+  if (values.empty()) {
     os << "[]";
     return os;
   }

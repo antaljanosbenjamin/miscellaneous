@@ -23,27 +23,27 @@ int solution(std::vector<int> &A) {
 
 int main() {
   {
-    std::vector<int> A{1, 4, -3};
+    std::vector<int> A{1, 4, -3}; // NOLINT(readability-magic-numbers)
     std::cout << "1 == " << solution(A) << '\n';
   }
   {
-    std::vector<int> A{-8, 4, 5, -10, 3};
+    std::vector<int> A{-8, 4, 5, -10, 3}; // NOLINT(readability-magic-numbers)
     std::cout << "3 == " << solution(A) << '\n';
   }
   {
-    std::vector<int> A{-8, 4, 5, -4, 3};
+    std::vector<int> A{-8, 4, 5, -4, 3}; // NOLINT(readability-magic-numbers)
     std::cout << "0 == " << solution(A) << '\n';
   }
   {
-    std::vector<int> A{-8, 4, 4, 4, 3};
+    std::vector<int> A{-8, 4, 4, 4, 3}; // NOLINT(readability-magic-numbers)
     std::cout << "4 == " << solution(A) << '\n';
   }
   {
-    std::vector<int> A{1};
+    std::vector<int> A{1}; // NOLINT(readability-magic-numbers)
     std::cout << "2 == " << solution(A) << '\n';
   }
   {
-    std::vector<int> A{1, 2};
+    std::vector<int> A{1, 2}; // NOLINT(readability-magic-numbers)
     std::cout << "2 == " << solution(A) << '\n';
   }
   return 0;

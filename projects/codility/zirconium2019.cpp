@@ -33,19 +33,19 @@ int solution(std::vector<int> &A, std::vector<int> &B, int F) {
 
 int main() {
   {
-    std::vector<int> A{4, 2, 1};
-    std::vector<int> B{2, 5, 3};
-    std::cout << "10 == " << solution(A, B, 2) << '\n';
+    std::vector<int> A{4, 2, 1};                        // NOLINT(readability-magic-numbers)
+    std::vector<int> B{2, 5, 3};                        // NOLINT(readability-magic-numbers)
+    std::cout << "10 == " << solution(A, B, 2) << '\n'; // NOLINT(readability-magic-numbers)
   }
   {
-    std::vector<int> A{7, 1, 4, 4};
-    std::vector<int> B{5, 3, 4, 3};
-    std::cout << "18 == " << solution(A, B, 2) << '\n';
+    std::vector<int> A{7, 1, 4, 4};                     // NOLINT(readability-magic-numbers)
+    std::vector<int> B{5, 3, 4, 3};                     // NOLINT(readability-magic-numbers)
+    std::cout << "18 == " << solution(A, B, 2) << '\n'; // NOLINT(readability-magic-numbers)
   }
   {
-    std::vector<int> A{5, 5, 5};
-    std::vector<int> B{5, 5, 5};
-    std::cout << "15 == " << solution(A, B, 1) << '\n';
+    std::vector<int> A{5, 5, 5};                        // NOLINT(readability-magic-numbers)
+    std::vector<int> B{5, 5, 5};                        // NOLINT(readability-magic-numbers)
+    std::cout << "15 == " << solution(A, B, 1) << '\n'; // NOLINT(readability-magic-numbers)
   }
   return 0;
 }
