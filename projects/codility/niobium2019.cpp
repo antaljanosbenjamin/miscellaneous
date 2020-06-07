@@ -25,8 +25,7 @@ int solution(std::vector<std::vector<int>> &A) {
     Node sameRows{};
     for (const auto &rowId: node.rowIds) {
       const auto &row = A[rowId];
-      const auto *item = &row[actualColumnIndex];
-      if (*item == *(item + 1)) {
+      if (row[actualColumnIndex] == row[actualColumnIndex + 1]) {
         sameRows.rowIds.push_back(rowId);
       } else {
         changedRows.rowIds.push_back(rowId);

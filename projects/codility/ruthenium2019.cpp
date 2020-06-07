@@ -57,20 +57,20 @@ int solution(std::vector<int> &A, int K) {
 
 int main() {
   {
-    std::vector<int> input{1, 1, 3, 4, 3, 3, 4};
-    std::cout << "5 == " << solution(input, 2) << '\n';
+    std::vector<int> input{1, 1, 3, 4, 3, 3, 4};        // NOLINT(readability-magic-numbers)
+    std::cout << "5 == " << solution(input, 2) << '\n'; // NOLINT(readability-magic-numbers)
   }
   {
-    std::vector<int> input{4, 5, 5, 4, 2, 2, 4};
-    std::cout << "2 == " << solution(input, 0) << '\n';
+    std::vector<int> input{4, 5, 5, 4, 2, 2, 4};        // NOLINT(readability-magic-numbers)
+    std::cout << "2 == " << solution(input, 0) << '\n'; // NOLINT(readability-magic-numbers)
   }
   {
-    std::vector<int> input{1, 3, 3, 2};
-    std::cout << "4 == " << solution(input, 2) << '\n';
+    std::vector<int> input{1, 3, 3, 2};                 // NOLINT(readability-magic-numbers)
+    std::cout << "4 == " << solution(input, 2) << '\n'; // NOLINT(readability-magic-numbers)
   }
   {
-    std::vector<int> input{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    std::cout << "10 == " << solution(input, 10) << '\n';
+    std::vector<int> input{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // NOLINT(readability-magic-numbers)
+    std::cout << "10 == " << solution(input, 10) << '\n';  // NOLINT(readability-magic-numbers)
   }
   return 0;
 }

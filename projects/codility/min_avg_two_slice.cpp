@@ -11,7 +11,7 @@ int solution(std::vector<int> &A) {
     }
     return prefixSums;
   }();
-  const auto getAverage = [&A, &prefixSums](const int from, const int to) {
+  const auto getAverage = [&prefixSums](const int from, const int to) {
     return (prefixSums[to + 1] - prefixSums[from]) / static_cast<double>(to - from + 1);
   };
 
@@ -33,7 +33,7 @@ int solution(std::vector<int> &A) {
 
 int main() {
   {
-    std::vector<int> A{4, 2, 2, 5, 1, 5, 8};
+    std::vector<int> A{4, 2, 2, 5, 1, 5, 8}; // NOLINT(readability-magic-numbers)
     std::cout << "1 == " << solution(A) << '\n';
   }
   return 0;
