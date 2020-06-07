@@ -7,7 +7,7 @@ struct FrontendAdvantage {
   int developerId{0};
   int advantage{0};
 };
-
+// cppcheck-suppress constParameter
 int solution(std::vector<int> &A, std::vector<int> &B, int F) {
   std::vector<FrontendAdvantage> advantages;
   advantages.resize(A.size());
