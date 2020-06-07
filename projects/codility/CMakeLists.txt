@@ -33,3 +33,7 @@ set_target_properties(min_avg_two_slice PROPERTIES FOLDER "codility")
 add_executable(max_double_slice_sum max_double_slice_sum.cpp)
 target_link_libraries(max_double_slice_sum PRIVATE project_options project_warnings)
 set_target_properties(max_double_slice_sum PROPERTIES FOLDER "codility")
+
+add_executable(number_solitaire number_solitaire.cpp)
+target_link_libraries(number_solitaire PRIVATE project_options project_warnings)
+set_target_properties(number_solitaire PROPERTIES FOLDER "codility")
