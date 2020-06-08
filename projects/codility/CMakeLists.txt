@@ -41,3 +41,7 @@ set_target_properties(number_solitaire PROPERTIES FOLDER "codility")
 add_executable(min_abs_sum min_abs_sum.cpp)
 target_link_libraries(min_abs_sum PRIVATE project_options project_warnings)
 set_target_properties(min_abs_sum PROPERTIES FOLDER "codility")
+
+add_executable(max_profit max_profit.cpp)
+target_link_libraries(max_profit PRIVATE project_options project_warnings)
+set_target_properties(max_profit PROPERTIES FOLDER "codility")
