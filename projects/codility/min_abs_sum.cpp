@@ -5,8 +5,9 @@
 
 // https://codility.com/media/train/solution-min-abs-sum.pdf
 int solution(std::vector<int> &A) {
+  constexpr static int theoreticalMaxValue = 100;
   std::for_each(A.begin(), A.end(), [](int &a) { a = std::abs(a); });
-  std::vector<int> nOccurrence(101U, 0);
+  std::vector<int> nOccurrence(theoreticalMaxValue + 1, 0);
   auto maxValue = 0;
   auto maxSum = 0;
   for (const auto &a: A) {
