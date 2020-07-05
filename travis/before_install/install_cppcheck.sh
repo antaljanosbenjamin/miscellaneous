@@ -1,4 +1,5 @@
 #!/bin/sh
+./linux.sh
 
 PREVIOUS_DIR=`pwd`
 git clone -b 1.90 https://github.com/danmar/cppcheck.git /tmp/cppcheck
