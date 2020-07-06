@@ -1,2 +1,2 @@
 #!/bin/sh
-sudo apt-get purge cmake
+PATH=`echo $PATH | sed -re 's/\/usr\/local\/cmake-[[:digit:]].[[:digit:]][[:digit:]]*\/bin(:)?//'`
