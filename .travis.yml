@@ -90,6 +90,8 @@ install:
 script:
   - mkdir build
   - cd build
+  - which cmake
+  - /usr/bin/cmake --version
   - cmake --version
   - cmake .. $CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Release
   - cmake --build . --config Release -j 6
