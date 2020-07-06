@@ -1,4 +1,4 @@
 #!/bin/sh
 echo $PATH
-PATH=`echo $PATH | sed -re 's/\/usr\/local\/cmake-[[:digit:]].[[:digit:]][[:digit:]]*\/bin(:)?//'`
+PATH=`echo $PATH | sed -re 's/\/usr\/local\/cmake-[[:digit:]]\.[[:digit:]][[:digit:]]\.[[:digit:]]+\/bin//'`
 echo $PATH
