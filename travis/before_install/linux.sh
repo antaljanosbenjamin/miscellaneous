@@ -4,5 +4,5 @@ PATH=`echo $PATH | sed -re 's/\/usr\/local\/cmake-[[:digit:]]\.[[:digit:]][[:dig
 echo "The new value of PATH: $PATH"
 
 if [ "$INSTALL_CPPCHECK" = true ] ; then
-  ./install_cppcheck.sh
+  . ./install_cppcheck.sh
 fi
