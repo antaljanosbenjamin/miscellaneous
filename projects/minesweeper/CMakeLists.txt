@@ -5,5 +5,5 @@ set(MINESWEEPER_HEADERS include/Minesweeper.hpp)
 
 add_executable(minesweeper ${MINESWEEPER_HEADERS} ${MINESWEEPER_SOURCES})
 target_include_directories(minesweeper PUBLIC include)
-target_link_libraries(minesweeper PUBLIC cminesweeper_shared)
+target_link_libraries(minesweeper PUBLIC cminesweeper)
 set_target_properties(minesweeper PROPERTIES FOLDER "minesweeper")
