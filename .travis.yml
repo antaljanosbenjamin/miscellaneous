@@ -1,6 +1,4 @@
 language: cpp
-rust:
-  - stable
 
 matrix:
   include:
