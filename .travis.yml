@@ -70,9 +70,8 @@ matrix:
         - CXX=g++-8
         - CMAKE_OPTIONS="-DENABLE_CPPCHECK=ON"
         - RUN_TESTS=false
+        - INSTALL_CPPCHECK=true
       compiler: gcc-8
-      before_install:
-        - travis/before_install/install_cppcheck.sh
     - os: linux
       name: 'Clang-tidy'
       python: 3.7
