@@ -45,7 +45,6 @@ matrix:
       env:
         - COMPILER="MSVC"
         - RUN_TESTS=true
-        - VERBOSE=1
     - os: windows
       name: 'Windows Clang'
       compiler: clang
@@ -53,7 +52,6 @@ matrix:
         - CMAKE_OPTIONS="-TClangCL -DWARNINGS_AS_ERRORS=0"
         - COMPILER=clang
         - RUN_TESTS=true
-        - VERBOSE=1
     - os: linux
       name: 'Cppcheck'
       python: 3.7
