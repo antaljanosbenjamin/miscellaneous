@@ -1,13 +1,5 @@
-option(
-  ENABLE_CPPCHECK
-  "Enable static analysis with cppcheck"
-  OFF
-)
-option(
-  ENABLE_CLANG_TIDY
-  "Enable static analysis with clang-tidy"
-  OFF
-)
+option(ENABLE_CPPCHECK "Enable static analysis with cppcheck" OFF)
+option(ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
 set(CLANG_TIDY_RUNNER
     "run-clang-tidy-10"
     CACHE STRING "Name of clang-tidy runner"

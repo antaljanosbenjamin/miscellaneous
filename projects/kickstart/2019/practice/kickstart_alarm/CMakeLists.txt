@@ -28,11 +28,6 @@ target_include_directories(kickstart_alarm INTERFACE include)
 # propagated to dependant targets
 target_link_libraries(kickstart_alarm INTERFACE project_options)
 
-target_link_libraries(
-  kickstart_alarm_demo
-  PRIVATE kickstart_alarm
-          project_warnings
-          project_options
-)
+target_link_libraries(kickstart_alarm_demo PRIVATE kickstart_alarm project_warnings project_options)
 
 set_target_properties(kickstart_alarm_demo PROPERTIES FOLDER "kickstart/2019/practice")

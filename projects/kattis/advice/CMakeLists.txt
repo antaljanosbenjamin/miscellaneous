@@ -17,11 +17,6 @@ set(ADVICE_DEMO_SOURCES src/main.cpp)
 
 add_executable(advice_demo ${ADVICE_DEMO_SOURCES})
 
-target_link_libraries(
-  advice_demo
-  PRIVATE advice
-          project_options
-          project_warnings
-)
+target_link_libraries(advice_demo PRIVATE advice project_options project_warnings)
 
 set_target_properties(advice_demo PROPERTIES FOLDER "kattis")
