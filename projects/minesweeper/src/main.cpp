@@ -4,16 +4,19 @@
 #include "Minesweeper.hpp"
 
 int main() {
-  CErrorInfo errorInfo;
-  std::vector<char> errorMessage(100U, 0);
+  CErrorInfo errorInfo{};
+  constexpr auto maxErrorMessageLength = 100U;
+  std::vector<char> errorMessage(maxErrorMessageLength, 0);
   errorInfo.errorMessage = errorMessage.data();
+  errorInfo.errorMessageMaxLength = errorMessage.size();
   GameHandle gameHandle{};
   minesweeper_new_game(&gameHandle, GameLevel::Expert, &errorInfo);
   std::cout << "Error message: \"" << std::string(errorInfo.errorMessage)
             << "\", error code: " << static_cast<uint32_t>(errorInfo.errorCode) << '\n';
 
-  COpenInfo openInfo;
-  std::vector<CFieldInfo> fieldInfos(100U, CFieldInfo{});
+  COpenInfo openInfo{};
+  constexpr auto fieldInfosLength = 100U;
+  std::vector<CFieldInfo> fieldInfos(fieldInfosLength, CFieldInfo{});
   openInfo.fieldInfos = fieldInfos.data();
   openInfo.fieldInfosLength = 0U;
   openInfo.fieldInfosMaxLength = fieldInfos.size();

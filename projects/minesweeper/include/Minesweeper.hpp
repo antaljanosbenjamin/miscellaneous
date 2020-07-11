@@ -47,7 +47,7 @@ struct COpenInfo {
 struct CErrorInfo {
   CError errorCode;
   uint64_t errorMessageLength;
-  uint64_t errorMessageMaxLendth;
+  uint64_t errorMessageMaxLength;
   char *errorMessage;
 };
 
