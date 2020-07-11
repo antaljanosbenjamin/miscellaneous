@@ -105,7 +105,6 @@ script:
   - cd build
   - cmake .. $CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Release
   - cmake --build . --config Release -j 6
-  - ls -l rust_projects/cminesweeper/release
   - if [ "$RUN_TESTS" = true ] ; then ctest . -C Release ; fi
   
 notifications:
