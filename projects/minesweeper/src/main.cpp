@@ -12,8 +12,6 @@ int main() {
   std::cout << "Error message: \"" << std::string(errorInfo.errorMessage)
             << "\", error code: " << static_cast<uint32_t>(errorInfo.errorCode) << '\n';
 
-  FieldFlagResult result;
-
   COpenInfo openInfo;
   std::vector<CFieldInfo> fieldInfos(100U, CFieldInfo{});
   openInfo.fieldInfos = fieldInfos.data();
@@ -25,6 +23,7 @@ int main() {
             << "\", error code: " << static_cast<uint32_t>(errorInfo.errorCode) << '\n';
   std::cout << openInfo.fieldInfosLength << '\n';
 
-  return openInfo.fieldInfosLength;
   minesweeper_destroy_game(gameHandle);
+
+  return 0;
 }
