@@ -20,10 +20,7 @@ set(LIMITED_CORRESPONDENCE_DEMO_SOURCES src/main.cpp)
 add_executable(limited_correspondence_demo ${LIMITED_CORRESPONDENCE_DEMO_SOURCES})
 
 target_link_libraries(
-  limited_correspondence_demo
-  limited_correspondence
-  project_options
-  project_warnings
+  limited_correspondence_demo limited_correspondence project_options project_warnings
 )
 
 set_target_properties(limited_correspondence_demo PROPERTIES FOLDER "kattis")
