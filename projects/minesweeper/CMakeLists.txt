@@ -1,5 +1,4 @@
 project(minesweeper)
-enable_testing()
 set(MINESWEEPER_SOURCES src/main.cpp)
 set(MINESWEEPER_HEADERS include/Minesweeper.hpp)
 

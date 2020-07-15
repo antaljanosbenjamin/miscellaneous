@@ -1,5 +1,4 @@
 project(advice)
-enable_testing()
 
 # Library
 set(ADVICE_SOURCES src/Advice.cpp src/Point.cpp)

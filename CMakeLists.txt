@@ -16,6 +16,7 @@ include(CMake/Conan.cmake)
 run_conan()
 
 include(CTest)
+enable_testing()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
