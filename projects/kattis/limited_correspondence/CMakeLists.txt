@@ -1,5 +1,4 @@
 project(limited_correspondence)
-enable_testing()
 
 # Library
 set(LIMITED_CORRESPONDENCE_SOURCES src/LetterAssembler.cpp)

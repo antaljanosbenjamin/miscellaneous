@@ -1,5 +1,4 @@
 project(kickstart_alarm)
-enable_testing()
 
 # Header-only lib
 set(KICKSTART_ALARM_SOURCES)
