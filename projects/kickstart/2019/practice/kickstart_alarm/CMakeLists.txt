@@ -9,14 +9,9 @@ set(KICKSTART_ALARM_DEMO_SOURCES src/main.cpp)
 
 add_library(kickstart_alarm INTERFACE)
 
-# Dummy project to show the header-only lib in VS
-add_custom_target(
-  kickstart_alarm_
-  EXCLUDE_FROM_ALL
-  SOURCES include/KickStartAlarm.hpp
+add_dummy_project_for_header_only_lib(
+  kickstart_alarm_ ${KICKSTART_ALARM_HEADERS} "kickstart/2019/practice"
 )
-
-set_target_properties(kickstart_alarm_ PROPERTIES FOLDER "kickstart/2019/practice")
 
 # Demo
 add_executable(kickstart_alarm_demo ${KICKSTART_ALARM_DEMO_SOURCES})
