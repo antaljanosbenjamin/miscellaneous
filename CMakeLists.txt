@@ -22,6 +22,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMY_DEBUG")
 
+include(CMake/HeadorOnlyVSProject.cmake)
+
 add_subdirectory(rust_projects)
 add_subdirectory(projects)
 add_subdirectory(tests)
