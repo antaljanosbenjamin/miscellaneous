@@ -10,7 +10,7 @@ set(KICKSTART_ALARM_DEMO_SOURCES src/main.cpp)
 add_library(kickstart_alarm INTERFACE)
 
 add_dummy_project_for_header_only_lib(
-  kickstart_alarm_ ${KICKSTART_ALARM_HEADERS} "kickstart/2019/practice"
+  kickstart_alarm_ ${KICKSTART_ALARM_HEADERS} FOLDER "kickstart/2019/practice"
 )
 
 # Demo
