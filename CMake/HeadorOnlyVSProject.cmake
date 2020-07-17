@@ -7,11 +7,7 @@ function(add_dummy_project_for_header_only_lib DUMMY_TARGET_NAME LIB_HEADERS)
     ${ARGN}
   )
   # Dummy project to show the header-only lib in VS
-  add_custom_target(
-    ${DUMMY_TARGET_NAME}
-    EXCLUDE_FROM_ALL
-    SOURCES ${LIB_HEADERS}
-  )
+  add_custom_target(${DUMMY_TARGET_NAME} SOURCES ${LIB_HEADERS})
 
   if(PARSED_ARGS_FOLDER)
     message(STATUS "FOLDER property of ${DUMMY_TARGET_NAME} is to ${PARSED_ARGS_FOLDER}")
