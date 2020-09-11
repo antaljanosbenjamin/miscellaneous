@@ -7,7 +7,7 @@ set(COLOR_FINDER_HEADERS include/ColorFinder.hpp include/Colors.hpp)
 add_library(color_finder INTERFACE)
 target_include_directories(color_finder INTERFACE include)
 target_link_libraries(color_finder INTERFACE project_options)
-set(CONSTEXPR_STEPS 1300000)
+set(CONSTEXPR_STEPS 10000000)
 
 message("AAA ${CMAKE_CXX_COMPILER_ID}")
 if(MSVC)
