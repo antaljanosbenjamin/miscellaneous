@@ -1,3 +1,4 @@
+add_subdirectory(color_finder)
 add_subdirectory(kattis)
 add_subdirectory(kickstart)
 add_subdirectory(komal)
