@@ -4,7 +4,9 @@
 #include <cstdint>
 #include <string>
 
-namespace ColorFinder{
+#include "ColorFinderConstexpr.h"
+
+namespace ColorFinder {
 struct Color {
   uint8_t r;
   uint8_t g;
@@ -16,7 +18,7 @@ struct ColorInfo {
   Color color;
 };
 
-constexpr std::array<ColorInfo, 25586> colors = {
+CF_CONSTEXPR std::array<ColorInfo, 25586> colors = {
     ColorInfo{"100 Mph", Color{0xc9, 0x3f, 0x38}},
     ColorInfo{"18th Century Green", Color{0xa5, 0x93, 0x44}},
     ColorInfo{"1975 Earth Red", Color{0x7b, 0x46, 0x3b}},
@@ -25604,4 +25606,4 @@ constexpr std::array<ColorInfo, 25586> colors = {
     ColorInfo{"Zuni", Color{0x00, 0x89, 0x96}},
     ColorInfo{"Zürich Blue", Color{0x24, 0x8b, 0xcc}},
 };
-}
+} // namespace ColorFinder
