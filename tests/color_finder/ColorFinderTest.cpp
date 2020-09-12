@@ -5,19 +5,18 @@
 #include "ColorFinder.hpp"
 #include "ColorFinderConstexpr.h"
 
-#define CHECK_COLOR_NAME_RUNTIME(ExpectedNameLiteral, ActualName)                                                      \
-  CHECK(std::string(ExpectedNameLiteral) == std::string(ActualName));
-
 #if CF_USE_CONSTEXPR
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define CHECK_COLOR_NAME_CONSTEXPR(ExpectedNameLiteral, ActualName)                                                    \
-  static_assert(std::string_view(ExpectedNameLiteral) == ActualName, "Name doesn't match");
+  static_assert(std::string_view(ExpectedNameLiteral) == (ActualName), "Name doesn't match");
 #else
 #define CHECK_COLOR_NAME_CONSTEXPR(ExpectedNameLiteral, ActualName)
 #endif
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define CHECK_COLOR_NAME(ExpectedNameLiteral, ActualName)                                                              \
-  CHECK_COLOR_NAME_RUNTIME(ExpectedNameLiteral, ActualName)                                                            \
-  CHECK_COLOR_NAME_CONSTEXPR(ExpectedNameLiteral, ActualName)
+  CHECK(std::string(ExpectedNameLiteral) == std::string(ActualName));                                                  \
+  CHECK_COLOR_NAME_CONSTEXPR(ExpectedNameLiteral, (ActualName))
 
 TEST_CASE("Exact match: Black") {
   CF_CONSTEXPR auto name = ColorFinder::getClosestColorName(ColorFinder::Color{0U, 0U, 0U});
