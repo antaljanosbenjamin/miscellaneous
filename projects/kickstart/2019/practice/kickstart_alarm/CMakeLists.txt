@@ -14,7 +14,7 @@ add_library(kickstart_alarm INTERFACE)
 add_custom_target(
   kickstart_alarm_
   EXCLUDE_FROM_ALL
-  SOURCES include/KickStartAlarm.hpp
+  SOURCES ${KICKSTART_ALARM_HEADERS}
 )
 
 set_target_properties(kickstart_alarm_ PROPERTIES FOLDER "kickstart/2019/practice")
