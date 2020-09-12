@@ -2,7 +2,11 @@ project(advice)
 enable_testing()
 
 # Library
-set(COLOR_FINDER_HEADERS include/ColorFinder.hpp include/Colors.hpp)
+set(COLOR_FINDER_HEADERS
+    include/ColorFinder.hpp
+    include/Colors.hpp
+    include/ColorFinderConstexpr.h
+)
 
 add_library(color_finder INTERFACE)
 target_include_directories(color_finder INTERFACE include)
