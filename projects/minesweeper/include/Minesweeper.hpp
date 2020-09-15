@@ -1,33 +1,25 @@
-#include <cstdint>
+#pragma once
 
-enum class CError : uint32_t {
+#include <experimental/propagate_const>
+#include <memory>
+#include <optional>
+#include <string>
+
+#include "tl/expected.hpp"
+
+namespace minesweeper {
+
+enum class Error {
   Ok,
   InvalidInput,
-  NullPointerAsInput,
   IndexIsOutOfRange,
-  InsufficientBuffer,
   UnexpectedError,
 };
 
-enum class FieldTypeTag : uint32_t {
-  Empty,
-  Numbered,
-  Mine,
-};
-
-struct FieldTagNumberedPayload {
-  uint8_t value;
-};
-
-struct FieldType {
-  FieldTypeTag tag;
-  FieldTagNumberedPayload payload;
-};
-
-struct CFieldInfo {
-  uint64_t row;
-  uint64_t col;
-  FieldType fieldType;
+enum class GameLevel {
+  Beginner,
+  Intermediate,
+  Expert,
 };
 
 enum class OpenResult {
@@ -37,41 +29,57 @@ enum class OpenResult {
   Winner,
 };
 
-struct COpenInfo {
-  OpenResult result;
-  uint64_t fieldInfosLength;
-  uint64_t fieldInfosMaxLength;
-  CFieldInfo *fieldInfos;
-};
-
-struct CErrorInfo {
-  CError errorCode;
-  uint64_t errorMessageLength;
-  uint64_t errorMessageMaxLength;
-  char *errorMessage;
-};
-
-enum class GameLevel {
-  Beginner,
-  Intermediate,
-  Expert,
-};
-
 enum class FieldFlagResult {
   Flagged,
   FlagRemoved,
   AlreadyOpened,
 };
 
-struct Game;
-using GameHandle = Game *;
+enum class FieldType : uint8_t { Empty = 0, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Mine };
 
-extern "C" {
+#pragma pack(push, 1)
+struct FieldInfo {
+  uint64_t row{0U};
+  uint64_t column{0U};
+  FieldType type{FieldType::Empty};
+};
+#pragma pack(pop)
 
-void minesweeper_new_game(GameHandle *gameHandle, GameLevel level, CErrorInfo *errorInfo);
-void minesweeper_game_open(const GameHandle gameHandle, const uint64_t row, const uint64_t column, COpenInfo *openInfo,
-                           CErrorInfo *errorInfo);
-void minesweeper_game_toggle_flag(const GameHandle gameHandle, const uint64_t row, const uint64_t column,
-                                  FieldFlagResult *flagResult, CErrorInfo *errorInfo);
-void minesweeper_destroy_game(const GameHandle gameHandle);
-}
+struct OpenInfo {
+  OpenResult openResult;
+  std::vector<FieldInfo> fieldInfos;
+};
+
+template <typename TResult>
+using Result = tl::expected<TResult, Error>;
+constexpr auto in_place = tl::in_place;
+
+class Minesweeper {
+public:
+  struct Dimension {
+    uint64_t width;
+    uint64_t height;
+  };
+
+  [[nodiscard]] static Result<Minesweeper> create(GameLevel level) noexcept;
+
+  Minesweeper(const Minesweeper &) = delete;
+  Minesweeper(Minesweeper &&other) noexcept;
+  Minesweeper &operator=(const Minesweeper &) = delete;
+  Minesweeper &operator=(Minesweeper &&) noexcept;
+
+  ~Minesweeper() noexcept;
+
+  [[nodiscard]] Result<Dimension> getSize() const noexcept;
+  [[nodiscard]] Result<uint64_t> getElapsedSeconds() const noexcept;
+  [[nodiscard]] Result<FieldFlagResult> toggleFlag(const uint64_t row, const uint64_t column);
+  [[nodiscard]] Result<OpenInfo> open(const uint64_t row, const uint64_t column);
+
+private:
+  struct Impl;
+
+  explicit Minesweeper(std::unique_ptr<Impl> &&impl);
+
+  std::experimental::propagate_const<std::unique_ptr<Impl>> impl;
+};
+} // namespace minesweeper

@@ -14,6 +14,7 @@ macro(run_conan)
   conan_cmake_run(
     REQUIRES
     catch2/2.11.0
+    tl-expected/1.0.0
     BASIC_SETUP
     CMAKE_TARGETS # individual targets to link to
     BUILD

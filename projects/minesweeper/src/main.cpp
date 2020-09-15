@@ -3,30 +3,21 @@
 
 #include "Minesweeper.hpp"
 
+using Minesweeper = minesweeper::Minesweeper;
+using GameLevel = minesweeper::GameLevel;
+template <typename T>
+using Result = minesweeper::Result<T>;
+using FieldInfo = minesweeper::FieldInfo;
+
 int main() {
-  CErrorInfo errorInfo{};
-  constexpr auto maxErrorMessageLength = 100U;
-  std::vector<char> errorMessage(maxErrorMessageLength, 0);
-  errorInfo.errorMessage = errorMessage.data();
-  errorInfo.errorMessageMaxLength = errorMessage.size();
-  GameHandle gameHandle{};
-  minesweeper_new_game(&gameHandle, GameLevel::Expert, &errorInfo);
-  std::cout << "Error message: \"" << std::string(errorInfo.errorMessage)
-            << "\", error code: " << static_cast<uint32_t>(errorInfo.errorCode) << '\n';
+  auto minesweeper = Minesweeper::create(GameLevel::Beginner).value();
 
-  COpenInfo openInfo{};
-  constexpr auto fieldInfosLength = 100U;
-  std::vector<CFieldInfo> fieldInfos(fieldInfosLength, CFieldInfo{});
-  openInfo.fieldInfos = fieldInfos.data();
-  openInfo.fieldInfosLength = 0U;
-  openInfo.fieldInfosMaxLength = fieldInfos.size();
+  const auto dimension = minesweeper.getSize().value();
 
-  minesweeper_game_open(gameHandle, 0U, 0U, &openInfo, &errorInfo);
-  std::cout << "Error message: \"" << std::string(errorInfo.errorMessage)
-            << "\", error code: " << static_cast<uint32_t>(errorInfo.errorCode) << '\n';
-  std::cout << openInfo.fieldInfosLength << '\n';
+  std::cout << "Created " << dimension.width << " x " << dimension.height << " sized game\n";
 
-  minesweeper_destroy_game(gameHandle);
+  const auto openInfo = minesweeper.open(0U, 0U).value();
+  std::cout << "Number of field infos is " << openInfo.fieldInfos.size() << '\n';
 
   return 0;
 }
