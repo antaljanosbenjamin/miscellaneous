@@ -1,5 +1,6 @@
 add_subdirectory(kattis)
 add_subdirectory(kickstart)
 add_subdirectory(komal)
+add_subdirectory(cminesweeper_wrapper)
 add_subdirectory(minesweeper)
 add_subdirectory(others)
