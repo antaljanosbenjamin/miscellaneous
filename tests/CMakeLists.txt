@@ -8,7 +8,7 @@ add_subdirectory(catch_main)
 
 set(UNIT_TEST_PREFIX "unittests.")
 
+add_subdirectory(cminesweeper_wrapper)
 add_subdirectory(color_finder)
 add_subdirectory(kattis)
 add_subdirectory(kickstart)
-add_subdirectory(minesweeper)
