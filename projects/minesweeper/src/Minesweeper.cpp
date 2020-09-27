@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iterator>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
