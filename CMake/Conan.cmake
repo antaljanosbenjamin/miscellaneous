@@ -10,11 +10,16 @@ macro(run_conan)
   include(${CMAKE_BINARY_DIR}/conan.cmake)
 
   conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
+  set(CONAN_DEPENDENCIES catch2/2.11.0 tl-expected/20190710)
+
+  if(WIN32)
+    list(APPEND CONAN_DEPENDENCIES propagate_const/1.0.0@public-conan/testing)
+    conan_add_remote(NAME twonington URL https://api.bintray.com/conan/twonington/public-conan)
+  endif()
 
   conan_cmake_run(
     REQUIRES
-    catch2/2.11.0
-    tl-expected/1.0.0
+    ${CONAN_DEPENDENCIES}
     BASIC_SETUP
     CMAKE_TARGETS # individual targets to link to
     BUILD
