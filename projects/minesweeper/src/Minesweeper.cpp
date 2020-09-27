@@ -10,7 +10,7 @@
 #include "CMinesweeper.hpp"
 
 namespace {
-constexpr minesweeper::Error convert(const CMError cError) {
+minesweeper::Error convert(const CMError cError) {
   switch (cError) {
   case CMError::CME_Ok:
     return minesweeper::Error::Ok;
@@ -25,7 +25,7 @@ constexpr minesweeper::Error convert(const CMError cError) {
   return minesweeper::Error::UnexpectedError;
 }
 
-constexpr minesweeper::FieldInfo convertFieldInfo(const CMFieldInfo &cFieldInfo) {
+minesweeper::FieldInfo convertFieldInfo(const CMFieldInfo &cFieldInfo) {
   const auto getFieldType = [&cFieldInfo]() {
     switch (cFieldInfo.fieldType.tag) {
     case CMFieldTypeTag::CMFTT_Empty:
@@ -47,7 +47,7 @@ constexpr minesweeper::FieldInfo convertFieldInfo(const CMFieldInfo &cFieldInfo)
   return fieldInfo;
 }
 
-constexpr minesweeper::OpenResult convert(const CMOpenResult cOpenResult) {
+minesweeper::OpenResult convert(const CMOpenResult cOpenResult) {
   switch (cOpenResult) {
   case CMOpenResult::CMOR_Ok:
     return minesweeper::OpenResult::Ok;
