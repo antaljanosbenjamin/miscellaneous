@@ -1,6 +1,9 @@
 #include "Minesweeper.hpp"
 
+#include <algorithm>
 #include <cassert>
+#include <stdexcept>
+#include <type_traits>
 #include <utility>
 
 #include "CMinesweeper.hpp"
@@ -18,6 +21,7 @@ constexpr minesweeper::Error convert(const CMError cError) {
   case CMError::CME_UnexpectedError:
     return minesweeper::Error::UnexpectedError;
   }
+  return minesweeper::Error::UnexpectedError;
 }
 
 constexpr minesweeper::FieldInfo convertFieldInfo(const CMFieldInfo &cFieldInfo) {
@@ -31,6 +35,10 @@ constexpr minesweeper::FieldInfo convertFieldInfo(const CMFieldInfo &cFieldInfo)
       assert(cFieldInfo.fieldType.payload.value <= 9U && "Field type payload cannot be greater than 9!");
       return minesweeper::FieldType{cFieldInfo.fieldType.payload.value};
     }
+
+    throw std::runtime_error(
+        "Unexpected CMFieldTypeTag value: " +
+        std::to_string(static_cast<std::underlying_type_t<CMFieldTypeTag>>(cFieldInfo.fieldType.tag)));
   };
 
   minesweeper::FieldInfo fieldInfo{cFieldInfo.row, cFieldInfo.col, getFieldType()};
@@ -49,6 +57,9 @@ constexpr minesweeper::OpenResult convert(const CMOpenResult cOpenResult) {
   case CMOpenResult::CMOR_Winner:
     return minesweeper::OpenResult::Winner;
   }
+
+  throw std::runtime_error("Unexpected CMOpenResult value: " +
+                           std::to_string(static_cast<std::underlying_type_t<CMOpenResult>>(cOpenResult)));
 }
 
 template <typename TCppType>
@@ -67,11 +78,11 @@ struct CType<uint64_t> {
   using type = uint64_t;
 };
 
-constexpr uint64_t convert(const uint64_t cValue) {
+uint64_t convert(const uint64_t cValue) {
   return cValue;
 }
 
-constexpr minesweeper::FieldFlagResult convert(const CMFieldFlagResult cFieldFlagResult) {
+minesweeper::FieldFlagResult convert(const CMFieldFlagResult cFieldFlagResult) {
   switch (cFieldFlagResult) {
   case CMFieldFlagResult::CMFFR_Flagged:
     return minesweeper::FieldFlagResult::Flagged;
@@ -80,9 +91,12 @@ constexpr minesweeper::FieldFlagResult convert(const CMFieldFlagResult cFieldFla
   case CMFieldFlagResult::CMFFR_AlreadyOpened:
     return minesweeper::FieldFlagResult::AlreadyOpened;
   }
+
+  throw std::runtime_error("Unexpected CMFieldFlagResult value: " +
+                           std::to_string(static_cast<std::underlying_type_t<CMFieldFlagResult>>(cFieldFlagResult)));
 }
 
-constexpr CMGameLevel convert(const minesweeper::GameLevel gameLevel) {
+CMGameLevel convert(const minesweeper::GameLevel gameLevel) {
   switch (gameLevel) {
   case minesweeper::GameLevel::Beginner:
     return CMGameLevel::CMGL_Beginner;
@@ -91,6 +105,8 @@ constexpr CMGameLevel convert(const minesweeper::GameLevel gameLevel) {
   case minesweeper::GameLevel::Expert:
     return CMGameLevel::CMGL_Expert;
   }
+  throw std::runtime_error("Unexpected GameLevel value: " +
+                           std::to_string(static_cast<std::underlying_type_t<minesweeper::GameLevel>>(gameLevel)));
 }
 
 class ErrorInfo {
