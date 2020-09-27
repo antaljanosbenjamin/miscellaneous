@@ -9,7 +9,6 @@ target_include_directories(color_finder INTERFACE include)
 target_link_libraries(color_finder INTERFACE project_options)
 set(CONSTEXPR_STEPS 10000000)
 
-message("AAA ${CMAKE_CXX_COMPILER_ID}")
 if(MSVC)
   target_compile_options(color_finder INTERFACE /constexpr:steps${CONSTEXPR_STEPS})
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
