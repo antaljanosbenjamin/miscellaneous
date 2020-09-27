@@ -1,11 +1,10 @@
 #pragma once
 
-#include <experimental/propagate_const>
 #include <memory>
 #include <optional>
 #include <string>
-
-#include "tl/expected.hpp"
+#include <tl/expected.hpp>
+#include "PropagateConstWrapper.hpp"
 
 namespace minesweeper {
 
