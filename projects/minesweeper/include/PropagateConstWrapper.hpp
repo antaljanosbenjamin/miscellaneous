@@ -2,6 +2,6 @@
 
 #ifdef _WIN32
 #include <propagate_const.h>
-#elif
+#else
 #include <experimental/propagate_const>
 #endif
