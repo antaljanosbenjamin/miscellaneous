@@ -10,7 +10,13 @@ target_link_libraries(color_finder INTERFACE project_options)
 set(CONSTEXPR_STEPS 10000000)
 
 if(MSVC)
-  target_compile_options(color_finder INTERFACE /constexpr:steps${CONSTEXPR_STEPS})
+  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+    target_compile_options(
+      color_finder INTERFACE "SHELL:-Xclang -fconstexpr-steps -Xclang ${CONSTEXPR_STEPS}"
+    )
+  else()
+    target_compile_options(color_finder INTERFACE /constexpr:steps${CONSTEXPR_STEPS})
+  endif()
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
   target_compile_options(color_finder INTERFACE -fconstexpr-steps=${CONSTEXPR_STEPS})
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
