@@ -117,7 +117,7 @@ public:
     this->cErrorInfo.errorMessageMaxLength = buffer.size();
   }
 
-  [[nodiscard]] bool isOk() const noexcept {
+  [[maybe_unused]] [[nodiscard]] bool isOk() const noexcept {
     return cErrorInfo.errorCode == CMError::CME_Ok;
   }
 
@@ -125,7 +125,7 @@ public:
     return convert(cErrorInfo.errorCode);
   }
 
-  [[nodiscard]] std::string_view getErrorMessage() const noexcept {
+  [[maybe_unused]] [[nodiscard]] std::string_view getErrorMessage() const noexcept {
     return std::string_view{buffer.data(), cErrorInfo.errorMessageLength};
   }
 
@@ -245,9 +245,16 @@ Minesweeper::~Minesweeper() noexcept {
 }
 
 Result<Minesweeper> Minesweeper::create(const GameLevel level) noexcept {
+  CMGameLevel cLevel{CMGameLevel::CMGL_Beginner};
+  try {
+    cLevel = convert(level);
+  } catch (...) {
+    return tl::unexpected{minesweeper::Error::ConversionError};
+  }
+
   ErrorInfo errorInfo;
   CMGameHandle handle{nullptr};
-  if (errorInfo.call(minesweeper_new_game, &handle, convert(level))) {
+  if (errorInfo.call(minesweeper_new_game, &handle, cLevel)) {
     Impl impl{};
     impl.handle = handle;
     return Minesweeper{std::make_unique<Impl>(std::move(impl))};
