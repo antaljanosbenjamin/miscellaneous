@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-
 #include "Minesweeper.hpp"
 
 using Minesweeper = minesweeper::Minesweeper;
@@ -9,6 +8,7 @@ template <typename T>
 using Result = minesweeper::Result<T>;
 using FieldInfo = minesweeper::FieldInfo;
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 int main() {
   auto minesweeper = Minesweeper::create(GameLevel::Beginner).value();
 

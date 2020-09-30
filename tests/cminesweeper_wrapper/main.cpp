@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-
 #include "CMinesweeper.hpp"
 
 int main() {

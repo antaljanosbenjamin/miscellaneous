@@ -1,12 +1,10 @@
 #include "Minesweeper.hpp"
-
 #include <algorithm>
 #include <cassert>
 #include <iterator>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
-
 #include "CMinesweeper.hpp"
 
 namespace {
@@ -112,22 +110,22 @@ CMGameLevel convert(const minesweeper::GameLevel gameLevel) {
 
 class ErrorInfo {
 public:
-  explicit ErrorInfo(size_t errorMessageMaxLength = 100)
-    : cErrorInfo{CMError::CME_Ok, 0U, 0U, nullptr}
-    , buffer(errorMessageMaxLength, 0) {
+  constexpr static size_t defaultErrorMessageMaxLength = 100;
+  explicit ErrorInfo(size_t errorMessageMaxLength = defaultErrorMessageMaxLength)
+    : buffer(errorMessageMaxLength, 0) {
     this->cErrorInfo.errorMessage = buffer.data();
     this->cErrorInfo.errorMessageMaxLength = buffer.size();
   }
 
-  bool isOk() const noexcept {
+  [[nodiscard]] bool isOk() const noexcept {
     return cErrorInfo.errorCode == CMError::CME_Ok;
   }
 
-  minesweeper::Error getCode() const noexcept {
+  [[nodiscard]] minesweeper::Error getCode() const noexcept {
     return convert(cErrorInfo.errorCode);
   }
 
-  std::string_view getErrorMessage() const noexcept {
+  [[nodiscard]] std::string_view getErrorMessage() const noexcept {
     return std::string_view{buffer.data(), cErrorInfo.errorMessageLength};
   }
 
@@ -144,25 +142,35 @@ private:
     cErrorInfo.errorMessageLength = 0;
   };
 
-  CMErrorInfo cErrorInfo;
+  CMErrorInfo cErrorInfo{CMError::CME_Ok, 0U, 0U, nullptr};
   std::vector<char> buffer;
 };
 
 template <typename TValue, typename TFunc, typename... TArgs>
+// NOLINTNEXTLINE(misc-misplaced-const)
 minesweeper::Result<TValue> getValue(const TFunc &func, const CMGameHandle handle, ErrorInfo &errorInfo,
                                      TArgs &&... args) noexcept {
   CType_t<TValue> cValue;
   if (errorInfo.call(func, handle, std::forward<TArgs>(args)..., &cValue)) {
-    return convert(cValue);
+    try {
+      return convert(cValue);
+    } catch (...) {
+      return tl::unexpected{minesweeper::Error::ConversionError};
+    }
   }
   return tl::unexpected{errorInfo.getCode()};
 }
 
 template <typename TValue, typename TFunc>
+// NOLINTNEXTLINE(misc-misplaced-const)
 minesweeper::Result<TValue> getValue(const TFunc &func, const CMGameHandle handle, ErrorInfo &errorInfo) noexcept {
   CType_t<TValue> cValue;
   if (errorInfo.call(func, handle, &cValue)) {
-    return convert(cValue);
+    try {
+      return convert(cValue);
+    } catch (...) {
+      return tl::unexpected{minesweeper::Error::ConversionError};
+    }
   }
   return tl::unexpected{errorInfo.getCode()};
 }
