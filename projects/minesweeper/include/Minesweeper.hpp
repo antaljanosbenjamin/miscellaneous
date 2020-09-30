@@ -12,6 +12,7 @@ enum class Error {
   Ok,
   InvalidInput,
   IndexIsOutOfRange,
+  ConversionError,
   UnexpectedError,
 };
 
@@ -65,7 +66,7 @@ public:
   Minesweeper(const Minesweeper &) = delete;
   Minesweeper(Minesweeper &&other) noexcept;
   Minesweeper &operator=(const Minesweeper &) = delete;
-  Minesweeper &operator=(Minesweeper &&) noexcept;
+  Minesweeper &operator=(Minesweeper &&other) noexcept;
 
   ~Minesweeper() noexcept;
 
