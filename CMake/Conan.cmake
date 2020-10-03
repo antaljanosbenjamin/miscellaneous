@@ -1,3 +1,5 @@
+include(ToolchainIdentification)
+
 macro(run_conan)
   # Download automatically, you can also just copy the conan.cmake  file
   if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
@@ -15,6 +17,10 @@ macro(run_conan)
   if(WIN32)
     list(APPEND CONAN_DEPENDENCIES propagate_const/1.0.0@public-conan/testing)
     conan_add_remote(NAME twonington URL https://api.bintray.com/conan/twonington/public-conan)
+  endif()
+
+  if(NOT TI_IS_CLANG_CL)
+    list(APPEND CONAN_DEPENDENCIES wxwidgets/3.1.2@bincrafters/stable)
   endif()
 
   conan_cmake_run(
