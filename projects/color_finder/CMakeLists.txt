@@ -24,11 +24,7 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 endif()
 
 # Dummy project to show the header-only lib in VS
-add_custom_target(
-  color_finder_
-  EXCLUDE_FROM_ALL
-  SOURCES ${COLOR_FINDER_HEADERS}
-)
+add_custom_target(color_finder_ EXCLUDE_FROM_ALL SOURCES ${COLOR_FINDER_HEADERS})
 
 set_target_properties(color_finder_ PROPERTIES FOLDER "color_finder")
 
