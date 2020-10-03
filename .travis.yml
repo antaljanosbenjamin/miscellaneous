@@ -20,6 +20,7 @@ matrix:
             - gcc-8
             - g++-8
             - cmake
+            - libgtk2.0-dev
       env:
         - CC=gcc-8
         - CXX=g++-8
@@ -40,6 +41,7 @@ matrix:
           packages:
             - clang-10
             - cmake
+            - libgtk2.0-dev
       compiler: clang-10
       env:
         - CC=clang-10
@@ -70,6 +72,7 @@ matrix:
             - gcc-8
             - g++-8
             - cmake
+            - libgtk2.0-dev
       env:
         - CC=gcc-8
         - CXX=g++-8
@@ -93,6 +96,7 @@ matrix:
             - clang-10
             - clang-tidy-10
             - cmake
+            - libgtk2.0-dev
       compiler: clang-10
       env:
         - CC=clang-10
