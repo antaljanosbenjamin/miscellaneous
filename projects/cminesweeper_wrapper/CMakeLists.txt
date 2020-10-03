@@ -1,3 +1,5 @@
+include(HeadorOnlyVSProject)
+
 set(CMINESWEEPER_WRAPPER_HEADERS include/CMinesweeper.hpp)
 
 add_library(cminesweeper_wrapper INTERFACE)

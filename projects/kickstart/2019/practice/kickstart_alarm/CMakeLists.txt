@@ -1,3 +1,5 @@
+include(HeadorOnlyVSProject)
+
 # Header-only lib
 set(KICKSTART_ALARM_SOURCES)
 
