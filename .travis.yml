@@ -1,5 +1,10 @@
 language: cpp
 
+cache:
+    directories:
+      - $HOME/.conan/data
+      - $HOME/.cargo
+
 matrix:
   include:
     - os: linux
