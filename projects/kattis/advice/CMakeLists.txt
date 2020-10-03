@@ -1,5 +1,3 @@
-project(advice)
-
 # Library
 set(ADVICE_SOURCES src/Advice.cpp src/Point.cpp)
 set(ADVICE_HEADERS include/Advice.hpp include/Point.hpp)
