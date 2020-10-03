@@ -8,7 +8,7 @@ target_link_libraries(color_finder INTERFACE project_options)
 set(CONSTEXPR_STEPS 10000000)
 
 if(WIN32)
-  if(TI_IS_CLANG)
+  if(TI_IS_CLANG_CL)
     target_compile_options(
       color_finder INTERFACE "SHELL:-Xclang -fconstexpr-steps -Xclang ${CONSTEXPR_STEPS}"
     )
