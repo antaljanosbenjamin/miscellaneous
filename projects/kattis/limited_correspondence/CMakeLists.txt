@@ -1,5 +1,3 @@
-project(limited_correspondence)
-
 # Library
 set(LIMITED_CORRESPONDENCE_SOURCES src/LetterAssembler.cpp)
 set(LIMITED_CORRESPONDENCE_HEADERS include/LetterAssembler.hpp)

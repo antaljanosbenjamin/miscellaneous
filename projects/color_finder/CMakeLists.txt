@@ -1,6 +1,3 @@
-project(advice)
-enable_testing()
-
 # Library
 set(COLOR_FINDER_HEADERS include/ColorFinder.hpp include/Colors.hpp include/ColorFinderConstexpr.h)
 

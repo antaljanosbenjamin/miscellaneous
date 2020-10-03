@@ -1,5 +1,3 @@
-project(kickstart_alarm)
-
 # Header-only lib
 set(KICKSTART_ALARM_SOURCES)
 
