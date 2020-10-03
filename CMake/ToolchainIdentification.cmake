@@ -1,0 +1,32 @@
+set(TI_IS_MSVC FALSE)
+set(TI_IS_CLANG_CL FALSE)
+set(TI_IS_GCC FALSE)
+set(TI_IS_CLANG FALSE)
+
+if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+  message(FATAL_ERROR "Only x64 is supported!")
+endif()
+
+set(NOT_SUPPORTED_COMPILER_MESSAGE
+    "The current compiler (${CMAKE_CXX_COMPILER_ID}) is not supported!"
+)
+
+if(WIN32)
+  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+    set(TI_IS_CLANG_CL TRUE)
+  elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
+    set(TI_IS_MSVC TRUE)
+  elseif()
+    message(FATAL_ERROR ${NOT_SUPPORTED_COMPILER_MESSAGE})
+  endif()
+elseif(UNIX)
+  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    set(TI_IS_GCC TRUE)
+  elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+    set(TI_IS_CLANG TRUE)
+  else()
+    message(FATAL_ERROR ${NOT_SUPPORTED_COMPILER_MESSAGE})
+  endif()
+else()
+  message(FATAL_ERROR "Not supported operating system!")
+endif()
