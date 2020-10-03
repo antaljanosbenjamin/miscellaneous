@@ -1,3 +1,4 @@
+include(ToolchainIdentification)
 # Library
 set(COLOR_FINDER_HEADERS include/ColorFinder.hpp include/Colors.hpp include/ColorFinderConstexpr.h)
 
@@ -6,17 +7,17 @@ target_include_directories(color_finder INTERFACE include)
 target_link_libraries(color_finder INTERFACE project_options)
 set(CONSTEXPR_STEPS 10000000)
 
-if(MSVC)
-  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+if(WIN32)
+  if(TI_IS_CLANG)
     target_compile_options(
       color_finder INTERFACE "SHELL:-Xclang -fconstexpr-steps -Xclang ${CONSTEXPR_STEPS}"
     )
-  else()
+  elseif(TI_IS_MSVC)
     target_compile_options(color_finder INTERFACE /constexpr:steps${CONSTEXPR_STEPS})
   endif()
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+elseif(TI_IS_CLANG)
   target_compile_options(color_finder INTERFACE -fconstexpr-steps=${CONSTEXPR_STEPS})
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+elseif(TI_IS_GCC)
   target_compile_options(color_finder INTERFACE -fconstexpr-loop-limit=${CONSTEXPR_STEPS})
 endif()
 
