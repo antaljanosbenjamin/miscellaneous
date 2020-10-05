@@ -2,7 +2,7 @@
 
 namespace ColorFiner {
 
-#if defined(_MSC_VER) || defined(__clang__)
+#if defined(TI_IS_MSVC) || defined(TI_IS_CLANG_CL) || defined(TI_IS_CLANG)
 #define CF_CONSTEXPR constexpr // NOLINT(cppcoreguidelines-macro-usage)
 #define CF_USE_CONSTEXPR true  // NOLINT(cppcoreguidelines-macro-usage)
 #else
