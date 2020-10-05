@@ -21,7 +21,13 @@ macro(run_conan)
   endif()
 
   if(NOT TI_IS_CLANG_CL)
-    list(APPEND CONAN_DEPENDENCIES wxwidgets/3.1.2@bincrafters/stable)
+    list(
+      APPEND
+      CONAN_DEPENDENCIES
+      wxwidgets/3.1.2@bincrafters/stable
+      fmt/7.0.3
+      span-lite/0.6.0
+    )
     list(APPEND CONAN_OPTIONS wxwidgets:compatibility=3.1 wxwidgets:debugreport=False)
   endif()
 
