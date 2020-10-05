@@ -1,9 +1,10 @@
 language: cpp
 
 cache:
-    directories:
-      - $HOME/.conan/data
-      - $HOME/.cargo
+  pip: true
+  cargo: true
+  directories:
+    - $HOME/.conan
 
 matrix:
   include:
