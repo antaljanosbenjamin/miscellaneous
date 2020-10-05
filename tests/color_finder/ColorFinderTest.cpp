@@ -6,11 +6,11 @@
 #include "ColorFinderConstexpr.h"
 
 #if CF_USE_CONSTEXPR
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define CHECK_COLOR_NAME_CONSTEXPR(ExpectedNameLiteral, ActualName)                                                    \
-  static_assert(std::string_view(ExpectedNameLiteral) == (ActualName), "Name doesn't match");
+  // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+  #define CHECK_COLOR_NAME_CONSTEXPR(ExpectedNameLiteral, ActualName)                                                  \
+    static_assert(std::string_view(ExpectedNameLiteral) == (ActualName), "Name doesn't match");
 #else
-#define CHECK_COLOR_NAME_CONSTEXPR(ExpectedNameLiteral, ActualName)
+  #define CHECK_COLOR_NAME_CONSTEXPR(ExpectedNameLiteral, ActualName)
 #endif
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
