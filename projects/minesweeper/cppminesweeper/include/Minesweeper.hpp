@@ -35,7 +35,19 @@ enum class FieldFlagResult {
   AlreadyOpened,
 };
 
-enum class FieldType : uint8_t { Empty = 0, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Mine };
+enum class FieldType : uint8_t {
+  Empty = 0,
+  One,
+  Two,
+  Three,
+  Four,
+  Five,
+  Six,
+  Seven,
+  Eight,
+  Nine,
+  Mine,
+};
 
 #pragma pack(push, 1)
 struct FieldInfo {
