@@ -11,23 +11,12 @@ public:
   virtual bool OnInit();
 };
 
-struct FieldBitmaps {
-
-  FieldBitmaps(int bitmapSize)
-    : original{bitmapSize, bitmapSize}
-    , empty{bitmapSize, bitmapSize}
-    , flagged{bitmapSize, bitmapSize}
-    , mine{bitmapSize, bitmapSize}
-    , clickedMine{bitmapSize, bitmapSize}
-    , hoovered{bitmapSize, bitmapSize} {
-  }
-
-  wxBitmap original;
-  wxBitmap empty;
-  wxBitmap flagged;
-  wxBitmap mine;
-  wxBitmap clickedMine;
-  wxBitmap hoovered;
+enum FieldGuiState : uint8_t {
+  Closed = 0,
+  Flagged,
+  Hoovered,
+  OpenedAndBoomed,
+  Opened,
 };
 
 template <typename TTo, typename TFrom>
@@ -40,32 +29,36 @@ constexpr std::underlying_type_t<TEnum> getNumericValue(const TEnum enumValue) {
   return static_cast<std::underlying_type_t<TEnum>>(enumValue);
 }
 
-class FieldState {
+class FieldBitmaps {
 public:
-  enum BaseState {
-    Closed,
-    Opened,
-    Flagged,
-    Hoovered,
-  };
-
-  const wxBitmap &getBitmap(const FieldBitmaps &bitmaps) {
-    switch (baseState) {
-    case BaseState::Closed:
-      return bitmaps.original;
-    case BaseState::Flagged:
-      return bitmaps.flagged;
-    case BaseState::Opened:
-      return getOpenedBitmap(bitmaps);
-    case BaseState::Hoovered:
-      return bitmaps.hoovered;
+  FieldBitmaps(int bitmapSize) {
+    for (auto &bitmap: bitmaps) {
+      bitmap = wxBitmap{bitmapSize, bitmapSize};
     }
-    throw std::runtime_error(fmt::format("Invalid base state {}!", getNumericValue(baseState)));
   }
 
+  wxBitmap &getBitmap(const FieldGuiState &guiState, const minesweeper::FieldType &fieldType) {
+    switch (guiState) {
+    case FieldGuiState::Closed:
+    case FieldGuiState::Flagged:
+    case FieldGuiState::Hoovered:
+    case FieldGuiState::OpenedAndBoomed:
+      return bitmaps[getNumericValue(guiState)];
+    case FieldGuiState::Opened:
+      return getOpenedBitmap(fieldType);
+    }
+    throw std::runtime_error(fmt::format("Invalid GUI state {}!", getNumericValue(guiState)));
+  }
+
+  const wxBitmap &getBitmap(const FieldGuiState &guiState, const minesweeper::FieldType &fieldType) const {
+    return const_cast<FieldBitmaps *>(this)->getBitmap(guiState, fieldType);
+  }
+
+  std::array<wxBitmap, 15> bitmaps;
+
 private:
-  const wxBitmap &getOpenedBitmap(const FieldBitmaps &bitmaps) {
-    switch (fieldInfo.type) {
+  wxBitmap &getOpenedBitmap(const minesweeper::FieldType &fieldType) {
+    switch (fieldType) {
     case minesweeper::FieldType::Empty:
     case minesweeper::FieldType::One:
     case minesweeper::FieldType::Two:
@@ -76,72 +69,58 @@ private:
     case minesweeper::FieldType::Seven:
     case minesweeper::FieldType::Eight:
     case minesweeper::FieldType::Nine:
-      return bitmaps.empty;
     case minesweeper::FieldType::Mine:
-      return bitmaps.mine;
+      return bitmaps[getNumericValue(FieldGuiState::Opened) + getNumericValue(fieldType)];
     }
-    throw std::runtime_error(fmt::format("Invalid field type {}!", getNumericValue(fieldInfo.type)));
+    throw std::runtime_error(fmt::format("Invalid field type {}!", getNumericValue(fieldType)));
+  }
+};
+
+class FieldState {
+public:
+  FieldState(const uint64_t &row, const uint64_t &column)
+    : fieldInfo{row, column, defaultFieldType} {
   }
 
-  // TODO REMOVE THIS
-public:
-  BaseState baseState{BaseState::Closed};
+  const wxBitmap &getBitmap(const FieldBitmaps &bitmaps) const {
+    return bitmaps.getBitmap(guiState, fieldInfo.type);
+  }
+
+  void setStateFromGuiState(const FieldGuiState &newGuiState) {
+    guiState = newGuiState;
+    fieldInfo.type = defaultFieldType;
+  }
+
+  void setStateFromFieldType(const minesweeper::FieldType &fieldType) {
+    guiState = FieldGuiState::Opened;
+    fieldInfo.type = fieldType;
+  }
+
+private:
+  static constexpr auto defaultFieldType = minesweeper::FieldType::Empty;
+  FieldGuiState guiState{FieldGuiState::Closed};
   minesweeper::FieldInfo fieldInfo{};
 };
 
+class FieldsFrame;
+
 class FieldPanel : public wxPanel {
 public:
-  FieldPanel(wxWindow *parent, const FieldBitmaps &bitmaps)
-    : wxPanel(parent)
-    , bitmaps{bitmaps} {
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
-  }
-
-  void Render(wxDC &dc) {
-    dc.DrawBitmap(state.getBitmap(bitmaps), 0, 0, false);
-  }
-
-  void PaintEvent(wxPaintEvent &) {
-    wxBufferedPaintDC dc(this);
-    Render(dc);
-  }
-
-  void RightClickEvent(wxMouseEvent &) {
-    state.baseState = FieldState::BaseState::Flagged;
-    Refresh();
-    Update();
-  }
-
-  void LeftClickEvent(wxMouseEvent &) {
-    state.baseState = FieldState::BaseState::Opened;
-    Refresh();
-    Update();
-  }
-
-  void MouseEnterEvent(wxMouseEvent &event) {
-    if (!event.LeftIsDown()) {
-      return;
-    }
-    state.baseState = FieldState::BaseState::Hoovered;
-    Refresh();
-    Update();
-  }
-
-  void MouseLeaveEvent(wxMouseEvent &event) {
-    if (!event.LeftIsDown()) {
-      return;
-    }
-    state.baseState = FieldState::BaseState::Closed;
-    Refresh();
-    Update();
-  }
+  FieldPanel(wxPanel &parent, const uint64_t x, const uint64_t y, const FieldBitmaps &bitmaps);
 
   DECLARE_EVENT_TABLE()
 
 private:
-  // TODO REMOVE THIS
-public:
-  FieldState state{};
+  FieldsFrame &frame();
+  void Render(wxDC &dc);
+
+  void PaintEvent(wxPaintEvent &);
+  void RightClickEvent(wxMouseEvent &);
+  void LeftClickEvent(wxMouseEvent &);
+  void MouseEnterEvent(wxMouseEvent &event);
+  void MouseLeaveEvent(wxMouseEvent &event);
+
+  FieldState state;
   const FieldBitmaps &bitmaps;
 };
 
@@ -154,12 +133,13 @@ EVT_ENTER_WINDOW(FieldPanel::MouseEnterEvent)
 EVT_LEAVE_WINDOW(FieldPanel::MouseLeaveEvent)
 END_EVENT_TABLE()
 
-class MyFrame : public wxFrame {
+class FieldsFrame : public wxFrame {
 public:
-  MyFrame();
+  FieldsFrame();
 
 private:
-  FieldBitmaps bitmaps{100};
+  static constexpr auto bitmapSize = 40;
+  FieldBitmaps bitmaps{bitmapSize};
   std::vector<std::reference_wrapper<FieldPanel>> panels{};
 
   void CreateFields(const uint64_t width, const uint64_t height);
@@ -168,6 +148,8 @@ private:
   void OnExit(wxCommandEvent &event);
   void OnAbout(wxCommandEvent &event);
   void OnButtonClicked(wxCommandEvent &event);
+
+  wxPanel *fieldHolderPanel;
 };
 
 enum {
@@ -177,13 +159,61 @@ enum {
 wxIMPLEMENT_APP(MyApp);
 
 bool MyApp::OnInit() {
-  auto *frame = new MyFrame();
+  auto *frame = new FieldsFrame();
   frame->Show(true);
   return true;
 }
 
-MyFrame::MyFrame()
-  : wxFrame(NULL, wxID_ANY, "Hello World") {
+FieldPanel::FieldPanel(wxPanel &parent, const uint64_t row, const uint64_t column, const FieldBitmaps &bitmaps)
+  : wxPanel(&parent)
+  , state{row, column}
+  , bitmaps{bitmaps} {
+  SetBackgroundStyle(wxBG_STYLE_PAINT);
+}
+
+void FieldPanel::PaintEvent(wxPaintEvent &) {
+  wxBufferedPaintDC dc(this);
+  Render(dc);
+}
+
+void FieldPanel::RightClickEvent(wxMouseEvent &) {
+  state.setStateFromGuiState(FieldGuiState::Flagged);
+  Refresh();
+}
+
+void FieldPanel::LeftClickEvent(wxMouseEvent &) {
+  state.setStateFromGuiState(FieldGuiState::Opened);
+  Refresh();
+}
+
+void FieldPanel::MouseEnterEvent(wxMouseEvent &event) {
+  if (!event.LeftIsDown()) {
+    return;
+  }
+  state.setStateFromGuiState(FieldGuiState::Hoovered);
+  Refresh();
+}
+
+void FieldPanel::MouseLeaveEvent(wxMouseEvent &event) {
+  if (!event.LeftIsDown()) {
+    return;
+  }
+  state.setStateFromGuiState(FieldGuiState::Closed);
+  Refresh();
+}
+
+FieldsFrame &FieldPanel::frame() {
+  return *dynamic_cast<FieldsFrame *>(GetParent());
+}
+
+void FieldPanel::Render(wxDC &dc) {
+  dc.DrawBitmap(state.getBitmap(bitmaps), 0, 0, false);
+}
+
+FieldsFrame::FieldsFrame()
+  : wxFrame(NULL, wxID_ANY, "Hello World", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER)
+  , fieldHolderPanel{new wxPanel(this)} {
+
   bitmaps = FieldBitmaps{40};
   wxMenu *menuFile = new wxMenu;
   menuFile->Append(ID_Hello, "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item");
@@ -197,95 +227,87 @@ MyFrame::MyFrame()
   SetMenuBar(menuBar);
   CreateStatusBar();
   SetStatusText("Welcome to wxWidgets!");
-  Bind(wxEVT_MENU, &MyFrame::OnHello, this, ID_Hello);
-  Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
-  Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
+  Bind(wxEVT_MENU, &FieldsFrame::OnHello, this, ID_Hello);
+  Bind(wxEVT_MENU, &FieldsFrame::OnAbout, this, wxID_ABOUT);
+  Bind(wxEVT_MENU, &FieldsFrame::OnExit, this, wxID_EXIT);
 
   wxMemoryDC dc;
-  auto paint = [&dc](wxBitmap &bitmap, const wxBrush &brush) {
+  auto paint = [&dc](wxBitmap &bitmap, const wxColor &color) {
     const auto size = bitmap.GetSize();
     assert(size.x > 1);
     assert(size.y > 1);
     dc.SelectObject(bitmap);
-    dc.SetPen(*wxBLACK);
+    dc.SetPen(color);
     dc.SetBrush(*wxGREY_BRUSH);
     dc.DrawRectangle(0, 0, size.x, size.y);
     dc.SetPen(*wxGREY_PEN);
-    dc.SetBrush(brush);
+    dc.SetBrush(wxBrush{color});
     constexpr auto borderSize = 5;
     dc.DrawRectangle(borderSize, borderSize, size.x - 2 * borderSize, size.y - 2 * borderSize);
     dc.SelectObject(wxNullBitmap);
   };
 
-  paint(bitmaps.original, wxBrush{wxColor{50, 50, 170}});
-  paint(bitmaps.empty, *wxLIGHT_GREY_BRUSH);
-  paint(bitmaps.flagged, *wxCYAN_BRUSH);
-  paint(bitmaps.mine, *wxYELLOW_BRUSH);
-  paint(bitmaps.clickedMine, *wxRED_BRUSH);
-  paint(bitmaps.hoovered, wxBrush{wxColor{180, 150, 0}});
+  constexpr auto dontCareFieldType = minesweeper::FieldType::Empty;
+  paint(bitmaps.getBitmap(FieldGuiState::Closed, dontCareFieldType), wxColor{50, 50, 170});
+  paint(bitmaps.getBitmap(FieldGuiState::Flagged, dontCareFieldType), *wxCYAN);
+  paint(bitmaps.getBitmap(FieldGuiState::OpenedAndBoomed, dontCareFieldType), *wxRED);
+  paint(bitmaps.getBitmap(FieldGuiState::Hoovered, dontCareFieldType), wxColor{180, 150, 0});
+  paint(bitmaps.getBitmap(FieldGuiState::Opened, minesweeper::FieldType::Empty), *wxLIGHT_GREY);
+
+  auto *topSizer = new wxBoxSizer(wxVERTICAL);
+  topSizer->Add(fieldHolderPanel);
+  SetSizerAndFit(topSizer);
 
   CreateFields(10, 10);
 }
 
-void MyFrame::CreateFields(const uint64_t width, const uint64_t height) {
+void FieldsFrame::CreateFields(const uint64_t width, const uint64_t height) {
+  fieldHolderPanel->Hide();
   auto *gridSizer = new wxGridSizer(safeCast<int>(height), safeCast<int>(width), 0, 0);
-  this->SetSizer(gridSizer);
 
-  const auto fieldCount = safeCast<int>(width * height);
+  const auto fieldCount = width * height;
 
-  const auto fieldSize = bitmaps.empty.GetSize();
+  auto fieldSize = wxSize(bitmapSize, bitmapSize);
   panels.reserve(fieldCount);
+  for (uint64_t fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex) {
 
-  for (auto fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex) {
-    auto panel = std::make_unique<FieldPanel>(this, bitmaps);
-    panel->SetSize(fieldSize);
-    panel->SetMinSize(fieldSize);
-    panel->SetMaxSize(fieldSize);
-    panel->SetWindowStyle(wxBORDER_NONE | wxBU_EXACTFIT);
-    auto panelRef = std::ref(*panel.get());
-    gridSizer->Add(panel.release(), wxALL, 1);
-    // panelRef.get().Bind(
-    //    wxEVT_LEFT_UP,
-    //    [this, gridSizer](wxMouseEvent &event) {
-    //      [[maybe_unused]] auto *eventObject = event.GetEventObject();
-    //      auto *panel = dynamic_cast<FieldPanel *>(event.GetEventObject());
-    //      if (nullptr == panel) {
-    //        return;
-    //      }
-    //      panel->SetState(FieldState::BaseState::Opened);
-    //      panel->Refresh();
-    //      panel->Update();
-    //    },
-    //    wxID_ANY);
-    // panelRef.get().Bind(
-    //    wxEVT_RIGHT_DOWN,
-    //    [this, gridSizer](wxMouseEvent &event) {
-    //      [[maybe_unused]] auto *eventObject = event.GetEventObject();
-    //      auto *panel = dynamic_cast<FieldPanel *>(event.GetEventObject());
-    //      if (nullptr == panel) {
-    //        return;
-    //      }
-    //      panel->SetState(FieldState::BaseState::Flagged);
-    //      panel->Refresh();
-    //      panel->Update();
-    //    },
-    //    wxID_ANY);
+    auto fieldPanel = new FieldPanel(*fieldHolderPanel, fieldIndex / width, fieldIndex % width, bitmaps);
+
+    fieldPanel->SetSize(fieldSize);
+    fieldPanel->SetMinSize(fieldSize);
+    fieldPanel->SetMaxSize(fieldSize);
+    fieldPanel->SetWindowStyle(wxBORDER_NONE | wxBU_EXACTFIT);
+    auto panelRef = std::ref(*fieldPanel);
     panels.push_back(std::move(panelRef));
+    gridSizer->Add(fieldPanel, wxALL, 1);
   }
 
-  panels[1].get().state.baseState = FieldState::BaseState::Flagged;
-  gridSizer->Fit(this);
-  gridSizer->SetSizeHints(this);
+  fieldHolderPanel->SetSizer(gridSizer);
+  gridSizer->Fit(fieldHolderPanel);
+  gridSizer->SetSizeHints(fieldHolderPanel);
+  fieldHolderPanel->Show(true);
+  GetSizer()->Fit(this);
 }
 
-void MyFrame::OnExit(wxCommandEvent &) {
+void FieldsFrame::DestroyFields() {
+  fieldHolderPanel->SetSizer(nullptr);
+  panels.clear();
+  if (fieldHolderPanel->DestroyChildren() != true) {
+    throw std::runtime_error("Something went wrong");
+  }
+}
+
+void FieldsFrame::OnExit(wxCommandEvent &) {
   Close(true);
 }
 
-void MyFrame::OnAbout(wxCommandEvent &) {
+void FieldsFrame::OnAbout(wxCommandEvent &) {
   wxMessageBox("This is a wxWidgets Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
+  CreateFields(20, 20);
+  Refresh();
 }
 
-void MyFrame::OnHello(wxCommandEvent &) {
+void FieldsFrame::OnHello(wxCommandEvent &) {
   wxLogMessage("Hello world from wxWidgets!");
+  DestroyFields();
 }
