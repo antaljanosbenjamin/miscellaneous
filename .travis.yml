@@ -9,12 +9,12 @@ matrix:
       addons:
         apt:
           packages:
-            - gcc-8
-            - g++-8
+            - gcc-10
+            - g++-10
       env:
-        - CC=gcc-8
-        - CXX=g++-8
-      compiler: gcc-8
+        - CC=gcc-10
+        - CXX=g++-10
+      compiler: gcc-10
     - os: linux
       name: 'Linux Clang-10'
       python: 3.7
@@ -48,13 +48,13 @@ matrix:
       addons:
         apt:
           packages:
-            - gcc-8
-            - g++-8
+            - gcc-10
+            - g++-10
       env:
-        - CC=gcc-8
-        - CXX=g++-8
+        - CC=gcc-10
+        - CXX=g++-10
         - CMAKE_OPTIONS="-DENABLE_CPPCHECK=ON"
-      compiler: gcc-8
+      compiler: gcc-10
       before_install:
         - travis/before_install/install_cppcheck.sh
     - os: linux
