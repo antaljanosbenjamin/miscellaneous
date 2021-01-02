@@ -28,7 +28,13 @@ macro(run_conan)
       fmt/7.0.3
       span-lite/0.6.0
     )
-    list(APPEND CONAN_OPTIONS wxwidgets:compatibility=3.1 wxwidgets:debugreport=False)
+    list(
+      APPEND
+      CONAN_OPTIONS
+      wxwidgets:compatibility=3.1
+      wxwidgets:debugreport=False
+      wxwidgets:webview=False
+    )
   endif()
 
   conan_cmake_run(
