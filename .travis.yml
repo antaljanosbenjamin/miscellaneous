@@ -5,7 +5,7 @@ matrix:
     - os: linux
       name: 'Linux GCC'
       python: 3.7
-      dist: bionic
+      dist: focal
       addons:
         apt:
           packages:
@@ -18,12 +18,12 @@ matrix:
     - os: linux
       name: 'Linux Clang-10'
       python: 3.7
-      dist: bionic
+      dist: focal
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main main'
+            - sourceline: 'deb https://apt.llvm.org/focal/ llvm-toolchain-focal-10 main main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
             - clang-10
@@ -44,7 +44,7 @@ matrix:
     - os: linux
       name: 'Cppcheck'
       python: 3.7
-      dist: bionic
+      dist: focal
       addons:
         apt:
           packages:
@@ -60,12 +60,12 @@ matrix:
     - os: linux
       name: 'Clang-tidy'
       python: 3.7
-      dist: bionic
+      dist: focal
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main main'
+            - sourceline: 'deb https://apt.llvm.org/focal/ llvm-toolchain-focal-10 main main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
             - clang-10
@@ -87,6 +87,6 @@ script:
   - cmake .. $CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Release
   - cmake --build . --config Release -j 6
   - ctest . -C Release
-  
+
 notifications:
   email: false
