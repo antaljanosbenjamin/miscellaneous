@@ -15,7 +15,7 @@ matrix:
       addons:
         apt:
           sources:
-            - sourceline: 'deb https://apt.kitware.com/ubuntu/ bionic main'
+            - sourceline: 'deb https://apt.kitware.com/ubuntu/ focal main'
               key_url: https://apt.kitware.com/keys/kitware-archive-latest.asc
           packages:
             - gcc-10
@@ -37,7 +37,7 @@ matrix:
             - ubuntu-toolchain-r-test
             - sourceline: 'deb https://apt.llvm.org/focal/ llvm-toolchain-focal-10 main main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
-            - sourceline: 'deb https://apt.kitware.com/ubuntu/ bionic main'
+            - sourceline: 'deb https://apt.kitware.com/ubuntu/ focal main'
               key_url: https://apt.kitware.com/keys/kitware-archive-latest.asc
           packages:
             - clang-10
@@ -67,7 +67,7 @@ matrix:
       addons:
         apt:
           sources:
-            - sourceline: 'deb https://apt.kitware.com/ubuntu/ bionic main'
+            - sourceline: 'deb https://apt.kitware.com/ubuntu/ focal main'
               key_url: https://apt.kitware.com/keys/kitware-archive-latest.asc
           packages:
             - gcc-10
@@ -93,7 +93,7 @@ matrix:
             - ubuntu-toolchain-r-test
             - sourceline: 'deb https://apt.llvm.org/focal/ llvm-toolchain-focal-10 main main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
-            - sourceline: 'deb https://apt.kitware.com/ubuntu/ bionic main'
+            - sourceline: 'deb https://apt.kitware.com/ubuntu/ focal main'
               key_url: https://apt.kitware.com/keys/kitware-archive-latest.asc
           packages:
             - clang-10
@@ -118,6 +118,6 @@ script:
   - cmake .. $CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Release
   - cmake --build . --config Release -j 6
   - if [ "$RUN_TESTS" = true ] ; then ctest . -C Release --jobs 4 ; fi
-  
+
 notifications:
   email: false
