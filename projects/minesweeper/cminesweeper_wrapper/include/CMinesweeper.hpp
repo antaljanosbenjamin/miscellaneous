@@ -80,7 +80,4 @@ void minesweeper_game_get_height(ConstCMGameHandle gameHandle, uint64_t *height,
 void minesweeper_game_get_elapsed_seconds(ConstCMGameHandle gameHandle, uint64_t *elapsed_seconds,
                                           CMErrorInfo *errorInfo);
 void minesweeper_destroy_game(CMGameHandle *gameHandle, CMErrorInfo *errorInfo);
-
-#ifdef __cplusplus
 }
-#endif
