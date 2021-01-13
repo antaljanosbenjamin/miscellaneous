@@ -9,6 +9,7 @@ export PATH=/c/Python:/c/Python/Scripts:$PATH
 
 pip install conan
 conan user
+conan profile remove default | echo "Default profile doesn't exist, therefore it cannot be deleted"
 conan profile new default --detect
 
 if [ "$COMPILER" = "MSVC" ]
