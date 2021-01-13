@@ -5,6 +5,8 @@ cache:
   cargo: true
   directories:
     - $HOME/.conan
+before_cache:
+  - travis/before_cache/$TRAVIS_OS_NAME.sh
 
 matrix:
   include:
