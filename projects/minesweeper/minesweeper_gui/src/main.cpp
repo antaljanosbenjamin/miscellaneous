@@ -1,3 +1,4 @@
+#include <array>
 #include <functional>
 #include <memory>
 
@@ -11,12 +12,26 @@ public:
   virtual bool OnInit();
 };
 
-enum FieldGuiState : uint8_t {
+enum class BaseState : uint8_t {
   Closed = 0,
-  Flagged,
   Hoovered,
-  OpenedAndBoomed,
+  Boomed,
   Opened,
+};
+
+enum class FigureType : uint8_t {
+  Empty = 0,
+  One,
+  Two,
+  Three,
+  Four,
+  Five,
+  Six,
+  Seven,
+  Eight,
+  Nine,
+  Mine,
+  Flag,
 };
 
 template <typename TTo, typename TFrom>
@@ -32,74 +47,100 @@ constexpr std::underlying_type_t<TEnum> getNumericValue(const TEnum enumValue) {
 class FieldBitmaps {
 public:
   FieldBitmaps(int bitmapSize) {
-    for (auto &bitmap: bitmaps) {
-      bitmap = wxBitmap{bitmapSize, bitmapSize};
-    }
+    std::fill(backgrounds.begin(), backgrounds.end(), wxBitmap{bitmapSize, bitmapSize});
+    std::fill(figures.begin(), figures.end(), wxBitmap{bitmapSize, bitmapSize});
   }
 
-  wxBitmap &getBitmap(const FieldGuiState &guiState, const minesweeper::FieldType &fieldType) {
+  const wxBitmap &getBackground(const BaseState &guiState) const {
+    static_assert(getNumericValue(BaseState::Opened) + 1 == std::tuple_size_v<decltype(backgrounds)>,
+                  "Number of background bitmaps doesn't match the count of enum values");
     switch (guiState) {
-    case FieldGuiState::Closed:
-    case FieldGuiState::Flagged:
-    case FieldGuiState::Hoovered:
-    case FieldGuiState::OpenedAndBoomed:
-      return bitmaps[getNumericValue(guiState)];
-    case FieldGuiState::Opened:
-      return getOpenedBitmap(fieldType);
+    case BaseState::Closed:
+    case BaseState::Hoovered:
+    case BaseState::Boomed:
+    case BaseState::Opened:
+      return backgrounds[getNumericValue(guiState)];
     }
     throw std::runtime_error(fmt::format("Invalid GUI state {}!", getNumericValue(guiState)));
   }
 
-  const wxBitmap &getBitmap(const FieldGuiState &guiState, const minesweeper::FieldType &fieldType) const {
-    return const_cast<FieldBitmaps *>(this)->getBitmap(guiState, fieldType);
+  wxBitmap &getBackground(const BaseState &guiState) {
+    return const_cast<wxBitmap &>(const_cast<const FieldBitmaps *>(this)->getBackground(guiState));
   }
 
-  std::array<wxBitmap, 15> bitmaps;
-
-private:
-  wxBitmap &getOpenedBitmap(const minesweeper::FieldType &fieldType) {
+  const wxBitmap &getFigure(const FigureType &fieldType) const {
+    static_assert(getNumericValue(FigureType::Flag) + 1 == std::tuple_size_v<decltype(figures)>,
+                  "Number of figure bitmaps doesn't match the count of enum values");
     switch (fieldType) {
-    case minesweeper::FieldType::Empty:
-    case minesweeper::FieldType::One:
-    case minesweeper::FieldType::Two:
-    case minesweeper::FieldType::Three:
-    case minesweeper::FieldType::Four:
-    case minesweeper::FieldType::Five:
-    case minesweeper::FieldType::Six:
-    case minesweeper::FieldType::Seven:
-    case minesweeper::FieldType::Eight:
-    case minesweeper::FieldType::Nine:
-    case minesweeper::FieldType::Mine:
-      return bitmaps[getNumericValue(FieldGuiState::Opened) + getNumericValue(fieldType)];
+    case FigureType::Empty:
+    case FigureType::One:
+    case FigureType::Two:
+    case FigureType::Three:
+    case FigureType::Four:
+    case FigureType::Five:
+    case FigureType::Six:
+    case FigureType::Seven:
+    case FigureType::Eight:
+    case FigureType::Nine:
+    case FigureType::Mine:
+    case FigureType::Flag:
+      return figures[getNumericValue(fieldType)];
     }
     throw std::runtime_error(fmt::format("Invalid field type {}!", getNumericValue(fieldType)));
   }
+
+  wxBitmap &getFigure(const FigureType &fieldType) {
+    return const_cast<wxBitmap &>(const_cast<const FieldBitmaps *>(this)->getFigure(fieldType));
+  }
+
+  std::array<wxBitmap, 4> backgrounds;
+  std::array<wxBitmap, 12> figures;
 };
 
 class FieldState {
 public:
   FieldState(const uint64_t &row, const uint64_t &column)
-    : fieldInfo{row, column, defaultFieldType} {
+    : row{row}
+    , column{column} {
   }
 
-  const wxBitmap &getBitmap(const FieldBitmaps &bitmaps) const {
-    return bitmaps.getBitmap(guiState, fieldInfo.type);
+  void updateWithBaseState(const BaseState &newBaseState) {
+    baseState = newBaseState;
   }
 
-  void setStateFromGuiState(const FieldGuiState &newGuiState) {
-    guiState = newGuiState;
-    fieldInfo.type = defaultFieldType;
+  void updateWithFigureType(const FigureType &newFigureType) {
+    if (newFigureType == FigureType::Flag && baseState != BaseState::Closed) {
+      return;
+    }
+
+    figureType = newFigureType;
   }
 
-  void setStateFromFieldType(const minesweeper::FieldType &fieldType) {
-    guiState = FieldGuiState::Opened;
-    fieldInfo.type = fieldType;
+  void draw(wxDC &dc, const FieldBitmaps &bitmaps) const {
+    dc.DrawBitmap(getBackground(bitmaps), 0, 0, false);
+    if (shouldDrawFigure()) {
+      dc.DrawBitmap(getFigure(bitmaps), 0, 0, false);
+    }
   }
 
 private:
-  static constexpr auto defaultFieldType = minesweeper::FieldType::Empty;
-  FieldGuiState guiState{FieldGuiState::Closed};
-  minesweeper::FieldInfo fieldInfo{};
+  const bool shouldDrawFigure() const {
+    return baseState == BaseState::Boomed || baseState == BaseState::Opened || figureType == FigureType::Flag;
+  }
+
+  const wxBitmap &getBackground(const FieldBitmaps &bitmaps) const {
+    return bitmaps.getBackground(baseState);
+  }
+
+  const wxBitmap &getFigure(const FieldBitmaps &bitmaps) const {
+    return bitmaps.getFigure(figureType);
+  }
+
+  static constexpr auto defaultFigureType = FigureType::Empty;
+  BaseState baseState{BaseState::Closed};
+  FigureType figureType{defaultFigureType};
+  uint64_t row{0U};
+  uint64_t column{0U};
 };
 
 class FieldsFrame;
@@ -177,12 +218,12 @@ void FieldPanel::PaintEvent(wxPaintEvent &) {
 }
 
 void FieldPanel::RightClickEvent(wxMouseEvent &) {
-  state.setStateFromGuiState(FieldGuiState::Flagged);
+  state.updateWithFigureType(FigureType::Flag);
   Refresh();
 }
 
 void FieldPanel::LeftClickEvent(wxMouseEvent &) {
-  state.setStateFromGuiState(FieldGuiState::Opened);
+  state.updateWithBaseState(BaseState::Opened);
   Refresh();
 }
 
@@ -190,7 +231,7 @@ void FieldPanel::MouseEnterEvent(wxMouseEvent &event) {
   if (!event.LeftIsDown()) {
     return;
   }
-  state.setStateFromGuiState(FieldGuiState::Hoovered);
+  state.updateWithBaseState(BaseState::Hoovered);
   Refresh();
 }
 
@@ -198,7 +239,7 @@ void FieldPanel::MouseLeaveEvent(wxMouseEvent &event) {
   if (!event.LeftIsDown()) {
     return;
   }
-  state.setStateFromGuiState(FieldGuiState::Closed);
+  state.updateWithBaseState(BaseState::Closed);
   Refresh();
 }
 
@@ -207,7 +248,7 @@ FieldsFrame &FieldPanel::frame() {
 }
 
 void FieldPanel::Render(wxDC &dc) {
-  dc.DrawBitmap(state.getBitmap(bitmaps), 0, 0, false);
+  state.draw(dc, bitmaps);
 }
 
 FieldsFrame::FieldsFrame()
@@ -234,25 +275,23 @@ FieldsFrame::FieldsFrame()
   wxMemoryDC dc;
   auto paint = [&dc](wxBitmap &bitmap, const wxColor &color) {
     const auto size = bitmap.GetSize();
-    assert(size.x > 1);
-    assert(size.y > 1);
+    constexpr auto borderSize = 5;
+    assert(size.x >= 2 * borderSize);
+    assert(size.y >= 2 * borderSize);
     dc.SelectObject(bitmap);
     dc.SetPen(color);
     dc.SetBrush(*wxGREY_BRUSH);
     dc.DrawRectangle(0, 0, size.x, size.y);
     dc.SetPen(*wxGREY_PEN);
     dc.SetBrush(wxBrush{color});
-    constexpr auto borderSize = 5;
     dc.DrawRectangle(borderSize, borderSize, size.x - 2 * borderSize, size.y - 2 * borderSize);
     dc.SelectObject(wxNullBitmap);
   };
 
-  constexpr auto dontCareFieldType = minesweeper::FieldType::Empty;
-  paint(bitmaps.getBitmap(FieldGuiState::Closed, dontCareFieldType), wxColor{50, 50, 170});
-  paint(bitmaps.getBitmap(FieldGuiState::Flagged, dontCareFieldType), *wxCYAN);
-  paint(bitmaps.getBitmap(FieldGuiState::OpenedAndBoomed, dontCareFieldType), *wxRED);
-  paint(bitmaps.getBitmap(FieldGuiState::Hoovered, dontCareFieldType), wxColor{180, 150, 0});
-  paint(bitmaps.getBitmap(FieldGuiState::Opened, minesweeper::FieldType::Empty), *wxLIGHT_GREY);
+  paint(bitmaps.getBackground(BaseState::Closed), wxColor{50, 50, 170});
+  paint(bitmaps.getBackground(BaseState::Boomed), *wxRED);
+  paint(bitmaps.getBackground(BaseState::Hoovered), wxColor{180, 150, 0});
+  paint(bitmaps.getBackground(BaseState::Opened), *wxLIGHT_GREY);
 
   auto *topSizer = new wxBoxSizer(wxVERTICAL);
   topSizer->Add(fieldHolderPanel);
