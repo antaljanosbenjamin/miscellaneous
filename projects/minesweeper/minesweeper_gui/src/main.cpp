@@ -69,7 +69,7 @@ public:
   }
 
   [[nodiscard]] wxBitmap &getBackground(const BaseState &guiState) {
-    // NOTLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
     return const_cast<wxBitmap &>(const_cast<const FieldBitmaps *>(this)->getBackground(guiState));
   }
 
@@ -95,7 +95,7 @@ public:
   }
 
   [[nodiscard]] wxBitmap &getFigure(const FigureType &fieldType) {
-    // NOTLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
     return const_cast<wxBitmap &>(const_cast<const FieldBitmaps *>(this)->getFigure(fieldType));
   }
 
@@ -130,15 +130,15 @@ public:
   }
 
 private:
-  bool shouldDrawFigure() const {
+  [[nodiscard]] bool shouldDrawFigure() const {
     return baseState == BaseState::Boomed || baseState == BaseState::Opened || figureType == FigureType::Flag;
   }
 
-  const wxBitmap &getBackground(const FieldBitmaps &bitmaps) const {
+  [[nodiscard]] const wxBitmap &getBackground(const FieldBitmaps &bitmaps) const {
     return bitmaps.getBackground(baseState);
   }
 
-  const wxBitmap &getFigure(const FieldBitmaps &bitmaps) const {
+  [[nodiscard]] const wxBitmap &getFigure(const FieldBitmaps &bitmaps) const {
     return bitmaps.getFigure(figureType);
   }
 
@@ -153,17 +153,18 @@ class FieldsFrame;
 
 class FieldPanel : public wxPanel {
 public:
-  FieldPanel(wxPanel &parent, const uint64_t x, const uint64_t y, const FieldBitmaps &bitmaps);
+  FieldPanel(wxPanel &parent, const uint64_t row, const uint64_t column, const FieldBitmaps &bitmaps);
 
-  DECLARE_EVENT_TABLE()
+  // cppcheck-suppress unknownMacro
+  DECLARE_EVENT_TABLE() // NOLINT(cppcoreguidelines-avoid-c-arrays)
 
 private:
   FieldsFrame &frame();
   void Render(wxDC &dc);
 
-  void PaintEvent(wxPaintEvent &);
-  void RightClickEvent(wxMouseEvent &);
-  void LeftClickEvent(wxMouseEvent &);
+  void PaintEvent(wxPaintEvent & /*unused*/);
+  void RightClickEvent(wxMouseEvent & /*unused*/);
+  void LeftClickEvent(wxMouseEvent & /*unused*/);
   void MouseEnterEvent(wxMouseEvent &event);
   void MouseLeaveEvent(wxMouseEvent &event);
 
@@ -171,7 +172,7 @@ private:
   const FieldBitmaps &bitmaps;
 };
 
-BEGIN_EVENT_TABLE(FieldPanel, wxPanel)
+BEGIN_EVENT_TABLE(FieldPanel, wxPanel) // NOLINT(cert-err58-cpp, cppcoreguidelines-avoid-c-arrays)
 EVT_PAINT(FieldPanel::PaintEvent)
 EVT_RIGHT_DOWN(FieldPanel::RightClickEvent)
 EVT_LEFT_UP(FieldPanel::LeftClickEvent)
@@ -196,18 +197,19 @@ private:
   void OnAbout(wxCommandEvent &event);
   void OnButtonClicked(wxCommandEvent &event);
 
-  wxPanel *fieldHolderPanel;
+  wxPanel *fieldHolderPanel{nullptr};
 };
 
 enum {
   ID_Hello = 1,
 };
 
-wxIMPLEMENT_APP(MyApp);
+wxIMPLEMENT_APP(MyApp); // NOLINT(cert-err58-cpp)
 
 bool MyApp::OnInit() {
-  auto *frame = new FieldsFrame();
+  auto frame = std::make_unique<FieldsFrame>();
   frame->Show(true);
+  frame.release();
   return true;
 }
 
@@ -218,17 +220,17 @@ FieldPanel::FieldPanel(wxPanel &parent, const uint64_t row, const uint64_t colum
   SetBackgroundStyle(wxBG_STYLE_PAINT);
 }
 
-void FieldPanel::PaintEvent(wxPaintEvent &) {
+void FieldPanel::PaintEvent(wxPaintEvent & /*unused*/) {
   wxBufferedPaintDC dc(this);
   Render(dc);
 }
 
-void FieldPanel::RightClickEvent(wxMouseEvent &) {
+void FieldPanel::RightClickEvent(wxMouseEvent & /*unused*/) {
   state.updateWithFigureType(FigureType::Flag);
   Refresh();
 }
 
-void FieldPanel::LeftClickEvent(wxMouseEvent &) {
+void FieldPanel::LeftClickEvent(wxMouseEvent & /*unused*/) {
   state.updateWithBaseState(BaseState::Opened);
   Refresh();
 }
@@ -258,20 +260,23 @@ void FieldPanel::Render(wxDC &dc) {
 }
 
 FieldsFrame::FieldsFrame()
-  : wxFrame(NULL, wxID_ANY, "Hello World", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER)
-  , fieldHolderPanel{new wxPanel(this)} {
+  // NOLINTNEXTLINE(hicpp-signed-bitwise)
+  : wxFrame(nullptr, wxID_ANY, "Hello World", wxDefaultPosition, wxDefaultSize,
+            wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER) {
 
-  bitmaps = FieldBitmaps{40};
-  wxMenu *menuFile = new wxMenu;
+  auto menuFile = std::make_unique<wxMenu>();
   menuFile->Append(ID_Hello, "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item");
   menuFile->AppendSeparator();
   menuFile->Append(wxID_EXIT);
-  wxMenu *menuHelp = new wxMenu;
+  auto menuHelp = std::make_unique<wxMenu>();
   menuHelp->Append(wxID_ABOUT);
-  wxMenuBar *menuBar = new wxMenuBar;
-  menuBar->Append(menuFile, "&File");
-  menuBar->Append(menuHelp, "&Help");
-  SetMenuBar(menuBar);
+  auto menuBar = std::make_unique<wxMenuBar>();
+  menuBar->Append(menuFile.get(), "&File");
+  menuFile.release();
+  menuBar->Append(menuHelp.get(), "&Help");
+  menuHelp.release();
+  SetMenuBar(menuBar.get());
+  menuBar.release();
   CreateStatusBar();
   SetStatusText("Welcome to wxWidgets!");
   Bind(wxEVT_MENU, &FieldsFrame::OnHello, this, ID_Hello);
@@ -300,7 +305,9 @@ FieldsFrame::FieldsFrame()
   paint(bitmaps.getBackground(BaseState::Opened), *wxLIGHT_GREY);
 
   auto *topSizer = new wxBoxSizer(wxVERTICAL);
-  topSizer->Add(fieldHolderPanel);
+  auto fieldHolderPanelOwner = std::make_unique<wxPanel>(this);
+  topSizer->Add(fieldHolderPanelOwner.get());
+  fieldHolderPanel = fieldHolderPanelOwner.release();
   SetSizerAndFit(topSizer);
 
   CreateFields(10, 10);
@@ -308,7 +315,7 @@ FieldsFrame::FieldsFrame()
 
 void FieldsFrame::CreateFields(const uint64_t width, const uint64_t height) {
   fieldHolderPanel->Hide();
-  auto *gridSizer = new wxGridSizer(safeCast<int>(height), safeCast<int>(width), 0, 0);
+  auto gridSizerOwner = std::make_unique<wxGridSizer>(safeCast<int>(height), safeCast<int>(width), 0, 0);
 
   const auto fieldCount = width * height;
 
@@ -316,7 +323,7 @@ void FieldsFrame::CreateFields(const uint64_t width, const uint64_t height) {
   panels.reserve(fieldCount);
   for (uint64_t fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex) {
 
-    auto fieldPanel = new FieldPanel(*fieldHolderPanel, fieldIndex / width, fieldIndex % width, bitmaps);
+    auto fieldPanel = std::make_unique<FieldPanel>(*fieldHolderPanel, fieldIndex / width, fieldIndex % width, bitmaps);
 
     fieldPanel->SetSize(fieldSize);
     fieldPanel->SetMinSize(fieldSize);
@@ -324,10 +331,13 @@ void FieldsFrame::CreateFields(const uint64_t width, const uint64_t height) {
     fieldPanel->SetWindowStyle(wxBORDER_NONE | wxBU_EXACTFIT);
     auto panelRef = std::ref(*fieldPanel);
     panels.push_back(std::move(panelRef));
-    gridSizer->Add(fieldPanel, wxALL, 1);
+    gridSizerOwner->Add(fieldPanel.get(), wxALL, 1);
+    fieldPanel.release();
   }
 
+  auto *gridSizer = gridSizerOwner.get();
   fieldHolderPanel->SetSizer(gridSizer);
+  gridSizerOwner.release();
   gridSizer->Fit(fieldHolderPanel);
   gridSizer->SetSizeHints(fieldHolderPanel);
   fieldHolderPanel->Show(true);
