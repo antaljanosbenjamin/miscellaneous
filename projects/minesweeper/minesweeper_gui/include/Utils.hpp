@@ -21,11 +21,12 @@
   #define PRAGMA_WARNING_POP_GCC() _Pragma(GCC diagnostic pop)
   #define PRAGMA_WARNING_IGNORE_GCC(Warning) _Pragma(GCC diagnostic ignored #Warning)
 
-  #define WARNING_IGNORED_ATTRIBUTES_GCC -Wattributes
+  #define WARNING_IGNORED_ATTRIBUTES_GCC                                                                               \
+    -Wattributes // NOLINT(cppcoreguidelines-macro-usage,bugprone-macro-parentheses)
 #endif
 
 #if defined(TI_IS_CLANG_CL) || defined(TI_IS_CLANG)
-  #define CLANG_MAYBE_UNUSED [[maybe_unused]]
+  #define CLANG_MAYBE_UNUSED [[maybe_unused]] // NOLINT(cppcoreguidelines-macro-usage)
 #else
   #define CLANG_MAYBE_UNUSED
 #endif
