@@ -124,7 +124,7 @@ public:
   }
 
 private:
-  const bool shouldDrawFigure() const {
+  bool shouldDrawFigure() const {
     return baseState == BaseState::Boomed || baseState == BaseState::Opened || figureType == FigureType::Flag;
   }
 
@@ -139,8 +139,8 @@ private:
   static constexpr auto defaultFigureType = FigureType::Empty;
   BaseState baseState{BaseState::Closed};
   FigureType figureType{defaultFigureType};
-  uint64_t row{0U};
-  uint64_t column{0U};
+  [[maybe_unused]] uint64_t row{0U};
+  [[maybe_unused]] uint64_t column{0U};
 };
 
 class FieldsFrame;
