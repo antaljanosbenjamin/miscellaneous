@@ -145,12 +145,8 @@ private:
   static constexpr auto defaultFigureType = FigureType::Empty;
   BaseState baseState{BaseState::Closed};
   FigureType figureType{defaultFigureType};
-
-  PRAGMA_WARNING_PUSH_GCC();
-  PRAGMA_WARNING_IGNORE_GCC(WARNING_IGNORED_ATTRIBUTES_GCC);
-  [[maybe_unused]] uint64_t row{0U};
-  [[maybe_unused]] uint64_t column{0U};
-  PRAGMA_WARNING_POP_GCC();
+  CLANG_MAYBE_UNUSED uint64_t row{0U};
+  CLANG_MAYBE_UNUSED uint64_t column{0U};
 };
 
 class FieldsFrame;
