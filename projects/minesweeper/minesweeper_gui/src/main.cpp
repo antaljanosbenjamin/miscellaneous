@@ -9,7 +9,7 @@
 
 class MyApp : public wxApp {
 public:
-  virtual bool OnInit();
+  bool OnInit() override;
 };
 
 enum class BaseState : uint8_t {
@@ -18,6 +18,8 @@ enum class BaseState : uint8_t {
   Boomed,
   Opened,
 };
+
+constexpr auto baseStateCount = 4;
 
 enum class FigureType : uint8_t {
   Empty = 0,
@@ -34,6 +36,8 @@ enum class FigureType : uint8_t {
   Flag,
 };
 
+constexpr auto figureTypeCount = 12;
+
 template <typename TTo, typename TFrom>
 constexpr TTo safeCast(const TFrom &from) {
   return static_cast<TTo>(from);
@@ -46,12 +50,12 @@ constexpr std::underlying_type_t<TEnum> getNumericValue(const TEnum enumValue) {
 
 class FieldBitmaps {
 public:
-  FieldBitmaps(int bitmapSize) {
+  explicit FieldBitmaps(int bitmapSize) {
     std::fill(backgrounds.begin(), backgrounds.end(), wxBitmap{bitmapSize, bitmapSize});
     std::fill(figures.begin(), figures.end(), wxBitmap{bitmapSize, bitmapSize});
   }
 
-  const wxBitmap &getBackground(const BaseState &guiState) const {
+  [[nodiscard]] const wxBitmap &getBackground(const BaseState &guiState) const {
     static_assert(getNumericValue(BaseState::Opened) + 1 == std::tuple_size_v<decltype(backgrounds)>,
                   "Number of background bitmaps doesn't match the count of enum values");
     switch (guiState) {
@@ -64,11 +68,12 @@ public:
     throw std::runtime_error(fmt::format("Invalid GUI state {}!", getNumericValue(guiState)));
   }
 
-  wxBitmap &getBackground(const BaseState &guiState) {
+  [[nodiscard]] wxBitmap &getBackground(const BaseState &guiState) {
+    // NOTLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
     return const_cast<wxBitmap &>(const_cast<const FieldBitmaps *>(this)->getBackground(guiState));
   }
 
-  const wxBitmap &getFigure(const FigureType &fieldType) const {
+  [[nodiscard]] const wxBitmap &getFigure(const FigureType &fieldType) const {
     static_assert(getNumericValue(FigureType::Flag) + 1 == std::tuple_size_v<decltype(figures)>,
                   "Number of figure bitmaps doesn't match the count of enum values");
     switch (fieldType) {
@@ -89,12 +94,13 @@ public:
     throw std::runtime_error(fmt::format("Invalid field type {}!", getNumericValue(fieldType)));
   }
 
-  wxBitmap &getFigure(const FigureType &fieldType) {
+  [[nodiscard]] wxBitmap &getFigure(const FigureType &fieldType) {
+    // NOTLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
     return const_cast<wxBitmap &>(const_cast<const FieldBitmaps *>(this)->getFigure(fieldType));
   }
 
-  std::array<wxBitmap, 4> backgrounds;
-  std::array<wxBitmap, 12> figures;
+  std::array<wxBitmap, baseStateCount> backgrounds;
+  std::array<wxBitmap, figureTypeCount> figures;
 };
 
 class FieldState {
