@@ -12,6 +12,7 @@ jobs:
           - os: windows-2019
             compiler: clang
             script: windows
+            cmake-options: "-TClangCL -DWARNINGS_AS_ERRORS=0"
           - os: ubuntu-20.04
             compiler: gcc-10
             cc: gcc-10
@@ -21,6 +22,7 @@ jobs:
       COMPILER: ${{ matrix.compiler }}
       CC: ${{ matrix.cc }}
       CCX: ${{ matrix.ccx }}
+      CMAKE_OPTIONS: ${{ matrix.cmake-options }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
