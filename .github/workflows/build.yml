@@ -7,4 +7,4 @@ jobs:
       COMPILER: MSVC
     steps:
       - uses: actions/checkout@v2
-      - run: ./scripts/install/windows.sh
+      - run: ./.github/workflows/scripts/install/windows.sh
