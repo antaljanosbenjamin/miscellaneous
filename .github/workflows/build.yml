@@ -30,6 +30,13 @@ jobs:
             script: linux
             cmake-options: "-DENABLE_CLANG_TIDY=ON"
             install-packages: "clang-tidy-10"
+          - os: ubuntu-20.04
+            compiler: gcc-10
+            cc: gcc-10
+            ccx: g++-10
+            script: linux
+            cmake-options: "-DENABLE_CPPCHECK=ON"
+            install-packages: "cppcheck"
     env:
       COMPILER: ${{ matrix.compiler }}
       CC: ${{ matrix.cc }}
