@@ -23,6 +23,12 @@ jobs:
             cc: clang-10
             ccx: clang++-10
             script: linux
+          - os: ubuntu-20.04
+            compiler: clang-10
+            cc: clang-10
+            ccx: clang++-10
+            script: linux
+            cmake-options: "-DENABLE_CLANG_TIDY=ON "
     env:
       COMPILER: ${{ matrix.compiler }}
       CC: ${{ matrix.cc }}
