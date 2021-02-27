@@ -190,9 +190,9 @@ private:
 
   void CreateFields(const uint64_t width, const uint64_t height);
   void DestroyFields();
-  void OnHello(wxCommandEvent &event);
-  void OnExit(wxCommandEvent &event);
-  void OnAbout(wxCommandEvent &event);
+  void OnHello(wxCommandEvent & /*unused*/);
+  void OnExit(wxCommandEvent & /*unused*/);
+  void OnAbout(wxCommandEvent & /*unused*/);
   void OnButtonClicked(wxCommandEvent &event);
 
   wxPanel *fieldHolderPanel{nullptr};
@@ -350,17 +350,17 @@ void FieldsFrame::DestroyFields() {
   }
 }
 
-void FieldsFrame::OnExit(wxCommandEvent &) {
+void FieldsFrame::OnExit(wxCommandEvent & /*unused*/) {
   Close(true);
 }
 
-void FieldsFrame::OnAbout(wxCommandEvent &) {
+void FieldsFrame::OnAbout(wxCommandEvent & /*unused*/) {
   wxMessageBox("This is a wxWidgets Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
   CreateFields(20, 20);
   Refresh();
 }
 
-void FieldsFrame::OnHello(wxCommandEvent &) {
+void FieldsFrame::OnHello(wxCommandEvent & /*unused*/) {
   wxLogMessage("Hello world from wxWidgets!");
   DestroyFields();
 }
