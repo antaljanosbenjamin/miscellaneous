@@ -48,10 +48,12 @@ enum class FieldType : uint8_t {
   Mine,
 };
 
+using SizeType = int64_t;
+
 #pragma pack(push, 1)
 struct FieldInfo {
-  uint64_t row{0U};
-  uint64_t column{0U};
+  SizeType row{0};
+  SizeType column{0};
   FieldType type{FieldType::Empty};
 };
 #pragma pack(pop)
@@ -68,8 +70,8 @@ constexpr auto in_place = tl::in_place;
 class Minesweeper {
 public:
   struct Dimension {
-    uint64_t width;
-    uint64_t height;
+    SizeType width{0};
+    SizeType height{0};
   };
 
   [[nodiscard]] static Result<Minesweeper> create(GameLevel level) noexcept;
@@ -83,8 +85,8 @@ public:
 
   [[nodiscard]] Result<Dimension> getSize() const noexcept;
   [[nodiscard]] Result<uint64_t> getElapsedSeconds() const noexcept;
-  [[nodiscard]] Result<FieldFlagResult> toggleFlag(const uint64_t row, const uint64_t column);
-  [[nodiscard]] Result<OpenInfo> open(const uint64_t row, const uint64_t column);
+  [[nodiscard]] Result<FieldFlagResult> toggleFlag(const SizeType row, const SizeType column);
+  [[nodiscard]] Result<OpenInfo> open(const SizeType row, const SizeType column);
 
 private:
   struct Impl;
