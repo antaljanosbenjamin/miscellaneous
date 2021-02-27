@@ -31,12 +31,11 @@ enum class FigureType : uint8_t {
   Six,
   Seven,
   Eight,
-  Nine,
   Mine,
   Flag,
 };
 
-constexpr auto figureTypeCount = 12;
+constexpr auto figureTypeCount = 11;
 
 template <typename TTo, typename TFrom>
 constexpr TTo safeCast(const TFrom &from) {
@@ -86,7 +85,6 @@ public:
     case FigureType::Six:
     case FigureType::Seven:
     case FigureType::Eight:
-    case FigureType::Nine:
     case FigureType::Mine:
     case FigureType::Flag:
       return figures[getNumericValue(fieldType)];
