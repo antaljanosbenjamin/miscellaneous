@@ -1,10 +1,13 @@
 #include <array>
 #include <functional>
+#include <map>
 #include <memory>
+#include <utility>
 
 #include <fmt/core.h>
 #include <nonstd/span.hpp>
 #include "Minesweeper.hpp"
+#include "Resources.hpp"
 #include "WxWidgetsWrapper.hpp"
 
 class MyApp : public wxApp {
@@ -106,9 +109,19 @@ public:
   FieldState(const uint64_t &row, const uint64_t &column)
     : row{row}
     , column{column} {
+    figureType = static_cast<FigureType>((row + column) % (static_cast<uint64_t>(FigureType::Flag) + 1));
+    if (FigureType::Mine == figureType && row % 2 == 0) {
+      baseState = BaseState::Boomed;
+    }
   }
 
   void updateWithBaseState(const BaseState &newBaseState) {
+    if (newBaseState == BaseState::Hoovered && !canBeHoover()) {
+      return;
+    }
+    if (newBaseState == BaseState::Closed && !isHoovered()) {
+      return;
+    }
     baseState = newBaseState;
   }
 
@@ -128,6 +141,14 @@ public:
   }
 
 private:
+  [[nodiscard]] bool canBeHoover() const {
+    return baseState == BaseState::Closed;
+  }
+
+  [[nodiscard]] bool isHoovered() const {
+    return baseState == BaseState::Hoovered;
+  }
+
   [[nodiscard]] bool shouldDrawFigure() const {
     return baseState == BaseState::Boomed || baseState == BaseState::Opened || figureType == FigureType::Flag;
   }
@@ -184,7 +205,7 @@ public:
   FieldsFrame();
 
 private:
-  static constexpr auto bitmapSize = 40;
+  static constexpr auto bitmapSize = 25;
   FieldBitmaps bitmaps{bitmapSize};
   std::vector<std::reference_wrapper<FieldPanel>> panels{};
 
@@ -204,6 +225,7 @@ enum {
 wxIMPLEMENT_APP(MyApp); // NOLINT(cert-err58-cpp)
 
 bool MyApp::OnInit() {
+  wxImage::AddHandler(new wxPNGHandler);
   auto frame = std::make_unique<FieldsFrame>();
   frame->Show(true);
   frame.release();
@@ -257,9 +279,8 @@ void FieldPanel::Render(wxDC &dc) {
 }
 
 FieldsFrame::FieldsFrame()
-  // NOLINTNEXTLINE(hicpp-signed-bitwise)
   : wxFrame(nullptr, wxID_ANY, "Hello World", wxDefaultPosition, wxDefaultSize,
-            wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER) {
+            wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER) { // NOLINT(hicpp-signed-bitwise)
 
   auto menuFile = std::make_unique<wxMenu>();
   menuFile->Append(ID_Hello, "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item");
@@ -296,10 +317,37 @@ FieldsFrame::FieldsFrame()
     dc.SelectObject(wxNullBitmap);
   };
 
-  paint(bitmaps.getBackground(BaseState::Closed), wxColor{50, 50, 170});
-  paint(bitmaps.getBackground(BaseState::Boomed), *wxRED);
-  paint(bitmaps.getBackground(BaseState::Hoovered), wxColor{180, 150, 0});
-  paint(bitmaps.getBackground(BaseState::Opened), *wxLIGHT_GREY);
+  auto fs = cmrc::minesweeper_gui_resources::get_filesystem();
+
+  {
+    const auto backgroundImageBindings = std::map<BaseState, std::string>{
+        {BaseState::Closed, "closed.png"},
+        {BaseState::Boomed, "boomed.png"},
+        {BaseState::Hoovered, "hoovered.png"},
+        {BaseState::Opened, "opened.png"},
+    };
+
+    for (const auto &binding: backgroundImageBindings) {
+      auto image = fs.open(binding.second);
+      auto streamToReadFrom = wxMemoryInputStream(image.begin(), image.size());
+      bitmaps.getBackground(binding.first) = wxBitmap(wxImage(streamToReadFrom));
+    }
+  }
+
+  {
+    const auto figureImageBindings = std::map<FigureType, std::string>{
+        {FigureType::Empty, "empty.png"}, {FigureType::One, "one.png"},     {FigureType::Two, "two.png"},
+        {FigureType::Three, "three.png"}, {FigureType::Four, "four.png"},   {FigureType::Five, "five.png"},
+        {FigureType::Six, "six.png"},     {FigureType::Seven, "seven.png"}, {FigureType::Eight, "eight.png"},
+        {FigureType::Mine, "mine.png"},   {FigureType::Flag, "flag.png"},
+    };
+
+    for (const auto &binding: figureImageBindings) {
+      auto image = fs.open(binding.second);
+      auto streamToReadFrom = wxMemoryInputStream(image.begin(), image.size());
+      bitmaps.getFigure(binding.first) = wxBitmap(wxImage(streamToReadFrom));
+    }
+  }
 
   auto *topSizer = new wxBoxSizer(wxVERTICAL);
   auto fieldHolderPanelOwner = std::make_unique<wxPanel>(this);
