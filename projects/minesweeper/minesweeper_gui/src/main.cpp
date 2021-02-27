@@ -193,7 +193,6 @@ private:
   void OnHello(wxCommandEvent & /*unused*/);
   void OnExit(wxCommandEvent & /*unused*/);
   void OnAbout(wxCommandEvent & /*unused*/);
-  void OnButtonClicked(wxCommandEvent &event);
 
   wxPanel *fieldHolderPanel{nullptr};
 };
