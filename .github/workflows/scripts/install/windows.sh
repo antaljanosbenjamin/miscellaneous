@@ -17,3 +17,7 @@ else
   exit 1
 fi
 
+if test ! -z "$INSTALL_PACKAGES" 
+then
+  choco install $INSTALL_PACKAGES
+fi

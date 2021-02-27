@@ -28,12 +28,14 @@ jobs:
             cc: clang-10
             ccx: clang++-10
             script: linux
-            cmake-options: "-DENABLE_CLANG_TIDY=ON "
+            cmake-options: "-DENABLE_CLANG_TIDY=ON"
+            install-packages: "clang-tidy-10"
     env:
       COMPILER: ${{ matrix.compiler }}
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.ccx }}
       CMAKE_OPTIONS: ${{ matrix.cmake-options }}
+      INSTALL_PACKAGES: ${{ matrix.install-packages }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
