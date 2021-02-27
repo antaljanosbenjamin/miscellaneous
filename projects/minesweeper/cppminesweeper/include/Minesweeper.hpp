@@ -45,7 +45,6 @@ enum class FieldType : uint8_t {
   Six,
   Seven,
   Eight,
-  Nine,
   Mine,
 };
 
