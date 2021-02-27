@@ -4,6 +4,9 @@
 
 extern "C" {
 
+using CMGameSizeType = int64_t;
+using CMArraySizeType = uint64_t;
+
 enum CMError : uint32_t {
   CME_Ok,
   CME_InvalidInput,
@@ -29,8 +32,8 @@ struct CMFieldType {
 };
 
 struct CMFieldInfo {
-  uint64_t row{0U};
-  uint64_t col{0U};
+  CMGameSizeType row{0U};
+  CMGameSizeType col{0U};
   CMFieldType fieldType{};
 };
 
@@ -43,15 +46,15 @@ enum CMOpenResult {
 
 struct CMOpenInfo {
   CMOpenResult result{CMOR_Ok};
-  uint64_t fieldInfosLength{0U};
-  uint64_t fieldInfosMaxLength{0U};
+  CMArraySizeType fieldInfosLength{0U};
+  CMArraySizeType fieldInfosMaxLength{0U};
   CMFieldInfo *fieldInfos{nullptr};
 };
 
 struct CMErrorInfo {
   CMError errorCode{CMError::CME_UnexpectedError};
-  uint64_t errorMessageLength{0U};
-  uint64_t errorMessageMaxLength{0U};
+  CMArraySizeType errorMessageLength{0U};
+  CMArraySizeType errorMessageMaxLength{0U};
   char *errorMessage{nullptr};
 };
 
@@ -71,12 +74,12 @@ using CMGameHandle = struct CMGame *;
 using ConstCMGameHandle = const CMGame *;
 
 void minesweeper_new_game(CMGameHandle *gameHandle, CMGameLevel level, CMErrorInfo *errorInfo);
-void minesweeper_game_open(CMGameHandle gameHandle, const uint64_t row, const uint64_t column, CMOpenInfo *openInfo,
-                           CMErrorInfo *errorInfo);
-void minesweeper_game_toggle_flag(CMGameHandle gameHandle, const uint64_t row, const uint64_t column,
+void minesweeper_game_open(CMGameHandle gameHandle, const CMGameSizeType row, const CMGameSizeType column,
+                           CMOpenInfo *openInfo, CMErrorInfo *errorInfo);
+void minesweeper_game_toggle_flag(CMGameHandle gameHandle, const CMGameSizeType row, const CMGameSizeType column,
                                   CMFieldFlagResult *flagResult, CMErrorInfo *errorInfo);
-void minesweeper_game_get_width(ConstCMGameHandle gameHandle, uint64_t *width, CMErrorInfo *errorInfo);
-void minesweeper_game_get_height(ConstCMGameHandle gameHandle, uint64_t *height, CMErrorInfo *errorInfo);
+void minesweeper_game_get_width(ConstCMGameHandle gameHandle, CMGameSizeType *width, CMErrorInfo *errorInfo);
+void minesweeper_game_get_height(ConstCMGameHandle gameHandle, CMGameSizeType *height, CMErrorInfo *errorInfo);
 void minesweeper_game_get_elapsed_seconds(ConstCMGameHandle gameHandle, uint64_t *elapsed_seconds,
                                           CMErrorInfo *errorInfo);
 void minesweeper_destroy_game(CMGameHandle *gameHandle, CMErrorInfo *errorInfo);

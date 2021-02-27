@@ -7,6 +7,8 @@
 #include <utility>
 #include "CMinesweeper.hpp"
 
+static_assert(std::is_same_v<minesweeper::SizeType, CMGameSizeType>, "Type mistmatch!");
+
 namespace {
 minesweeper::Error convert(const CMError cError) {
   switch (cError) {
@@ -75,6 +77,11 @@ struct CType<minesweeper::FieldFlagResult> {
 template <>
 struct CType<uint64_t> {
   using type = uint64_t;
+};
+
+template <>
+struct CType<minesweeper::SizeType> {
+  using type = CMGameSizeType;
 };
 
 uint64_t convert(const uint64_t cValue) {
@@ -179,10 +186,10 @@ minesweeper::Result<TValue> getValue(const TFunc &func, const CMGameHandle handl
 namespace minesweeper {
 struct Minesweeper::Impl {
   [[nodiscard]] Result<Dimension> getSize() const noexcept {
-    return getValue<uint64_t>(minesweeper_game_get_width, this->handle, this->errorInfo)
-        .and_then([this](const Result<uint64_t> &width) {
-          return getValue<uint64_t>(minesweeper_game_get_height, this->handle, this->errorInfo)
-              .and_then([width](const Result<uint64_t> &height) -> Result<Minesweeper::Dimension> {
+    return getValue<minesweeper::SizeType>(minesweeper_game_get_width, this->handle, this->errorInfo)
+        .and_then([this](const Result<minesweeper::SizeType> &width) {
+          return getValue<minesweeper::SizeType>(minesweeper_game_get_height, this->handle, this->errorInfo)
+              .and_then([width](const Result<minesweeper::SizeType> &height) -> Result<Minesweeper::Dimension> {
                 return Dimension{*width, *height};
               });
         });
@@ -202,9 +209,9 @@ struct Minesweeper::Impl {
           this->getSize().and_then([](const Result<Dimension> &dimension) -> Result<std::vector<CMFieldInfo>> {
             assert(dimension->height != 0U);
             assert(dimension->width != 0U);
-            const auto bufferSize = dimension->width * dimension->height;
+            const auto bufferSize = static_cast<CMArraySizeType>(dimension->width * dimension->height);
 
-            if (bufferSize / dimension->width != dimension->height) {
+            if (static_cast<minesweeper::SizeType>(bufferSize / dimension->width) != dimension->height) {
               return tl::unexpected{Error::UnexpectedError};
             }
 
@@ -270,11 +277,11 @@ Result<uint64_t> Minesweeper::getElapsedSeconds() const noexcept {
   return this->impl->getElapsedSeconds();
 }
 
-Result<FieldFlagResult> Minesweeper::toggleFlag(const uint64_t row, const uint64_t column) {
+Result<FieldFlagResult> Minesweeper::toggleFlag(const minesweeper::SizeType row, const minesweeper::SizeType column) {
   return this->impl->toggleFlag(row, column);
 }
 
-[[nodiscard]] Result<OpenInfo> Minesweeper::open(const uint64_t row, const uint64_t column) {
+[[nodiscard]] Result<OpenInfo> Minesweeper::open(const minesweeper::SizeType row, const minesweeper::SizeType column) {
   return this->impl->open(row, column);
 }
 
