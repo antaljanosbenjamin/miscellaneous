@@ -14,9 +14,8 @@ jobs:
         with:
           packages: conan
       - run: ./.github/workflows/scripts/install/windows.sh
-      - run: |
-          mkdir build
-          cd build
-          cmake .. $CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Release
-          cmake --build . --config Release -j 6
-          ctest . -C Release
+      - run: mkdir build
+      - run: cd build
+      - run: cmake .. $CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build . --config Release -j 6
+      - run: ctest . -C Release
