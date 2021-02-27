@@ -1,6 +1,5 @@
 #!/bin/bash
 
-pip install conan
 conan user
 conan profile new default --detect
 
