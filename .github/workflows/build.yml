@@ -1,0 +1,7 @@
+name: build-pdf
+on: [push]
+jobs:
+  build-pdf:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
