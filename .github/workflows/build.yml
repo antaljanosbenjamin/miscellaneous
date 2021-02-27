@@ -8,10 +8,19 @@ jobs:
         include:
           - os: windows-2019
             compiler: MSVC
+            script: windows
           - os: windows-2019
             compiler: clang
+            script: windows
+          - os: ubuntu-20.04
+            compiler: gcc-10
+            cc: gcc-10
+            ccx: g++-10
+            script: linux
     env:
       COMPILER: ${{ matrix.compiler }}
+      CC: ${{ matrix.cc }}
+      CCX: ${{ matrix.ccx }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -20,7 +29,7 @@ jobs:
       - uses: BSFishy/pip-action@v1
         with:
           packages: conan
-      - run: ./.github/workflows/scripts/install/windows.sh
+      - run: ./.github/workflows/scripts/install/${{ matrix.script }}.sh
         shell: bash
       - run: |
           mkdir build
