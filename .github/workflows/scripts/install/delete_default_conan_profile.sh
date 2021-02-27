@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ -f "$HOME/.conan/profiles/default" ]; then
     echo "Default profile exists, deleting it."
