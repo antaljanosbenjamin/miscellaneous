@@ -2,35 +2,42 @@ name: build
 on: [push]
 jobs:
   build:
+    name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
-          - os: windows-2019
+          - name: "Windows MSVC"
+            os: windows-2019
             compiler: MSVC
             script: windows
-          - os: windows-2019
+          - name: "Windows Clang"
+            os: windows-2019
             compiler: clang
             script: windows
             cmake-options: "-TClangCL -DWARNINGS_AS_ERRORS=0"
-          - os: ubuntu-20.04
+          - name: "Linux GCC-10"
+            os: ubuntu-20.04
             compiler: gcc-10
             cc: gcc-10
             ccx: g++-10
             script: linux
-          - os: ubuntu-20.04
+          - name: "Linux Clang-10"
+            os: ubuntu-20.04
             compiler: clang-10
             cc: clang-10
             ccx: clang++-10
             script: linux
-          - os: ubuntu-20.04
+          - name: "Linux Clang-tidy-10"
+            os: ubuntu-20.04
             compiler: clang-10
             cc: clang-10
             ccx: clang++-10
             script: linux
             cmake-options: "-DENABLE_CLANG_TIDY=ON"
             install-packages: "clang-tidy-10"
-          - os: ubuntu-20.04
+          - name: "Linux Cppcheck"
+            os: ubuntu-20.04
             compiler: gcc-10
             cc: gcc-10
             ccx: g++-10
