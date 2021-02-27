@@ -3,5 +3,8 @@ on: [push]
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      - COMPILER: MSVC
     steps:
       - uses: actions/checkout@v2
+      - run: ./scripts/install/windows.sh
