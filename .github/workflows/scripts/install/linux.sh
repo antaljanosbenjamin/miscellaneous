@@ -5,7 +5,7 @@
 conan user
 conan profile new default --detect
 
-sudo apt libgtk2.0-dev
+sudo apt install libgtk2.0-dev
 
 if test ! -z "$INSTALL_PACKAGES" 
 then
