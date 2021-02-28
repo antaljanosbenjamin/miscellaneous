@@ -65,7 +65,7 @@ jobs:
       - uses: BSFishy/pip-action@v1
         with:
           packages: conan
-      - run: ./.github/workflows/scripts/install/${{ matrix.script }}.sh
+      - run: . ./.github/workflows/scripts/install/${{ matrix.script }}.sh
         shell: bash
       - run: |
           mkdir build
