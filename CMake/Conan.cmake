@@ -24,7 +24,7 @@ macro(run_conan)
     list(
       APPEND
       CONAN_DEPENDENCIES
-      wxwidgets/3.1.2@bincrafters/stable
+      wxwidgets/3.1.4@bincrafters/stable
       fmt/7.0.3
       span-lite/0.6.0
     )
