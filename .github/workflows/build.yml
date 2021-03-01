@@ -50,6 +50,7 @@ jobs:
             cmake-options: "-DENABLE_CPPCHECK=ON"
             install-packages: "cppcheck"
             run-tests: false
+      fail-fast: false
     env:
       COMPILER: ${{ matrix.compiler }}
       CC: ${{ matrix.cc }}
