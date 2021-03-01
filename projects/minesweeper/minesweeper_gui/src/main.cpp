@@ -301,22 +301,6 @@ FieldsFrame::FieldsFrame()
   Bind(wxEVT_MENU, &FieldsFrame::OnAbout, this, wxID_ABOUT);
   Bind(wxEVT_MENU, &FieldsFrame::OnExit, this, wxID_EXIT);
 
-  wxMemoryDC dc;
-  auto paint = [&dc](wxBitmap &bitmap, const wxColor &color) {
-    const auto size = bitmap.GetSize();
-    constexpr auto borderSize = 5;
-    assert(size.x >= 2 * borderSize);
-    assert(size.y >= 2 * borderSize);
-    dc.SelectObject(bitmap);
-    dc.SetPen(color);
-    dc.SetBrush(*wxGREY_BRUSH);
-    dc.DrawRectangle(0, 0, size.x, size.y);
-    dc.SetPen(*wxGREY_PEN);
-    dc.SetBrush(wxBrush{color});
-    dc.DrawRectangle(borderSize, borderSize, size.x - 2 * borderSize, size.y - 2 * borderSize);
-    dc.SelectObject(wxNullBitmap);
-  };
-
   auto fs = cmrc::minesweeper_gui_resources::get_filesystem();
 
   {
