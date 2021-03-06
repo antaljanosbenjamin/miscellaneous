@@ -68,7 +68,7 @@ jobs:
           path: |
             ~/.conan
             !~/.conan/profiles
-          key: ${{ runner.os }}-{{ matrix.compiler }}
+          key: ${{ runner.os }}-${{ matrix.compiler }}
       - name: Install dependencies, configure build node
         run: . ./.github/workflows/scripts/install/${{ matrix.script }}.sh
         shell: bash
