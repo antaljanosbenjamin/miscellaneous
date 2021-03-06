@@ -1,4 +1,4 @@
-# From https://github.com/vector-of-bool/cmrc
+# From https://github.com/vector-of-bool/cmrc/blob/e7ba9e9417960b2a5cefc9e79e8af8b06bfde3d1/CMakeRC.cmake
 
 # This block is executed when generating an intermediate resource file, not when
 # running in CMake configure mode
