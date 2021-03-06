@@ -77,3 +77,10 @@ jobs:
           cd build
           if [ "$RUN_TESTS" = true ] ; then ctest . -C Release --jobs 6 ; fi
         shell: bash
+      - name: Cache conan files
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.conan
+            !~/.conan/profiles
+          key: ${{ runner.os }}-{{ matrix.compiler }}
