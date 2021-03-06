@@ -175,7 +175,6 @@ class FieldPanel : public wxPanel {
 public:
   FieldPanel(wxPanel &parent, const uint64_t row, const uint64_t column, const FieldBitmaps &bitmaps);
 
-  // cppcheck-suppress unknownMacro
   DECLARE_EVENT_TABLE() // NOLINT(modernize-avoid-c-arrays)
 
 private:

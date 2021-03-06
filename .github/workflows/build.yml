@@ -41,15 +41,6 @@ jobs:
             cmake-options: "-DENABLE_CLANG_TIDY=ON"
             install-packages: "clang-tidy-10"
             run-tests: false
-          - name: "Linux Cppcheck"
-            os: ubuntu-20.04
-            compiler: gcc-10
-            cc: gcc-10
-            ccx: g++-10
-            script: linux
-            cmake-options: "-DENABLE_CPPCHECK=ON"
-            install-packages: "cppcheck"
-            run-tests: false
       fail-fast: false
     env:
       COMPILER: ${{ matrix.compiler }}
