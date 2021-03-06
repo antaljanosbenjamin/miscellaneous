@@ -17,12 +17,15 @@
 
   #define WARNING_MSVC_THIS_FUNCTION_OR_VARIABLE_MAY_BE_UNSAFE
 
+  // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
   #define PRAGMA_WARNING_PUSH_GCC() _Pragma(GCC diagnostic push)
+  // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
   #define PRAGMA_WARNING_POP_GCC() _Pragma(GCC diagnostic pop)
+  // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
   #define PRAGMA_WARNING_IGNORE_GCC(Warning) _Pragma(GCC diagnostic ignored #Warning)
 
-  #define WARNING_IGNORED_ATTRIBUTES_GCC                                                                               \
-    -Wattributes // NOLINT(cppcoreguidelines-macro-usage,bugprone-macro-parentheses)
+  // NOLINTNEXTLINE(cppcoreguidelines-macro-usage,bugprone-macro-parentheses)
+  #define WARNING_IGNORED_ATTRIBUTES_GCC -Wattributes
 #endif
 
 #if defined(TI_IS_CLANG_CL) || defined(TI_IS_CLANG)
