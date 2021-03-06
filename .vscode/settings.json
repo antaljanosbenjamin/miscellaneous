@@ -1,0 +1,5 @@
+{
+    "cmake.configureSettings": {
+        "ENABLE_CLANG_TIDY": false
+    }
+}
