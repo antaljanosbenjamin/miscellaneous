@@ -22,6 +22,12 @@ if(NOT TI_IS_CLANG_CL)
     res/three.png
     res/two.png
   )
+  set(RESOURCE_FOLDER_PREFIX "__cmrc_")
+  configure_file(
+    res/.clang-tidy
+    ${CMAKE_CURRENT_BINARY_DIR}/${RESOURCE_FOLDER_PREFIX}minesweeper_gui_resources/.clang-tidy
+    COPYONLY
+  )
 
   set(MINESWEEPER_GUI_HEADERS include/Utils.hpp include/WxWidgetsWrapper.hpp)
   set(MINESWEEPER_GUI_SOURCES src/main.cpp)

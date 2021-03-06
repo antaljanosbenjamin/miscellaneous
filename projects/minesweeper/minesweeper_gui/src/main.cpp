@@ -53,7 +53,8 @@ constexpr std::underlying_type_t<TEnum> getNumericValue(const TEnum enumValue) {
 class FieldBitmaps {
 public:
   explicit FieldBitmaps(int bitmapSize) {
-    std::fill(backgrounds.begin(), backgrounds.end(), wxBitmap{bitmapSize, bitmapSize});
+    std::fill(backgrounds.begin(), backgrounds.end(),
+              wxBitmap{bitmapSize, bitmapSize}); // NOLINT(clang-analyzer-optin.cplusplus.VirtualCall)
     std::fill(figures.begin(), figures.end(), wxBitmap{bitmapSize, bitmapSize});
   }
 
@@ -164,8 +165,8 @@ private:
   static constexpr auto defaultFigureType = FigureType::Empty;
   BaseState baseState{BaseState::Closed};
   FigureType figureType{defaultFigureType};
-  CLANG_MAYBE_UNUSED uint64_t row{0U};
-  CLANG_MAYBE_UNUSED uint64_t column{0U};
+  CLANG_MAYBE_UNUSED uint64_t row{0U};    // NOLINT(clang-diagnostic-unused-private-field)
+  CLANG_MAYBE_UNUSED uint64_t column{0U}; // NOLINT(clang-diagnostic-unused-private-field)
 };
 
 class FieldsFrame;
@@ -175,7 +176,7 @@ public:
   FieldPanel(wxPanel &parent, const uint64_t row, const uint64_t column, const FieldBitmaps &bitmaps);
 
   // cppcheck-suppress unknownMacro
-  DECLARE_EVENT_TABLE() // NOLINT(cppcoreguidelines-avoid-c-arrays)
+  DECLARE_EVENT_TABLE() // NOLINT(modernize-avoid-c-arrays)
 
 private:
   FieldsFrame &frame();
@@ -191,7 +192,7 @@ private:
   const FieldBitmaps &bitmaps;
 };
 
-BEGIN_EVENT_TABLE(FieldPanel, wxPanel) // NOLINT(cert-err58-cpp, cppcoreguidelines-avoid-c-arrays)
+BEGIN_EVENT_TABLE(FieldPanel, wxPanel) // NOLINT(cert-err58-cpp, modernize-avoid-c-arrays)
 EVT_PAINT(FieldPanel::PaintEvent)
 EVT_RIGHT_DOWN(FieldPanel::RightClickEvent)
 EVT_LEFT_UP(FieldPanel::LeftClickEvent)
@@ -215,6 +216,9 @@ private:
   void OnExit(wxCommandEvent & /*unused*/);
   void OnAbout(wxCommandEvent & /*unused*/);
 
+  static constexpr auto defaultGridHeight = 10;
+  static constexpr auto defaultGridWidth = defaultGridHeight;
+
   wxPanel *fieldHolderPanel{nullptr};
 };
 
@@ -222,13 +226,13 @@ enum {
   ID_Hello = 1,
 };
 
-wxIMPLEMENT_APP(MyApp); // NOLINT(cert-err58-cpp)
+wxIMPLEMENT_APP(MyApp); // NOLINT(cert-err58-cpp, cppcoreguidelines-pro-type-static-cast-downcast)
 
 bool MyApp::OnInit() {
-  wxImage::AddHandler(new wxPNGHandler);
+  wxImage::AddHandler(new wxPNGHandler{}); // NOLINT(cppcoreguidelines-owning-memory)
   auto frame = std::make_unique<FieldsFrame>();
   frame->Show(true);
-  frame.release();
+  static_cast<void>(frame.release());
   return true;
 }
 
@@ -290,11 +294,11 @@ FieldsFrame::FieldsFrame()
   menuHelp->Append(wxID_ABOUT);
   auto menuBar = std::make_unique<wxMenuBar>();
   menuBar->Append(menuFile.get(), "&File");
-  menuFile.release();
+  static_cast<void>(menuFile.release());
   menuBar->Append(menuHelp.get(), "&Help");
-  menuHelp.release();
+  static_cast<void>(menuHelp.release());
   SetMenuBar(menuBar.get());
-  menuBar.release();
+  static_cast<void>(menuBar.release());
   CreateStatusBar();
   SetStatusText("Welcome to wxWidgets!");
   Bind(wxEVT_MENU, &FieldsFrame::OnHello, this, ID_Hello);
@@ -333,13 +337,14 @@ FieldsFrame::FieldsFrame()
     }
   }
 
-  auto *topSizer = new wxBoxSizer(wxVERTICAL);
+  std::unique_ptr<wxBoxSizer> topSizer{new wxBoxSizer(wxVERTICAL)};
   auto fieldHolderPanelOwner = std::make_unique<wxPanel>(this);
   topSizer->Add(fieldHolderPanelOwner.get());
   fieldHolderPanel = fieldHolderPanelOwner.release();
-  SetSizerAndFit(topSizer);
+  SetSizerAndFit(topSizer.get());
+  static_cast<void>(topSizer.release());
 
-  CreateFields(10, 10);
+  CreateFields(defaultGridWidth, defaultGridHeight);
 }
 
 void FieldsFrame::CreateFields(const uint64_t width, const uint64_t height) {
@@ -357,16 +362,16 @@ void FieldsFrame::CreateFields(const uint64_t width, const uint64_t height) {
     fieldPanel->SetSize(fieldSize);
     fieldPanel->SetMinSize(fieldSize);
     fieldPanel->SetMaxSize(fieldSize);
-    fieldPanel->SetWindowStyle(wxBORDER_NONE | wxBU_EXACTFIT);
+    fieldPanel->SetWindowStyle(wxBORDER_NONE | wxBU_EXACTFIT); // NOLINT(hicpp-signed-bitwise)
     auto panelRef = std::ref(*fieldPanel);
-    panels.push_back(std::move(panelRef));
+    panels.push_back((panelRef));
     gridSizerOwner->Add(fieldPanel.get(), wxALL, 1);
-    fieldPanel.release();
+    static_cast<void>(fieldPanel.release());
   }
 
   auto *gridSizer = gridSizerOwner.get();
   fieldHolderPanel->SetSizer(gridSizer);
-  gridSizerOwner.release();
+  static_cast<void>(gridSizerOwner.release());
   gridSizer->Fit(fieldHolderPanel);
   gridSizer->SetSizeHints(fieldHolderPanel);
   fieldHolderPanel->Show(true);
@@ -386,8 +391,9 @@ void FieldsFrame::OnExit(wxCommandEvent & /*unused*/) {
 }
 
 void FieldsFrame::OnAbout(wxCommandEvent & /*unused*/) {
-  wxMessageBox("This is a wxWidgets Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
-  CreateFields(20, 20);
+  wxMessageBox("This is a wxWidgets Hello World example", "About Hello World",
+               wxOK | wxICON_INFORMATION); // NOLINT(hicpp-signed-bitwise, readability-magic-numbers)
+  CreateFields(2 * defaultGridWidth, 2 * defaultGridWidth);
   Refresh();
 }
 
