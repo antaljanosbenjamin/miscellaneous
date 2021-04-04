@@ -8,7 +8,7 @@ include(StaticAnalyzers)
 include(ToolchainIdentification)
 
 add_library(project_options INTERFACE)
-target_compile_features(project_options INTERFACE cxx_std_17)
+target_compile_features(project_options INTERFACE cxx_std_20)
 if(TI_IS_MSVC)
   target_compile_definitions(project_options INTERFACE TI_IS_MSVC)
 elseif(TI_IS_CLANG_CL)
