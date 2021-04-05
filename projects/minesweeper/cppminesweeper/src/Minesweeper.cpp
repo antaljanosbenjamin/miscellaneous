@@ -25,26 +25,24 @@ minesweeper::Error convert(const CMError cError) {
   return minesweeper::Error::UnexpectedError;
 }
 
-minesweeper::FieldInfo convertFieldInfo(const CMFieldInfo &cFieldInfo) {
-  const auto getFieldType = [&cFieldInfo]() {
-    switch (cFieldInfo.fieldType.tag) {
+minesweeper::OpenedField convertOpenedField(const CMOpenedField &cOpenedField) {
+  const auto getFieldType = [&cOpenedField]() {
+    switch (cOpenedField.fieldType.tag) {
     case CMFieldTypeTag::CMFTT_Empty:
       return minesweeper::FieldType::Empty;
     case CMFieldTypeTag::CMFTT_Mine:
       return minesweeper::FieldType::Mine;
     case CMFieldTypeTag::CMFTT_Numbered:
-      assert(cFieldInfo.fieldType.payload.value <= 9U && "Field type payload cannot be greater than 9!");
-      return minesweeper::FieldType{cFieldInfo.fieldType.payload.value};
+      assert(cOpenedField.fieldType.payload.value <= 9U && "Field type payload cannot be greater than 9!");
+      return minesweeper::FieldType{cOpenedField.fieldType.payload.value};
     }
 
     throw std::runtime_error(
         "Unexpected CMFieldTypeTag value: " +
-        std::to_string(static_cast<std::underlying_type_t<CMFieldTypeTag>>(cFieldInfo.fieldType.tag)));
+        std::to_string(static_cast<std::underlying_type_t<CMFieldTypeTag>>(cOpenedField.fieldType.tag)));
   };
 
-  minesweeper::FieldInfo fieldInfo{cFieldInfo.row, cFieldInfo.col, getFieldType()};
-
-  return fieldInfo;
+  return minesweeper::OpenedField{cOpenedField.row, cOpenedField.col, getFieldType()};
 }
 
 minesweeper::OpenResult convert(const CMOpenResult cOpenResult) {
@@ -204,9 +202,9 @@ struct Minesweeper::Impl {
   }
 
   [[nodiscard]] Result<OpenInfo> open(const uint64_t row, const uint64_t column) {
-    if (!this->fieldInfoBuffer.has_value()) {
+    if (!this->openedFieldBuffer.has_value()) {
       auto buffer =
-          this->getSize().and_then([](const Result<Dimension> &dimension) -> Result<std::vector<CMFieldInfo>> {
+          this->getSize().and_then([](const Result<Dimension> &dimension) -> Result<std::vector<CMOpenedField>> {
             assert(dimension->height != 0U);
             assert(dimension->width != 0U);
             const auto bufferSize = static_cast<CMArraySizeType>(dimension->width * dimension->height);
@@ -215,30 +213,31 @@ struct Minesweeper::Impl {
               return tl::unexpected{Error::UnexpectedError};
             }
 
-            return std::vector<CMFieldInfo>{bufferSize};
+            return std::vector<CMOpenedField>{bufferSize};
           });
 
       if (!buffer.has_value()) {
         return tl::unexpected{buffer.error()};
       }
-      fieldInfoBuffer = std::move(*buffer);
+      this->openedFieldBuffer = std::move(*buffer);
     }
 
-    CMOpenInfo cOpenInfo{CMOpenResult::CMOR_Boom, 0U, this->fieldInfoBuffer->size(), this->fieldInfoBuffer->data()};
+    CMOpenInfo cOpenInfo{CMOpenResult::CMOR_Boom, 0U, this->openedFieldBuffer->size(), this->openedFieldBuffer->data()};
 
     if (!this->errorInfo.call(minesweeper_game_open, this->handle, row, column, &cOpenInfo)) {
       return tl::unexpected{errorInfo.getCode()};
     }
-    std::vector<FieldInfo> fieldInfos;
-    std::transform(this->fieldInfoBuffer->begin(), this->fieldInfoBuffer->begin() + cOpenInfo.fieldInfosLength,
-                   std::back_inserter(fieldInfos), convertFieldInfo);
+    std::vector<OpenedField> newlyOpenedFields;
+    std::transform(this->openedFieldBuffer->begin(),
+                   this->openedFieldBuffer->begin() + cOpenInfo.newlyOpenedFieldsLength,
+                   std::back_inserter(newlyOpenedFields), convertOpenedField);
 
-    return OpenInfo{convert(cOpenInfo.result), std::move(fieldInfos)};
+    return OpenInfo{convert(cOpenInfo.result), std::move(newlyOpenedFields)};
   }
 
   CMGameHandle handle{nullptr};
   mutable ErrorInfo errorInfo{};
-  std::optional<std::vector<CMFieldInfo>> fieldInfoBuffer{};
+  std::optional<std::vector<CMOpenedField>> openedFieldBuffer{};
 };
 
 Minesweeper::Minesweeper(Minesweeper &&other) noexcept = default;

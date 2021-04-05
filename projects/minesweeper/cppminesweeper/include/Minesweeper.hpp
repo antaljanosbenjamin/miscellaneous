@@ -51,7 +51,7 @@ enum class FieldType : uint8_t {
 using SizeType = int64_t;
 
 #pragma pack(push, 1)
-struct FieldInfo {
+struct OpenedField {
   SizeType row{0};
   SizeType column{0};
   FieldType type{FieldType::Empty};
@@ -60,7 +60,7 @@ struct FieldInfo {
 
 struct OpenInfo {
   OpenResult openResult;
-  std::vector<FieldInfo> fieldInfos;
+  std::vector<OpenedField> newlyOpenedFields;
 };
 
 template <typename TResult>

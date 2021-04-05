@@ -17,11 +17,11 @@ int main() {
   }
 
   CMOpenInfo openInfo{};
-  constexpr auto fieldInfosLength = 100U;
-  std::vector<CMFieldInfo> fieldInfos(fieldInfosLength, CMFieldInfo{});
-  openInfo.fieldInfos = fieldInfos.data();
-  openInfo.fieldInfosLength = 0U;
-  openInfo.fieldInfosMaxLength = fieldInfos.size();
+  constexpr auto newlyOpenedFieldsLength = 100U;
+  std::vector<CMOpenedField> newlyOpenedFields(newlyOpenedFieldsLength, CMOpenedField{});
+  openInfo.newlyOpenedFields = newlyOpenedFields.data();
+  openInfo.newlyOpenedFieldsLength = 0U;
+  openInfo.newlyOpenedFieldsMaxLength = newlyOpenedFields.size();
 
   minesweeper_game_open(gameHandle, 0U, 0U, &openInfo, &errorInfo);
   std::cout << "Error message: \"" << std::string(errorInfo.errorMessage)
@@ -29,7 +29,7 @@ int main() {
   if (errorInfo.errorCode != CMError::CME_Ok) {
     return -2;
   }
-  std::cout << openInfo.fieldInfosLength << '\n';
+  std::cout << openInfo.newlyOpenedFieldsLength << '\n';
 
   minesweeper_destroy_game(&gameHandle, &errorInfo);
 
