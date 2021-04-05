@@ -183,6 +183,10 @@ minesweeper::Result<TValue> getValue(const TFunc &func, const CMGameHandle handl
 
 namespace minesweeper {
 struct Minesweeper::Impl {
+  using OpenFunctionType = decltype(minesweeper_game_open);
+  static_assert(std::is_same_v<OpenFunctionType, decltype(minesweeper_game_open_neighbors)>,
+                "The two open function has different type!");
+
   [[nodiscard]] Result<Dimension> getSize() const noexcept {
     return getValue<minesweeper::SizeType>(minesweeper_game_get_width, this->handle, this->errorInfo)
         .and_then([this](const Result<minesweeper::SizeType> &width) {
@@ -201,7 +205,7 @@ struct Minesweeper::Impl {
     return getValue<FieldFlagResult>(minesweeper_game_toggle_flag, this->handle, this->errorInfo, row, column);
   }
 
-  [[nodiscard]] Result<OpenInfo> open(const uint64_t row, const uint64_t column) {
+  [[nodiscard]] Result<OpenInfo> openCommon(const uint64_t row, const uint64_t column, OpenFunctionType &openFunc) {
     if (!this->openedFieldBuffer.has_value()) {
       auto buffer =
           this->getSize().and_then([](const Result<Dimension> &dimension) -> Result<std::vector<CMOpenedField>> {
@@ -224,7 +228,7 @@ struct Minesweeper::Impl {
 
     CMOpenInfo cOpenInfo{CMOpenResult::CMOR_Boom, 0U, this->openedFieldBuffer->size(), this->openedFieldBuffer->data()};
 
-    if (!this->errorInfo.call(minesweeper_game_open, this->handle, row, column, &cOpenInfo)) {
+    if (!this->errorInfo.call(openFunc, this->handle, row, column, &cOpenInfo)) {
       return tl::unexpected{errorInfo.getCode()};
     }
     std::vector<OpenedField> newlyOpenedFields;
@@ -233,6 +237,14 @@ struct Minesweeper::Impl {
                    std::back_inserter(newlyOpenedFields), convertOpenedField);
 
     return OpenInfo{convert(cOpenInfo.result), std::move(newlyOpenedFields)};
+  }
+
+  [[nodiscard]] Result<OpenInfo> open(const uint64_t row, const uint64_t column) {
+    return this->openCommon(row, column, minesweeper_game_open);
+  }
+
+  [[nodiscard]] Result<OpenInfo> openNeighbors(const uint64_t row, const uint64_t column) {
+    return this->openCommon(row, column, minesweeper_game_open_neighbors);
   }
 
   CMGameHandle handle{nullptr};
@@ -282,6 +294,11 @@ Result<FieldFlagResult> Minesweeper::toggleFlag(const minesweeper::SizeType row,
 
 [[nodiscard]] Result<OpenInfo> Minesweeper::open(const minesweeper::SizeType row, const minesweeper::SizeType column) {
   return this->impl->open(row, column);
+}
+
+[[nodiscard]] Result<OpenInfo> Minesweeper::openNeighbors(const minesweeper::SizeType row,
+                                                          const minesweeper::SizeType column) {
+  return this->impl->openNeighbors(row, column);
 }
 
 Minesweeper::Minesweeper(std::unique_ptr<Impl> &&impl)

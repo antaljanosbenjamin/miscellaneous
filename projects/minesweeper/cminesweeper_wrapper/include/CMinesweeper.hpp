@@ -70,17 +70,32 @@ enum CMFieldFlagResult {
   CMFFR_AlreadyOpened,
 };
 
+enum CMFieldState {
+  CMFS_Closed,
+  CMFS_Opened,
+  CMFS_Flagged,
+};
+
+struct CMFieldInfo {
+  CMFieldState fieldState{CMFieldState::CMFS_Closed};
+  CMFieldType fieldType;
+};
+
 using CMGameHandle = struct CMGame *;
 using ConstCMGameHandle = const CMGame *;
 
 void minesweeper_new_game(CMGameHandle *gameHandle, CMGameLevel level, CMErrorInfo *errorInfo);
 void minesweeper_game_open(CMGameHandle gameHandle, const CMGameSizeType row, const CMGameSizeType column,
                            CMOpenInfo *openInfo, CMErrorInfo *errorInfo);
+void minesweeper_game_open_neighbors(CMGameHandle gameHandle, const CMGameSizeType row, const CMGameSizeType column,
+                                     CMOpenInfo *openInfo, CMErrorInfo *errorInfo);
 void minesweeper_game_toggle_flag(CMGameHandle gameHandle, const CMGameSizeType row, const CMGameSizeType column,
                                   CMFieldFlagResult *flagResult, CMErrorInfo *errorInfo);
 void minesweeper_game_get_width(ConstCMGameHandle gameHandle, CMGameSizeType *width, CMErrorInfo *errorInfo);
 void minesweeper_game_get_height(ConstCMGameHandle gameHandle, CMGameSizeType *height, CMErrorInfo *errorInfo);
 void minesweeper_game_get_elapsed_seconds(ConstCMGameHandle gameHandle, uint64_t *elapsed_seconds,
                                           CMErrorInfo *errorInfo);
+void minesweeper_game_get_field_info(ConstCMGameHandle gameHandle, const CMGameSizeType row,
+                                     const CMGameSizeType column, CMFieldInfo *fieldInfo, CMErrorInfo *errorInfo);
 void minesweeper_destroy_game(CMGameHandle *gameHandle, CMErrorInfo *errorInfo);
 }

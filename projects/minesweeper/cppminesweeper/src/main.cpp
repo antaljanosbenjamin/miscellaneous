@@ -19,5 +19,8 @@ int main() {
   const auto openInfo = minesweeper.open(0U, 0U).value();
   std::cout << "Number of opened fields is " << openInfo.newlyOpenedFields.size() << '\n';
 
+  const auto openNeighborsInfo = minesweeper.openNeighbors(0U, 0U).value();
+  std::cout << "Number of opened fields using openNeighbors is " << openNeighborsInfo.newlyOpenedFields.size() << '\n';
+
   return 0;
 }
