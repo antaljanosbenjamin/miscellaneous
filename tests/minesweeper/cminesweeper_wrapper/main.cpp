@@ -29,7 +29,16 @@ int main() {
   if (errorInfo.errorCode != CMError::CME_Ok) {
     return -2;
   }
-  std::cout << openInfo.newlyOpenedFieldsLength << '\n';
+  std::cout << "Newly opened fields (open): " << openInfo.newlyOpenedFieldsLength << '\n';
+
+  openInfo.newlyOpenedFieldsLength = 0U;
+  minesweeper_game_open_neighbors(gameHandle, 0U, 0U, &openInfo, &errorInfo);
+  std::cout << "Error message: \"" << std::string(errorInfo.errorMessage)
+            << "\", error code: " << static_cast<uint32_t>(errorInfo.errorCode) << '\n';
+  if (errorInfo.errorCode != CMError::CME_Ok) {
+    return -3;
+  }
+  std::cout << "Newly opened fields (openNeighbors): " << openInfo.newlyOpenedFieldsLength << '\n';
 
   minesweeper_destroy_game(&gameHandle, &errorInfo);
 

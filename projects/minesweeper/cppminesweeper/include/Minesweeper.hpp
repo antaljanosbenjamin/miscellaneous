@@ -87,6 +87,7 @@ public:
   [[nodiscard]] Result<uint64_t> getElapsedSeconds() const noexcept;
   [[nodiscard]] Result<FieldFlagResult> toggleFlag(const SizeType row, const SizeType column);
   [[nodiscard]] Result<OpenInfo> open(const SizeType row, const SizeType column);
+  [[nodiscard]] Result<OpenInfo> openNeighbors(const SizeType row, const SizeType column);
 
 private:
   struct Impl;
