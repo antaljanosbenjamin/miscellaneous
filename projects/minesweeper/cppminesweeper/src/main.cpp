@@ -6,7 +6,7 @@ using Minesweeper = minesweeper::Minesweeper;
 using GameLevel = minesweeper::GameLevel;
 template <typename T>
 using Result = minesweeper::Result<T>;
-using FieldInfo = minesweeper::FieldInfo;
+using OpenedField = minesweeper::OpenedField;
 
 // NOLINTNEXTLINE(bugprone-exception-escape)
 int main() {
@@ -17,7 +17,7 @@ int main() {
   std::cout << "Created " << dimension.width << " x " << dimension.height << " sized game\n";
 
   const auto openInfo = minesweeper.open(0U, 0U).value();
-  std::cout << "Number of field infos is " << openInfo.fieldInfos.size() << '\n';
+  std::cout << "Number of opened fields is " << openInfo.newlyOpenedFields.size() << '\n';
 
   return 0;
 }

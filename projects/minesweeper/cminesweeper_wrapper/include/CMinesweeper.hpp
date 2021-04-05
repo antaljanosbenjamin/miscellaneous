@@ -31,7 +31,7 @@ struct CMFieldType {
   CMFieldTagNumberedPayload payload{0U};
 };
 
-struct CMFieldInfo {
+struct CMOpenedField {
   CMGameSizeType row{0U};
   CMGameSizeType col{0U};
   CMFieldType fieldType{};
@@ -46,9 +46,9 @@ enum CMOpenResult {
 
 struct CMOpenInfo {
   CMOpenResult result{CMOR_Ok};
-  CMArraySizeType fieldInfosLength{0U};
-  CMArraySizeType fieldInfosMaxLength{0U};
-  CMFieldInfo *fieldInfos{nullptr};
+  CMArraySizeType newlyOpenedFieldsLength{0U};
+  CMArraySizeType newlyOpenedFieldsMaxLength{0U};
+  CMOpenedField *newlyOpenedFields{nullptr};
 };
 
 struct CMErrorInfo {
