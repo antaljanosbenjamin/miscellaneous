@@ -5,7 +5,7 @@ target_link_libraries(
 )
 
 catch_discover_tests(
-  kickstart_alarm_test TEST_PREFIX ${UNIT_TEST_PREFIX}
+  kickstart_alarm_test TEST_PREFIX "${UNIT_TEST_PREFIX}kickstart_alarm."
   # EXTRA_ARGS -s --reporter=xml --out=tests.xml
 )
 

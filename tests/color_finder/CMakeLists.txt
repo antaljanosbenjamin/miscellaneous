@@ -5,7 +5,7 @@ target_link_libraries(
 )
 
 catch_discover_tests(
-  color_finder_test TEST_PREFIX "unittests.color_finder."
+  color_finder_test TEST_PREFIX "${UNIT_TEST_PREFIX}color_finder."
   # EXTRA_ARGS -s --reporter=xml --out=tests.xml
 )
 
