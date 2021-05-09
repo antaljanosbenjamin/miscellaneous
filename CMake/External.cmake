@@ -15,11 +15,6 @@ macro(run_conan)
   set(CONAN_DEPENDENCIES catch2/2.11.0 tl-expected/20190710)
   set(CONAN_OPTIONS "")
 
-  if(WIN32)
-    list(APPEND CONAN_DEPENDENCIES propagate_const/1.0.0@public-conan/testing)
-    conan_add_remote(NAME twonington URL https://api.bintray.com/conan/twonington/public-conan)
-  endif()
-
   if(NOT TI_IS_CLANG_CL)
     list(
       APPEND
@@ -48,3 +43,14 @@ macro(run_conan)
     ${CONAN_OPTIONS}
   )
 endmacro()
+
+if(WIN32)
+  include(FetchContent)
+
+  FetchContent_Populate(
+    propagate_const GIT_REPOSITORY https://github.com/jbcoe/propagate_const.git
+    GIT_TAG 672cdbcd27028f8985dc7a559a085e530ac4656b
+  )
+
+  add_subdirectory(${propagate_const_SOURCE_DIR} ${propagate_const_BINARY_DIR})
+endif()

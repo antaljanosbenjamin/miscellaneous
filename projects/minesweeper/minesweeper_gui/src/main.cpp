@@ -7,6 +7,7 @@
 #include <fmt/core.h>
 #include <nonstd/span.hpp>
 #include "Minesweeper.hpp"
+#include "PropagateConstWrapper.hpp"
 #include "Resources.hpp"
 #include "WxWidgetsWrapper.hpp"
 
@@ -107,13 +108,37 @@ public:
 
 class FieldState {
 public:
-  FieldState(const uint64_t &row, const uint64_t &column)
-    : row{row}
+  FieldState(const uint64_t row, const uint64_t column)
+    : baseState{BaseState::Closed}
+    , figureType{FigureType::Empty}
+    , row{row}
     , column{column} {
-    figureType = static_cast<FigureType>((row + column) % (static_cast<uint64_t>(FigureType::Flag) + 1));
-    if (FigureType::Mine == figureType && row % 2 == 0) {
-      baseState = BaseState::Boomed;
-    }
+  }
+
+  void toggleFlag(minesweeper::Minesweeper &game) {
+    game.toggleFlag(row, column).and_then([this](const minesweeper::Result<minesweeper::FieldFlagResult> &result) {
+      switch (*result) {
+      case minesweeper::FieldFlagResult::Flagged:
+        this->updateWithFigureType(FigureType::Flag);
+        break;
+      case minesweeper::FieldFlagResult::FlagRemoved:
+        this->updateWithFigureType(FigureType::Empty);
+        break;
+      case minesweeper::FieldFlagResult::AlreadyOpened:
+        break;
+      }
+      return minesweeper::Result<void>();
+    });
+  }
+
+  std::vector<minesweeper::OpenedField> open(minesweeper::Minesweeper &game) {
+    return game.open(row, column)
+        .and_then([this](minesweeper::Result<minesweeper::OpenInfo> &&result) {
+          auto &openInfo = *result;
+
+          return minesweeper::Result<std::vector<minesweeper::OpenedField>>(std::move(openInfo.newlyOpenedFields));
+        })
+        .value();
   }
 
   void updateWithBaseState(const BaseState &newBaseState) {
@@ -170,15 +195,20 @@ private:
 };
 
 class FieldsFrame;
+class FieldPanel;
+
+using FieldPanels = std::vector<std::reference_wrapper<FieldPanel>>;
 
 class FieldPanel : public wxPanel {
 public:
-  FieldPanel(wxPanel &parent, const uint64_t row, const uint64_t column, const FieldBitmaps &bitmaps);
+  FieldPanel(wxPanel &parent, const uint64_t row, const uint64_t column, const FieldBitmaps &bitmaps,
+             FieldPanels &panels, minesweeper::Minesweeper &game);
 
   DECLARE_EVENT_TABLE() // NOLINT(modernize-avoid-c-arrays)
 
+  FieldState state;
+
 private:
-  FieldsFrame &frame();
   void Render(wxDC &dc);
 
   void PaintEvent(wxPaintEvent & /*unused*/);
@@ -187,15 +217,15 @@ private:
   void MouseEnterEvent(wxMouseEvent &event);
   void MouseLeaveEvent(wxMouseEvent &event);
 
-  FieldState state;
-  const FieldBitmaps &bitmaps;
+  const FieldBitmaps *bitmaps;
+  std::experimental::propagate_const<FieldPanels *> panels;
+  std::experimental::propagate_const<minesweeper::Minesweeper *> game;
 };
 
 BEGIN_EVENT_TABLE(FieldPanel, wxPanel) // NOLINT(cert-err58-cpp, modernize-avoid-c-arrays)
 EVT_PAINT(FieldPanel::PaintEvent)
-EVT_RIGHT_DOWN(FieldPanel::RightClickEvent)
 EVT_LEFT_UP(FieldPanel::LeftClickEvent)
-EVT_LEFT_DOWN(FieldPanel::MouseEnterEvent)
+EVT_RIGHT_DOWN(FieldPanel::RightClickEvent)
 EVT_ENTER_WINDOW(FieldPanel::MouseEnterEvent)
 EVT_LEAVE_WINDOW(FieldPanel::MouseLeaveEvent)
 END_EVENT_TABLE()
@@ -204,21 +234,24 @@ class FieldsFrame : public wxFrame {
 public:
   FieldsFrame();
 
-private:
-  static constexpr auto bitmapSize = 25;
-  FieldBitmaps bitmaps{bitmapSize};
-  std::vector<std::reference_wrapper<FieldPanel>> panels{};
+  static FieldPanel &getFieldPanel(FieldPanels &panels, uint64_t row, uint64_t col,
+                                   const minesweeper::Minesweeper::Dimension &size);
 
-  void CreateFields(const uint64_t width, const uint64_t height);
+private:
+  void CreateFields();
   void DestroyFields();
   void OnHello(wxCommandEvent & /*unused*/);
   void OnExit(wxCommandEvent & /*unused*/);
   void OnAbout(wxCommandEvent & /*unused*/);
 
-  static constexpr auto defaultGridHeight = 10;
+  static constexpr auto bitmapSize = 25;
+  static constexpr auto defaultGridHeight = 3;
   static constexpr auto defaultGridWidth = defaultGridHeight;
 
+  FieldBitmaps bitmaps{bitmapSize};
+  FieldPanels panels{};
   wxPanel *fieldHolderPanel{nullptr};
+  minesweeper::Minesweeper game;
 };
 
 enum {
@@ -227,18 +260,23 @@ enum {
 
 wxIMPLEMENT_APP(MyApp); // NOLINT(cert-err58-cpp, cppcoreguidelines-pro-type-static-cast-downcast)
 
+std::unique_ptr<FieldsFrame> frame;
+
 bool MyApp::OnInit() {
   wxImage::AddHandler(new wxPNGHandler{}); // NOLINT(cppcoreguidelines-owning-memory)
-  auto frame = std::make_unique<FieldsFrame>();
+  frame = std::make_unique<FieldsFrame>();
   frame->Show(true);
   static_cast<void>(frame.release());
   return true;
 }
 
-FieldPanel::FieldPanel(wxPanel &parent, const uint64_t row, const uint64_t column, const FieldBitmaps &bitmaps)
+FieldPanel::FieldPanel(wxPanel &parent, const uint64_t row, const uint64_t column, const FieldBitmaps &bitmaps,
+                       FieldPanels &panels, minesweeper::Minesweeper &game)
   : wxPanel(&parent)
   , state{row, column}
-  , bitmaps{bitmaps} {
+  , bitmaps{&bitmaps}
+  , panels{&panels}
+  , game{&game} {
   SetBackgroundStyle(wxBG_STYLE_PAINT);
 }
 
@@ -248,13 +286,20 @@ void FieldPanel::PaintEvent(wxPaintEvent & /*unused*/) {
 }
 
 void FieldPanel::RightClickEvent(wxMouseEvent & /*unused*/) {
-  state.updateWithFigureType(FigureType::Flag);
+  this->state.toggleFlag(*game);
   Refresh();
 }
 
 void FieldPanel::LeftClickEvent(wxMouseEvent & /*unused*/) {
-  state.updateWithBaseState(BaseState::Opened);
-  Refresh();
+  auto newlyOpenedFields = this->state.open(*game);
+  for (const auto &newlyOpenedField: newlyOpenedFields) {
+    auto &fieldPanel =
+        FieldsFrame::getFieldPanel(*panels, static_cast<uint64_t>(newlyOpenedField.row),
+                                   static_cast<uint64_t>(newlyOpenedField.column), game->getSize().value());
+    fieldPanel.state.updateWithBaseState(BaseState::Opened);
+    fieldPanel.state.updateWithFigureType(static_cast<FigureType>(newlyOpenedField.type));
+    fieldPanel.Refresh();
+  }
 }
 
 void FieldPanel::MouseEnterEvent(wxMouseEvent &event) {
@@ -273,17 +318,13 @@ void FieldPanel::MouseLeaveEvent(wxMouseEvent &event) {
   Refresh();
 }
 
-FieldsFrame &FieldPanel::frame() {
-  return *dynamic_cast<FieldsFrame *>(GetParent());
-}
-
 void FieldPanel::Render(wxDC &dc) {
-  state.draw(dc, bitmaps);
+  state.draw(dc, *bitmaps);
 }
 
 FieldsFrame::FieldsFrame()
-  : wxFrame(nullptr, wxID_ANY, "Hello World", wxDefaultPosition, wxDefaultSize,
-            wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER) { // NOLINT(hicpp-signed-bitwise)
+  : wxFrame(nullptr, wxID_ANY, "Hello World", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER)
+  , game{minesweeper::Minesweeper::create(minesweeper::GameLevel::Beginner).value()} { // NOLINT(hicpp-signed-bitwise)
 
   auto menuFile = std::make_unique<wxMenu>();
   menuFile->Append(ID_Hello, "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item");
@@ -343,12 +384,21 @@ FieldsFrame::FieldsFrame()
   SetSizerAndFit(topSizer.get());
   static_cast<void>(topSizer.release());
 
-  CreateFields(defaultGridWidth, defaultGridHeight);
+  CreateFields();
 }
 
-void FieldsFrame::CreateFields(const uint64_t width, const uint64_t height) {
+FieldPanel &FieldsFrame::getFieldPanel(FieldPanels &panels, uint64_t row, uint64_t col,
+                                       const minesweeper::Minesweeper::Dimension &size) {
+  return panels[row * size.width + col];
+}
+
+void FieldsFrame::CreateFields() {
+  const auto size = this->game.getSize().value();
   fieldHolderPanel->Hide();
-  auto gridSizerOwner = std::make_unique<wxGridSizer>(safeCast<int>(height), safeCast<int>(width), 0, 0);
+  auto gridSizerOwner = std::make_unique<wxGridSizer>(safeCast<int>(size.height), safeCast<int>(size.width), 0, 0);
+
+  const auto width = static_cast<uint64_t>(size.width);
+  const auto height = static_cast<uint64_t>(size.height);
 
   const auto fieldCount = width * height;
 
@@ -356,7 +406,8 @@ void FieldsFrame::CreateFields(const uint64_t width, const uint64_t height) {
   panels.reserve(fieldCount);
   for (uint64_t fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex) {
 
-    auto fieldPanel = std::make_unique<FieldPanel>(*fieldHolderPanel, fieldIndex / width, fieldIndex % width, bitmaps);
+    auto fieldPanel =
+        std::make_unique<FieldPanel>(*fieldHolderPanel, fieldIndex / width, fieldIndex % width, bitmaps, panels, game);
 
     fieldPanel->SetSize(fieldSize);
     fieldPanel->SetMinSize(fieldSize);
@@ -392,7 +443,7 @@ void FieldsFrame::OnExit(wxCommandEvent & /*unused*/) {
 void FieldsFrame::OnAbout(wxCommandEvent & /*unused*/) {
   wxMessageBox("This is a wxWidgets Hello World example", "About Hello World",
                wxOK | wxICON_INFORMATION); // NOLINT(hicpp-signed-bitwise, readability-magic-numbers)
-  CreateFields(2 * defaultGridWidth, 2 * defaultGridWidth);
+  CreateFields();
   Refresh();
 }
 
