@@ -11,7 +11,7 @@ target_link_libraries(
 )
 
 if(WIN32)
-  target_link_libraries(cppminesweeper PUBLIC CONAN_PKG::propagate_const)
+  target_link_libraries(cppminesweeper PUBLIC propagate_const)
 endif()
 
 target_link_libraries(cppminesweeper PRIVATE project_warnings)

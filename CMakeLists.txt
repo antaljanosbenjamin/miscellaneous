@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.3)
+cmake_minimum_required(VERSION 3.11.0)
 project(miscellaneous)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
@@ -22,7 +22,7 @@ endif()
 add_library(project_warnings INTERFACE)
 set_project_warnings(project_warnings)
 
-include(Conan)
+include(External)
 run_conan()
 
 include(CTest)
