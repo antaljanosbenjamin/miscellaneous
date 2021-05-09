@@ -34,8 +34,8 @@ void AddTasks(TaskSystemType &ts, std::vector<uint64_t> &runningTimes) {
         result %= thirdMagicNumber;
       }
 #ifdef MY_DEBUG
-      NOT_USED.fetch_add(result, std::memory_order::memory_order_relaxed);
-      task_count.fetch_add(1, std::memory_order::memory_order_relaxed);
+      NOT_USED.fetch_add(result, std::memory_order_relaxed);
+      task_count.fetch_add(1, std::memory_order_relaxed);
 #endif
     });
   }
