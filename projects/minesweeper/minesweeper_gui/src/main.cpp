@@ -225,6 +225,7 @@ BEGIN_EVENT_TABLE(FieldPanel, wxPanel) // NOLINT(cert-err58-cpp, modernize-avoid
 EVT_PAINT(FieldPanel::PaintEvent)
 EVT_LEFT_UP(FieldPanel::LeftClickEvent)
 EVT_RIGHT_DOWN(FieldPanel::RightClickEvent)
+EVT_RIGHT_DCLICK(FieldPanel::RightClickEvent)
 EVT_ENTER_WINDOW(FieldPanel::MouseEnterEvent)
 EVT_LEAVE_WINDOW(FieldPanel::MouseLeaveEvent)
 END_EVENT_TABLE()
