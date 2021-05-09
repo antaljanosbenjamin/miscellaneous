@@ -40,7 +40,6 @@ if(NOT TI_IS_CLANG_CL)
             minesweeper_gui_resources
             CONAN_PKG::wxwidgets
             CONAN_PKG::fmt
-            CONAN_PKG::span-lite
             project_options
             project_warnings
   )
