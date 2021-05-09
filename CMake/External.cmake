@@ -16,13 +16,7 @@ macro(run_conan)
   set(CONAN_OPTIONS "")
 
   if(NOT TI_IS_CLANG_CL)
-    list(
-      APPEND
-      CONAN_DEPENDENCIES
-      wxwidgets/3.1.4@bincrafters/stable
-      fmt/7.0.3
-      span-lite/0.6.0
-    )
+    list(APPEND CONAN_DEPENDENCIES wxwidgets/3.1.4@bincrafters/stable fmt/7.0.3)
     list(
       APPEND
       CONAN_OPTIONS

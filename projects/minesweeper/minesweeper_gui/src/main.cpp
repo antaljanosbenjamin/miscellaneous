@@ -5,7 +5,6 @@
 #include <utility>
 
 #include <fmt/core.h>
-#include <nonstd/span.hpp>
 #include "Minesweeper.hpp"
 #include "PropagateConstWrapper.hpp"
 #include "Resources.hpp"
