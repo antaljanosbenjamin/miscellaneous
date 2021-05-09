@@ -6,7 +6,7 @@ target_link_libraries(
 )
 
 catch_discover_tests(
-  limited_correspondence_test TEST_PREFIX ${UNIT_TEST_PREFIX}
+  limited_correspondence_test TEST_PREFIX "${UNIT_TEST_PREFIX}limited_correspondence."
   # EXTRA_ARGS -s --reporter=xml --out=tests.xml
 )
 

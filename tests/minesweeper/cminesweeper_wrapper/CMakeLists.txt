@@ -4,7 +4,7 @@ target_link_libraries(
   cminesweeper_wrapper_test PRIVATE cminesweeper_wrapper project_options project_warnings
 )
 
-add_test(NAME ${UNIT_TEST_PREFIX}cminesweeper_wrapper_test
+add_test(NAME "${UNIT_TEST_PREFIX}cminesweeper_wrapper_test"
          COMMAND $<TARGET_FILE:cminesweeper_wrapper_test>
 )
 
