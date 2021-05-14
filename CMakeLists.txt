@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.11.0)
 project(miscellaneous)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+set(CMAKE_CONFIGURATION_TYPES "${CMAKE_BUILD_TYPE}")
 
 include(Warnings)
 include(StaticAnalyzers)
