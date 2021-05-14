@@ -35,10 +35,11 @@ enum class FigureType : uint8_t {
   Seven,
   Eight,
   Mine,
+  WrongMine,
   Flag,
 };
 
-constexpr auto figureTypeCount = 11;
+constexpr auto figureTypeCount = 12;
 
 template <typename TTo, typename TFrom>
 constexpr TTo safeCast(const TFrom &from) {
@@ -90,6 +91,7 @@ public:
     case FigureType::Seven:
     case FigureType::Eight:
     case FigureType::Mine:
+    case FigureType::WrongMine:
     case FigureType::Flag:
       return figures[getNumericValue(fieldType)];
     }
@@ -364,10 +366,10 @@ FieldsFrame::FieldsFrame()
 
   {
     const auto figureImageBindings = std::map<FigureType, std::string>{
-        {FigureType::Empty, "empty.png"}, {FigureType::One, "one.png"},     {FigureType::Two, "two.png"},
-        {FigureType::Three, "three.png"}, {FigureType::Four, "four.png"},   {FigureType::Five, "five.png"},
-        {FigureType::Six, "six.png"},     {FigureType::Seven, "seven.png"}, {FigureType::Eight, "eight.png"},
-        {FigureType::Mine, "mine.png"},   {FigureType::Flag, "flag.png"},
+        {FigureType::Empty, "empty.png"}, {FigureType::One, "one.png"},          {FigureType::Two, "two.png"},
+        {FigureType::Three, "three.png"}, {FigureType::Four, "four.png"},        {FigureType::Five, "five.png"},
+        {FigureType::Six, "six.png"},     {FigureType::Seven, "seven.png"},      {FigureType::Eight, "eight.png"},
+        {FigureType::Mine, "mine.png"},   {FigureType::WrongMine, "mine_2.png"}, {FigureType::Flag, "flag.png"},
     };
 
     for (const auto &binding: figureImageBindings) {
