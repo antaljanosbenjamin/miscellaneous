@@ -21,11 +21,10 @@ private:
   void OnExit(wxCommandEvent & /*unused*/);
   void OnAbout(wxCommandEvent & /*unused*/);
 
-  static constexpr auto bitmapSize = 25;
   static constexpr auto defaultGridHeight = 3;
   static constexpr auto defaultGridWidth = defaultGridHeight;
 
-  FieldBitmaps bitmaps{bitmapSize};
+  FieldBitmaps bitmaps;
   FieldPanels panels{};
   wxPanel *fieldHolderPanel{nullptr};
   minesweeper::Minesweeper game;

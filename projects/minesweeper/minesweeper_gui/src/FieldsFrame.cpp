@@ -12,11 +12,53 @@ namespace {
 enum {
   ID_Hello = 1,
 };
+
+minesweeper_gui::FieldBitmaps getDefaultBitmaps() {
+  static constexpr auto bitmapSize = 25;
+  using FieldBitmaps = minesweeper_gui::FieldBitmaps;
+  using BaseState = minesweeper_gui::BaseState;
+  using FigureType = minesweeper_gui::FigureType;
+
+  FieldBitmaps bitmaps{bitmapSize};
+  auto fs = cmrc::minesweeper_gui_resources::get_filesystem();
+
+  {
+    const auto backgroundImageBindings = std::map<BaseState, std::string>{
+        {BaseState::Closed, "closed.png"},
+        {BaseState::Boomed, "boomed.png"},
+        {BaseState::Hoovered, "hoovered.png"},
+        {BaseState::Opened, "opened.png"},
+    };
+
+    for (const auto &binding: backgroundImageBindings) {
+      auto image = fs.open(binding.second);
+      auto streamToReadFrom = wxMemoryInputStream(image.begin(), image.size());
+      bitmaps.getBackground(binding.first) = wxBitmap(wxImage(streamToReadFrom));
+    }
+  }
+
+  {
+    const auto figureImageBindings = std::map<FigureType, std::string>{
+        {FigureType::Empty, "empty.png"}, {FigureType::One, "one.png"},          {FigureType::Two, "two.png"},
+        {FigureType::Three, "three.png"}, {FigureType::Four, "four.png"},        {FigureType::Five, "five.png"},
+        {FigureType::Six, "six.png"},     {FigureType::Seven, "seven.png"},      {FigureType::Eight, "eight.png"},
+        {FigureType::Mine, "mine.png"},   {FigureType::WrongMine, "mine_2.png"}, {FigureType::Flag, "flag.png"},
+    };
+
+    for (const auto &binding: figureImageBindings) {
+      auto image = fs.open(binding.second);
+      auto streamToReadFrom = wxMemoryInputStream(image.begin(), image.size());
+      bitmaps.getFigure(binding.first) = wxBitmap(wxImage(streamToReadFrom));
+    }
+  }
+  return bitmaps;
 }
+} // namespace
 
 namespace minesweeper_gui {
 FieldsFrame::FieldsFrame()
   : wxFrame(nullptr, wxID_ANY, "Hello World", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER)
+  , bitmaps{getDefaultBitmaps()}
   , game{minesweeper::Minesweeper::create(minesweeper::GameLevel::Beginner).value()} { // NOLINT(hicpp-signed-bitwise)
 
   auto menuFile = std::make_unique<wxMenu>();
@@ -45,40 +87,6 @@ FieldsFrame::FieldsFrame()
   SetSizerAndFit(topSizer.get());
   static_cast<void>(topSizer.release());
 
-  {
-    auto fs = cmrc::minesweeper_gui_resources::get_filesystem();
-
-    {
-      const auto backgroundImageBindings = std::map<BaseState, std::string>{
-          {BaseState::Closed, "closed.png"},
-          {BaseState::Boomed, "boomed.png"},
-          {BaseState::Hoovered, "hoovered.png"},
-          {BaseState::Opened, "opened.png"},
-      };
-
-      for (const auto &binding: backgroundImageBindings) {
-        auto image = fs.open(binding.second);
-        auto streamToReadFrom = wxMemoryInputStream(image.begin(), image.size());
-        bitmaps.getBackground(binding.first) = wxBitmap(wxImage(streamToReadFrom));
-      }
-    }
-
-    {
-      const auto figureImageBindings = std::map<FigureType, std::string>{
-          {FigureType::Empty, "empty.png"}, {FigureType::One, "one.png"},          {FigureType::Two, "two.png"},
-          {FigureType::Three, "three.png"}, {FigureType::Four, "four.png"},        {FigureType::Five, "five.png"},
-          {FigureType::Six, "six.png"},     {FigureType::Seven, "seven.png"},      {FigureType::Eight, "eight.png"},
-          {FigureType::Mine, "mine.png"},   {FigureType::WrongMine, "mine_2.png"}, {FigureType::Flag, "flag.png"},
-      };
-
-      for (const auto &binding: figureImageBindings) {
-        auto image = fs.open(binding.second);
-        auto streamToReadFrom = wxMemoryInputStream(image.begin(), image.size());
-        bitmaps.getFigure(binding.first) = wxBitmap(wxImage(streamToReadFrom));
-      }
-    }
-  }
-
   CreateFields();
 }
 
@@ -96,6 +104,7 @@ void FieldsFrame::CreateFields() {
   const auto height = static_cast<uint64_t>(size.height);
 
   const auto fieldCount = width * height;
+  const auto bitmapSize = bitmaps.getSize();
 
   auto fieldSize = wxSize(bitmapSize, bitmapSize);
   panels.reserve(fieldCount);
