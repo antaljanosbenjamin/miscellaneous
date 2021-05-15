@@ -1,8 +1,10 @@
 #include "LetterAssembler.hpp"
 
 #include <algorithm>
+#include <limits>
 #include <set>
 #include <tuple>
+
 
 bool LetterAssembler::read(std::istream &inputStream) {
   auto pairCount = 0U;
