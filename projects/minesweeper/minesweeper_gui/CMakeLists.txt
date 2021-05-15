@@ -1,8 +1,9 @@
 include(ToolchainIdentification)
 
 if(NOT TI_IS_CLANG_CL)
+  set(RESOURCE_LIB_NAME minesweeper_gui_resources)
   cmrc_add_resource_library(
-    minesweeper_gui_resources
+    ${RESOURCE_LIB_NAME}
     WHENCE
     res
     res/boomed.png
@@ -25,12 +26,31 @@ if(NOT TI_IS_CLANG_CL)
   set(RESOURCE_FOLDER_PREFIX "__cmrc_")
   configure_file(
     res/.clang-tidy
-    ${CMAKE_CURRENT_BINARY_DIR}/${RESOURCE_FOLDER_PREFIX}minesweeper_gui_resources/.clang-tidy
-    COPYONLY
+    ${CMAKE_CURRENT_BINARY_DIR}/${RESOURCE_FOLDER_PREFIX}${RESOURCE_LIB_NAME}/.clang-tidy COPYONLY
   )
 
-  set(MINESWEEPER_GUI_HEADERS include/Utils.hpp include/WxWidgetsWrapper.hpp)
-  set(MINESWEEPER_GUI_SOURCES src/main.cpp)
+  set(MINESWEEPER_GUI_HEADERS
+      # cmake-format: sortable
+      include/BaseState.hpp
+      include/FieldBitmaps.hpp
+      include/FieldPanel.hpp
+      include/FieldsFrame.hpp
+      include/FieldState.hpp
+      include/Resources.hpp
+      include/utils/EnumHelper.hpp
+      include/utils/SafeCast.hpp
+      include/utils/Warnings.hpp
+      include/WxWidgetsWrapper.hpp
+  )
+
+  set(MINESWEEPER_GUI_SOURCES
+      # cmake-format: sortable
+      src/FieldBitmaps.cpp
+      src/FieldPanel.cpp
+      src/FieldsFrame.cpp
+      src/FieldState.cpp
+      src/main.cpp
+  )
 
   add_executable(minesweeper_gui ${MINESWEEPER_GUI_HEADERS} ${MINESWEEPER_GUI_SOURCES})
   target_include_directories(minesweeper_gui PRIVATE include)
