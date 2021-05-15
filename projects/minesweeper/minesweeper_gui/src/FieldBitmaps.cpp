@@ -53,4 +53,8 @@ FieldBitmaps::FieldBitmaps(int bitmapSize) {
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
   return const_cast<wxBitmap &>(const_cast<const FieldBitmaps *>(this)->getFigure(fieldType));
 }
+
+[[nodiscard]] int FieldBitmaps::getSize() const {
+  return backgrounds[0].GetHeight();
+}
 } // namespace minesweeper_gui
