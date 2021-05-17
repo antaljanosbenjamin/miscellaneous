@@ -6,6 +6,7 @@
 class MyApp : public wxApp {
 public:
   bool OnInit() override;
+  bool OnExceptionInMainLoop() override;
 };
 
 wxIMPLEMENT_APP(MyApp); // NOLINT(cert-err58-cpp, cppcoreguidelines-pro-type-static-cast-downcast)
@@ -17,5 +18,11 @@ bool MyApp::OnInit() {
   frame = std::make_unique<minesweeper_gui::FieldsFrame>();
   frame->Show(true);
   static_cast<void>(frame.release());
+  return true;
+}
+
+bool MyApp::OnExceptionInMainLoop() {
+  wxMessageBox("Something went wrong :(", "Error",
+               wxOK | wxICON_ERROR); // NOLINT(hicpp-signed-bitwise, readability-magic-numbers)
   return true;
 }
