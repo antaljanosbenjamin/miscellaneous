@@ -16,8 +16,7 @@ public:
 
 private:
   void CreateFields();
-  void DestroyFields();
-  void OnHello(wxCommandEvent & /*unused*/);
+  void OnNewGame(wxCommandEvent & /*unused*/);
   void OnExit(wxCommandEvent & /*unused*/);
   void OnAbout(wxCommandEvent & /*unused*/);
 
@@ -26,7 +25,7 @@ private:
 
   FieldBitmaps bitmaps;
   FieldPanels panels{};
-  wxPanel *fieldHolderPanel{nullptr};
+  std::experimental::propagate_const<wxPanel *> fieldHolderPanel{nullptr};
   minesweeper::Minesweeper game;
 };
 } // namespace minesweeper_gui

@@ -10,7 +10,7 @@
 
 namespace {
 enum {
-  ID_Hello = 1,
+  ID_NewGame = 1,
 };
 
 minesweeper_gui::FieldBitmaps getDefaultBitmaps() {
@@ -62,7 +62,7 @@ FieldsFrame::FieldsFrame()
   , game{minesweeper::Minesweeper::create(minesweeper::GameLevel::Beginner).value()} { // NOLINT(hicpp-signed-bitwise)
 
   auto menuFile = std::make_unique<wxMenu>();
-  menuFile->Append(ID_Hello, "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item");
+  menuFile->Append(ID_NewGame, "&New game\tCtrl-N", "Start new game");
   menuFile->AppendSeparator();
   menuFile->Append(wxID_EXIT);
   auto menuHelp = std::make_unique<wxMenu>();
@@ -75,8 +75,7 @@ FieldsFrame::FieldsFrame()
   SetMenuBar(menuBar.get());
   static_cast<void>(menuBar.release());
   CreateStatusBar();
-  SetStatusText("Welcome to wxWidgets!");
-  Bind(wxEVT_MENU, &FieldsFrame::OnHello, this, ID_Hello);
+  Bind(wxEVT_MENU, &FieldsFrame::OnNewGame, this, ID_NewGame);
   Bind(wxEVT_MENU, &FieldsFrame::OnAbout, this, wxID_ABOUT);
   Bind(wxEVT_MENU, &FieldsFrame::OnExit, this, wxID_EXIT);
 
@@ -96,8 +95,16 @@ FieldPanel &FieldsFrame::getFieldPanel(FieldPanels &panels, uint64_t row, uint64
 }
 
 void FieldsFrame::CreateFields() {
+  fieldHolderPanel->Freeze();
+
+  if (auto *sizer = fieldHolderPanel->GetSizer(); nullptr != sizer) {
+    sizer->Clear(true);
+    fieldHolderPanel->SetSizer(nullptr, true);
+    panels.clear();
+  }
+
   const auto size = this->game.getSize().value();
-  fieldHolderPanel->Hide();
+
   auto gridSizerOwner = std::make_unique<wxGridSizer>(safeCast<int>(size.height), safeCast<int>(size.width), 0, 0);
 
   const auto width = static_cast<uint64_t>(size.width);
@@ -123,21 +130,11 @@ void FieldsFrame::CreateFields() {
     static_cast<void>(fieldPanel.release());
   }
 
-  auto *gridSizer = gridSizerOwner.get();
-  fieldHolderPanel->SetSizer(gridSizer);
+  fieldHolderPanel->SetSizer(gridSizerOwner.get());
   static_cast<void>(gridSizerOwner.release());
-  gridSizer->Fit(fieldHolderPanel);
-  gridSizer->SetSizeHints(fieldHolderPanel);
-  fieldHolderPanel->Show(true);
+  fieldHolderPanel->Layout();
+  fieldHolderPanel->Thaw();
   GetSizer()->Fit(this);
-}
-
-void FieldsFrame::DestroyFields() {
-  fieldHolderPanel->SetSizer(nullptr);
-  panels.clear();
-  if (fieldHolderPanel->DestroyChildren() != true) {
-    throw std::runtime_error("Something went wrong");
-  }
 }
 
 void FieldsFrame::OnExit(wxCommandEvent & /*unused*/) {
@@ -145,14 +142,13 @@ void FieldsFrame::OnExit(wxCommandEvent & /*unused*/) {
 }
 
 void FieldsFrame::OnAbout(wxCommandEvent & /*unused*/) {
-  wxMessageBox("This is a wxWidgets Hello World example", "About Hello World",
+  wxMessageBox("This is the ultimate Minesweeper game!", "About Minesweeper",
                wxOK | wxICON_INFORMATION); // NOLINT(hicpp-signed-bitwise, readability-magic-numbers)
-  CreateFields();
-  Refresh();
 }
 
-void FieldsFrame::OnHello(wxCommandEvent & /*unused*/) {
-  wxLogMessage("Hello world from wxWidgets!");
-  DestroyFields();
+void FieldsFrame::OnNewGame(wxCommandEvent & /*unused*/) {
+  this->game = minesweeper::Minesweeper::create(minesweeper::GameLevel::Beginner).value();
+  CreateFields();
+  Refresh();
 }
 } // namespace minesweeper_gui
