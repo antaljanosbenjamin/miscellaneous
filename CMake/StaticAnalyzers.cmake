@@ -1,6 +1,6 @@
 option(ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
 
-set(CLANG_TIDY_RUNNER "run-clang-tidy-10" CACHE STRING "Name of clang-tidy runner")
+set(CLANG_TIDY_RUNNER "run-clang-tidy-11" CACHE STRING "Name of clang-tidy runner")
 
 if(ENABLE_CLANG_TIDY)
   find_program(RUNNER ${CLANG_TIDY_RUNNER})
