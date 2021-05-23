@@ -25,21 +25,21 @@ jobs:
             ccx: g++-10
             script: linux
             run-tests: true
-          - name: "Linux Clang-10"
+          - name: "Linux Clang-11"
             os: ubuntu-20.04
-            compiler: clang-10
-            cc: clang-10
-            ccx: clang++-10
+            compiler: clang-11
+            cc: clang-11
+            ccx: clang++-11
             script: linux
             run-tests: true
-          - name: "Linux Clang-tidy-10"
+          - name: "Linux Clang-tidy-11"
             os: ubuntu-20.04
-            compiler: clang-10
-            cc: clang-10
-            ccx: clang++-10
+            compiler: clang-11
+            cc: clang-11
+            ccx: clang++-11
             script: linux
             cmake-options: "-DENABLE_CLANG_TIDY=ON"
-            install-packages: "clang-tidy-10"
+            install-packages: "clang-tidy-11"
             run-tests: false
       fail-fast: false
     env:
