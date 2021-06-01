@@ -10,9 +10,9 @@
 #include "TaskStealingTaskSystem.hpp"
 
 #ifdef MY_DEBUG
-std::atomic<uint64_t> NOT_USED;
-std::atomic<int> task_count{0};
-std::mutex mutex;
+std::atomic<uint64_t> NOT_USED; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+std::atomic<int> task_count{0}; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+std::mutex mutex;               // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 #endif
 
 template <typename TaskSystemType>

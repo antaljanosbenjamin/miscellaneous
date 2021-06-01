@@ -4,9 +4,7 @@
 
 namespace minesweeper_gui {
 FieldState::FieldState(const uint64_t row, const uint64_t column)
-  : baseState{BaseState::Closed}
-  , figureType{FigureType::Empty}
-  , row{row}
+  : row{row}
   , column{column} {
 }
 

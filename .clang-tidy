@@ -1,10 +1,40 @@
 ---
-Checks:           '*,-fuchsia-overloaded-operator,-fuchsia-default-arguments-calls,-modernize-use-trailing-return-type,-hicpp-use-emplace,-modernize-use-emplace,-google-runtime-references,-fuchsia-statically-constructed-objects,-readability-redundant-member-init,-readability-simplify-boolean-expr,-cppcoreguidelines-avoid-magic-numbers,-llvm-header-guard,-readability-avoid-const-params-in-decls,-cppcoreguidelines-non-private-member-variables-in-classes,-clang-diagnostic-invalid-constexpr,-llvm-include-order,-hicpp-no-array-decay,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-fuchsia-default-arguments-declarations,-cppcoreguidelines-pro-bounds-constant-array-index,-cppcoreguidelines-avoid-c-arrays,-hicpp-avoid-c-arrays,-hicpp-move-const-arg'
-WarningsAsErrors: '*'
-HeaderFilterRegex: '(projects|experiments)/.*'
+Checks:           >
+  *,
+  -clang-diagnostic-invalid-constexpr,
+  -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -fuchsia-default-arguments-calls,
+  -fuchsia-default-arguments-declarations,
+  -fuchsia-overloaded-operator,
+  -fuchsia-statically-constructed-objects,
+  -google-runtime-references,
+  -hicpp-avoid-c-arrays,
+  -hicpp-move-const-arg,
+  -hicpp-no-array-decay,
+  -hicpp-use-emplace,-modernize-use-emplace,
+  -llvm-header-guard,
+  -llvm-include-order,
+  -llvmlibc*,
+  -llvmlibc-implementation-in-namespace,
+  -misc-no-recursion,
+  -modernize-use-trailing-return-type,
+  -readability-avoid-const-params-in-decls,
+  -readability-redundant-member-init,
+  -readability-simplify-boolean-expr
+
+WarningsAsErrors:      >
+  *,
+  -hicpp-use-nullptr,
+  -modernize-use-nullptr
+
+HeaderFilterRegex:     ''
 AnalyzeTemporaryDtors: false
-FormatStyle:     file
-User:            kovi
+FormatStyle:           file
+User:                  kovi
 CheckOptions:
   - key:             cert-dcl16-c.NewSuffixes
     value:           'L;LL;LU;LLU'

@@ -17,6 +17,7 @@ public:
   FieldBitmaps(FieldBitmaps &&) = default;
   FieldBitmaps &operator=(const FieldBitmaps &) = default;
   FieldBitmaps &operator=(FieldBitmaps &&) = default;
+  ~FieldBitmaps() = default;
 
   [[nodiscard]] const wxBitmap &getBackground(const BaseState &guiState) const;
   [[nodiscard]] wxBitmap &getBackground(const BaseState &guiState);

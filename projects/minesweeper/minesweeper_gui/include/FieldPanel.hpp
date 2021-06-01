@@ -18,9 +18,7 @@ public:
   FieldPanel(wxPanel &parent, const uint64_t row, const uint64_t column, const FieldBitmaps &bitmaps,
              FieldPanels &panels, minesweeper::Minesweeper &game);
 
-  DECLARE_EVENT_TABLE() // NOLINT(modernize-avoid-c-arrays)
-
-  FieldState state;
+  DECLARE_EVENT_TABLE() // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-non-const-global-variables)
 
 private:
   void Render(wxDC &dc);
@@ -31,6 +29,7 @@ private:
   void MouseEnterEvent(wxMouseEvent &event);
   void MouseLeaveEvent(wxMouseEvent &event);
 
+  FieldState state;
   const FieldBitmaps *bitmaps;
   std::experimental::propagate_const<FieldPanels *> panels;
   std::experimental::propagate_const<minesweeper::Minesweeper *> game;
