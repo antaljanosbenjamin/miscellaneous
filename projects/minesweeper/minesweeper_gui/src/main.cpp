@@ -9,9 +9,10 @@ public:
   bool OnExceptionInMainLoop() override;
 };
 
-wxIMPLEMENT_APP(MyApp); // NOLINT(cert-err58-cpp, cppcoreguidelines-pro-type-static-cast-downcast)
+// NOLINTNEXTLINE(cert-err58-cpp, cppcoreguidelines-pro-type-static-cast-downcast)
+wxIMPLEMENT_APP(MyApp); // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 
-std::unique_ptr<minesweeper_gui::FieldsFrame> frame;
+std::unique_ptr<minesweeper_gui::FieldsFrame> frame; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
 bool MyApp::OnInit() {
   wxImage::AddHandler(new wxPNGHandler{}); // NOLINT(cppcoreguidelines-owning-memory)

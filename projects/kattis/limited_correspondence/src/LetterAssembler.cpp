@@ -5,7 +5,6 @@
 #include <set>
 #include <tuple>
 
-
 bool LetterAssembler::read(std::istream &inputStream) {
   auto pairCount = 0U;
   auto sumFirstWordLength = 0ULL;

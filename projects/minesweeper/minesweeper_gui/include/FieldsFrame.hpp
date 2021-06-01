@@ -15,6 +15,7 @@ public:
                                    const minesweeper::Minesweeper::Dimension &size);
 
 private:
+  static FieldBitmaps getDefaultBitmaps();
   void CreateFields();
   void OnNewGame(wxCommandEvent & /*unused*/);
   void OnExit(wxCommandEvent & /*unused*/);
@@ -23,7 +24,7 @@ private:
   static constexpr auto defaultGridHeight = 3;
   static constexpr auto defaultGridWidth = defaultGridHeight;
 
-  FieldBitmaps bitmaps;
+  FieldBitmaps bitmaps{getDefaultBitmaps()};
   FieldPanels panels{};
   std::experimental::propagate_const<wxPanel *> fieldHolderPanel{nullptr};
   minesweeper::Minesweeper game;
