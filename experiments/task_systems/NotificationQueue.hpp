@@ -5,7 +5,6 @@
 #include <functional>
 #include <mutex>
 
-// cppcheck-suppress noConstructor
 class NotificationQueue {
   std::deque<std::function<void()>> q_{};
   bool done_{false};

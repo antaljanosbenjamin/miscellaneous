@@ -1,0 +1,3 @@
+add_subdirectory(cminesweeper_wrapper)
+add_subdirectory(cppminesweeper)
+add_subdirectory(minesweeper_gui)

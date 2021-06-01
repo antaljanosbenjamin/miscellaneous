@@ -11,59 +11,76 @@ jobs:
             os: windows-2019
             compiler: MSVC
             script: windows
+            run-tests: true
           - name: "Windows Clang"
             os: windows-2019
             compiler: clang
             script: windows
             cmake-options: "-TClangCL -DWARNINGS_AS_ERRORS=0"
+            run-tests: true
           - name: "Linux GCC-10"
             os: ubuntu-20.04
             compiler: gcc-10
             cc: gcc-10
             ccx: g++-10
             script: linux
-          - name: "Linux Clang-10"
+            run-tests: true
+          - name: "Linux Clang-11"
             os: ubuntu-20.04
-            compiler: clang-10
-            cc: clang-10
-            ccx: clang++-10
+            compiler: clang-11
+            cc: clang-11
+            ccx: clang++-11
             script: linux
-          - name: "Linux Clang-tidy-10"
+            run-tests: true
+          - name: "Linux Clang-tidy-11"
             os: ubuntu-20.04
-            compiler: clang-10
-            cc: clang-10
-            ccx: clang++-10
+            compiler: clang-11
+            cc: clang-11
+            ccx: clang++-11
             script: linux
             cmake-options: "-DENABLE_CLANG_TIDY=ON"
-            install-packages: "clang-tidy-10"
-          - name: "Linux Cppcheck"
-            os: ubuntu-20.04
-            compiler: gcc-10
-            cc: gcc-10
-            ccx: g++-10
-            script: linux
-            cmake-options: "-DENABLE_CPPCHECK=ON"
-            install-packages: "cppcheck"
+            install-packages: "clang-tidy-11"
+            run-tests: false
+      fail-fast: false
     env:
       COMPILER: ${{ matrix.compiler }}
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.ccx }}
       CMAKE_OPTIONS: ${{ matrix.cmake-options }}
       INSTALL_PACKAGES: ${{ matrix.install-packages }}
+      RUN_TESTS: ${{ matrix.run-tests }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Setup python
+        uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-      - uses: BSFishy/pip-action@v1
+      - name: Install conan
+        uses: BSFishy/pip-action@v1
         with:
           packages: conan
-      - run: ./.github/workflows/scripts/install/${{ matrix.script }}.sh
+      - name: Conan cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.conan
+            !~/.conan/profiles
+          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ secrets.CACHE_VERSION }}
+      - name: Install dependencies, configure build node
+        run: . ./.github/workflows/scripts/install/${{ matrix.script }}.sh
         shell: bash
-      - run: |
+      - name: Build
+        run: |
           mkdir build
           cd build
           cmake .. $CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Release
           cmake --build . --config Release -j 6
-          ctest . -C Release
+        shell: bash
+      - name: Run tests
+        run: |
+          cd build
+          if [ "$RUN_TESTS" = true ] ; then ctest . -C Release --jobs 6 ; fi
         shell: bash
