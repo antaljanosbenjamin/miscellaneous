@@ -7,5 +7,6 @@ endif()
 add_subdirectory(catch_main)
 
 add_subdirectory(color_finder)
+add_subdirectory(entity_store)
 add_subdirectory(kattis)
 add_subdirectory(kickstart)
