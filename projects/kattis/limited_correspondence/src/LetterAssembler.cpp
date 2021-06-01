@@ -1,6 +1,7 @@
 #include "LetterAssembler.hpp"
 
 #include <algorithm>
+#include <limits>
 #include <set>
 #include <tuple>
 

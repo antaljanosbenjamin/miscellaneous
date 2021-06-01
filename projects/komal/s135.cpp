@@ -23,13 +23,13 @@
 #include <iostream>
 
 #ifdef GENERATE_INPUT
-#include <fstream>
-#include <numeric>
-#include <random>
+  #include <fstream>
+  #include <numeric>
+  #include <random>
 #else
-#include <algorithm>
-#include <numeric>
-#include <vector>
+  #include <algorithm>
+  #include <numeric>
+  #include <vector>
 #endif
 
 #ifndef GENERATE_INPUT

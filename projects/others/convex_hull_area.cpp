@@ -120,7 +120,6 @@ bool Point::compare(const Point &pointSource, const Point &pointLhs, const Point
   return (orientation == COUNTERCLOCKWISE) ? true : false;
 }
 
-// cppcheck-suppress passedByValue
 ConvexHullCalculator::ConvexHullCalculator(std::vector<Point> vectorPoints)
   : m_vectorPoints(std::move(vectorPoints))
   , m_pointMostLeftBottom()
@@ -199,7 +198,7 @@ int main() {
   while (sNumberOfBacons != 0) {
     std::vector<Point> vectorPoints(sNumberOfBacons);
     for (size_t sPos = 0; sPos < sNumberOfBacons; ++sPos) {
-    std::cin >> iX >> iY;
+      std::cin >> iX >> iY;
       vectorPoints[sPos] = Point{iX, iY};
     }
 

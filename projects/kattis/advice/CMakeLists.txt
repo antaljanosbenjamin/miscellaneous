@@ -1,6 +1,3 @@
-project(advice)
-enable_testing()
-
 # Library
 set(ADVICE_SOURCES src/Advice.cpp src/Point.cpp)
 set(ADVICE_HEADERS include/Advice.hpp include/Point.hpp)
@@ -17,11 +14,6 @@ set(ADVICE_DEMO_SOURCES src/main.cpp)
 
 add_executable(advice_demo ${ADVICE_DEMO_SOURCES})
 
-target_link_libraries(
-  advice_demo
-  PRIVATE advice
-          project_options
-          project_warnings
-)
+target_link_libraries(advice_demo PRIVATE advice project_options project_warnings)
 
 set_target_properties(advice_demo PROPERTIES FOLDER "kattis")

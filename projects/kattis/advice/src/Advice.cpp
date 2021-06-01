@@ -6,6 +6,7 @@
 #include <sstream>
 #include <unordered_map>
 
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 std::unordered_map<std::string, std::function<std::shared_ptr<Advice>(const std::string &)>> createFunctions;
 
 void MakeUpper(std::string &str) {

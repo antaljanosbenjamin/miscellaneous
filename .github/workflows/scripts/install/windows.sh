@@ -1,5 +1,7 @@
 #!/bin/bash
 
+./.github/workflows/scripts/install/delete_default_conan_profile.sh
+
 conan user
 conan profile new default --detect
 

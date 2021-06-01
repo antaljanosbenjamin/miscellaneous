@@ -2,29 +2,24 @@
 
 #include <cmath>
 
-// cppcheck-suppress unusedFunction
 Point operator+(const Point &lhs, const Point &rhs) {
   return {lhs.x + rhs.x, lhs.y + rhs.y};
 }
 
-// cppcheck-suppress unusedFunction
 Point &operator+=(Point &lhs, const Point &rhs) {
   lhs.x += rhs.x;
   lhs.y += rhs.y;
   return lhs;
 }
 
-// cppcheck-suppress unusedFunction
 bool operator==(const Point &lhs, const Point &rhs) {
   return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
-// cppcheck-suppress unusedFunction
 Point operator-(const Point &lhs, const Point &rhs) {
   return Point{lhs.x - rhs.x, lhs.y - rhs.y};
 }
 
-// cppcheck-suppress unusedFunction
 Point &operator-=(Point &lhs, const Point &rhs) {
   lhs.x -= rhs.x;
   lhs.y -= rhs.y;
@@ -32,7 +27,6 @@ Point &operator-=(Point &lhs, const Point &rhs) {
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp)
-
 Point &RotateByDegree(Point &point, const double dAngleInDegree) {
   auto angleInRadian = [](const double angle) {
     const auto PI = std::acos(-1);
