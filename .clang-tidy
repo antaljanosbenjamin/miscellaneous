@@ -31,7 +31,7 @@ WarningsAsErrors:      >
   -hicpp-use-nullptr,
   -modernize-use-nullptr
 
-HeaderFilterRegex:     ''
+HeaderFilterRegex:     '(projects|experiments)/.*'
 AnalyzeTemporaryDtors: false
 FormatStyle:           file
 User:                  kovi
