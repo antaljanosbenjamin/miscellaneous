@@ -55,7 +55,7 @@ void FieldPanel::MouseLeaveEvent(wxMouseEvent &event) {
 void FieldPanel::Render(wxDC &dc) {
   state.draw(dc, *bitmaps);
 }
-// NOLINTNEXTLINE(cert-err58-cpp, modernize-avoid-c-arrays,cppcoreguidelines-avoid-non-const-global-variables)
+// NOLINTNEXTLINE(modernize-avoid-c-arrays,cppcoreguidelines-avoid-non-const-global-variables)
 BEGIN_EVENT_TABLE(FieldPanel, wxPanel)
 EVT_PAINT(FieldPanel::PaintEvent)
 EVT_LEFT_UP(FieldPanel::LeftClickEvent)

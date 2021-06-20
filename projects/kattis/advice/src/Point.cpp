@@ -26,7 +26,6 @@ Point &operator-=(Point &lhs, const Point &rhs) {
   return lhs;
 }
 
-// NOLINTNEXTLINE(cert-err58-cpp)
 Point &RotateByDegree(Point &point, const double dAngleInDegree) {
   auto angleInRadian = [](const double angle) {
     const auto PI = std::acos(-1);
