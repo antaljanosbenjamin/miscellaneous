@@ -2,13 +2,13 @@
 
 #include <stdexcept>
 
-#include "Todo.hpp"
+#include "Entity.hpp"
 
 namespace EntityStore {
 
-class DoesNotHaveTodoException : public std::out_of_range {
+class DoesNotHaveEntityException : public std::out_of_range {
 public:
-  explicit DoesNotHaveTodoException(const TodoId id);
+  explicit DoesNotHaveEntityException(const EntityId id);
 };
 
 class InvalidRangeException : public std::logic_error {

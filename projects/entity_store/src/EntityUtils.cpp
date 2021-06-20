@@ -1,9 +1,9 @@
-#include "TodoUtils.hpp"
+#include "EntityUtils.hpp"
 
 namespace EntityStore {
 
 void printProperties(std::ostream &os, const Properties &properties, const std::string &prefix) {
-  for (std::underlying_type_t<PropertyId> propertyIndex{0u}; propertyIndex <= asUnderlying(PropertyId::_LAST);
+  for (std::underlying_type_t<PropertyId> propertyIndex{0U}; propertyIndex <= asUnderlying(PropertyId::LAST);
        ++propertyIndex) {
     auto propertyId = static_cast<PropertyId>(propertyIndex);
     if (properties.hasProperty(propertyId)) {
@@ -13,9 +13,9 @@ void printProperties(std::ostream &os, const Properties &properties, const std::
   }
 }
 
-void printTodo(std::ostream &os, const Store &store, TodoId id) {
-  os << "Todo{" << id << "}\n";
-  const auto propertiesPtr = store.tryGet(id);
+void printEntity(std::ostream &os, const Store &store, EntityId id) {
+  os << "Entity{" << id << "}\n";
+  const auto *propertiesPtr = store.tryGet(id);
   if (propertiesPtr == nullptr) {
     os << "\tIsn't in store!\n";
   } else {
@@ -28,9 +28,9 @@ std::ostream &operator<<(std::ostream &os, const Properties &properties) {
   return os;
 }
 
-std::ostream &operator<<(std::ostream &os, const Todo &todo) {
-  os << "Todo{" << todo.id() << "}\n";
-  printProperties(os, todo.properties, "\t");
+std::ostream &operator<<(std::ostream &os, const Entity &entity) {
+  os << "Entity{" << entity.id() << "}\n";
+  printProperties(os, entity.properties(), "\t");
   return os;
 }
 

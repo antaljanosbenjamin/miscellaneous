@@ -2,8 +2,8 @@
 
 namespace EntityStore {
 
-DoesNotHaveTodoException::DoesNotHaveTodoException(const TodoId id)
-  : std::out_of_range("Store does not contain Todo with id " + std::to_string(id)) {
+DoesNotHaveEntityException::DoesNotHaveEntityException(const EntityId id)
+  : std::out_of_range("Store does not contain Entity with id " + std::to_string(id)) {
 }
 
 InvalidRangeException::InvalidRangeException()
