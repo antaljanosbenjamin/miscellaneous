@@ -189,7 +189,7 @@ void checkWithGrandChild(const CommitType commitType, TInit &init, TUpdate &upda
 
 template <typename TInit, typename TUpdate, typename TCheck>
 void checkWithStore(TInit &init, TUpdate &update, TCheck &check) {
-  Store store = Store::create();
+  auto store = Store::create();
 
   init(store);
   update(store);

@@ -83,7 +83,7 @@ void printTitle(const std::string &title) {
 void theBasicStoreExample() {
   printTitle("The basic store");
 
-  PRINT_AND_EXECUTE(Store store = Store::create());
+  PRINT_AND_EXECUTE(auto store = Store::create());
 
   std::cout << "// Pay attention to the difference between the two setter of title and description!\n";
   std::cout << "//  * The former one receives the property id as a template argument, therefore type conversion (from "
@@ -135,7 +135,7 @@ void theBasicStoreExample() {
 void queriesExample() {
   printTitle("Queries");
 
-  PRINT_AND_EXECUTE(Store store = Store::create());
+  PRINT_AND_EXECUTE(auto store = Store::create());
 
   PRINT_AND_EXECUTE(store.insert(1, Properties().set<PropertyId::Title>("Darth Zannah's lightsaber")));
   PRINT_AND_EXECUTE(store.insert(2, Properties().set<PropertyId::Title>("Darth Bane's lightsaber")));
@@ -193,7 +193,7 @@ void queriesExample() {
 void childStoresExample() {
   printTitle("Child Stores");
 
-  PRINT_AND_EXECUTE(Store store = Store::create());
+  PRINT_AND_EXECUTE(auto store = Store::create());
   PRINT_AND_EXECUTE(std::string description2133 = "One of the best!");
   PRINT_AND_EXECUTE_BOOLEAN(store.insert(
       2133,
