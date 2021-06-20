@@ -1,5 +1,10 @@
 name: build
-on: [push]
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * 6'
+
 jobs:
   build:
     name: ${{ matrix.name }}
