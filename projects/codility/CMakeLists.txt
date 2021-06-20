@@ -1,51 +1,23 @@
-add_executable(rhodium2019 rhodium2019.cpp)
-target_link_libraries(rhodium2019 PRIVATE project_options project_warnings)
-set_target_properties(rhodium2019 PROPERTIES FOLDER "codility")
+function(add_codility_solution TARGET_NAME FILE_NAME)
+  add_library(
+    ${TARGET_NAME} ${TARGET_NAME}/include/${FILE_NAME}.hpp ${TARGET_NAME}/src/${FILE_NAME}.cpp
+  )
+  target_include_directories(${TARGET_NAME} PUBLIC ${TARGET_NAME}/include)
+  target_link_libraries(${TARGET_NAME} PUBLIC project_options)
+  target_link_libraries(${TARGET_NAME} PRIVATE project_warnings)
+  set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "codility")
+endfunction()
 
-add_executable(ruthenium2019 ruthenium2019.cpp)
-target_link_libraries(ruthenium2019 PRIVATE project_options project_warnings)
-set_target_properties(ruthenium2019 PROPERTIES FOLDER "codility")
-
-add_executable(molybdenum2019 molybdenum2019.cpp)
-target_link_libraries(molybdenum2019 PRIVATE project_options project_warnings)
-set_target_properties(molybdenum2019 PROPERTIES FOLDER "codility")
-
-add_executable(niobium2019 niobium2019.cpp)
-target_link_libraries(niobium2019 PRIVATE project_options project_warnings)
-set_target_properties(niobium2019 PROPERTIES FOLDER "codility")
-
-add_executable(zirconium2019 zirconium2019.cpp)
-target_link_libraries(zirconium2019 PRIVATE project_options project_warnings)
-set_target_properties(zirconium2019 PROPERTIES FOLDER "codility")
-
-add_executable(binary_gap binary_gap.cpp)
-target_link_libraries(binary_gap PRIVATE project_options project_warnings)
-set_target_properties(binary_gap PROPERTIES FOLDER "codility")
-
-add_executable(min_abs_sum_of_two min_abs_sum_of_two.cpp)
-target_link_libraries(min_abs_sum_of_two PRIVATE project_options project_warnings)
-set_target_properties(min_abs_sum_of_two PROPERTIES FOLDER "codility")
-
-add_executable(min_avg_two_slice min_avg_two_slice.cpp)
-target_link_libraries(min_avg_two_slice PRIVATE project_options project_warnings)
-set_target_properties(min_avg_two_slice PROPERTIES FOLDER "codility")
-
-add_executable(max_double_slice_sum max_double_slice_sum.cpp)
-target_link_libraries(max_double_slice_sum PRIVATE project_options project_warnings)
-set_target_properties(max_double_slice_sum PROPERTIES FOLDER "codility")
-
-add_executable(number_solitaire number_solitaire.cpp)
-target_link_libraries(number_solitaire PRIVATE project_options project_warnings)
-set_target_properties(number_solitaire PROPERTIES FOLDER "codility")
-
-add_executable(min_abs_sum min_abs_sum.cpp)
-target_link_libraries(min_abs_sum PRIVATE project_options project_warnings)
-set_target_properties(min_abs_sum PROPERTIES FOLDER "codility")
-
-add_executable(max_profit max_profit.cpp)
-target_link_libraries(max_profit PRIVATE project_options project_warnings)
-set_target_properties(max_profit PROPERTIES FOLDER "codility")
-
-add_executable(max_slice_sum max_slice_sum.cpp)
-target_link_libraries(max_slice_sum PRIVATE project_options project_warnings)
-set_target_properties(max_slice_sum PROPERTIES FOLDER "codility")
+add_codility_solution(binary_gap BinaryGap)
+add_codility_solution(max_double_slice_sum MaxDoubleSliceSum)
+add_codility_solution(max_profit MaxProfit)
+add_codility_solution(max_slice_sum MaxSliceSum)
+add_codility_solution(min_abs_sum MinAbsSum)
+add_codility_solution(min_abs_sum_of_two MinAbsSumOfTwo)
+add_codility_solution(min_avg_two_slice MinAvgTwoSlice)
+add_codility_solution(molybdenum2019 Molybdenum)
+add_codility_solution(niobium2019 Niobium)
+add_codility_solution(number_solitaire NumberSolitaire)
+add_codility_solution(rhodium2019 Rhodium)
+add_codility_solution(ruthenium2019 Ruthenium)
+add_codility_solution(zirconium2019 Zirconium)
