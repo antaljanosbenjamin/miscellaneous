@@ -23,10 +23,21 @@ add_library(
 )
 
 target_include_directories(entity_store PUBLIC include)
-
-target_link_libraries(entity_store project_options project_warnings)
+target_link_libraries(entity_store PUBLIC project_options)
+target_link_libraries(entity_store PRIVATE project_warnings)
 
 add_executable(entity_store_demo src/main.cpp)
-
 target_link_libraries(entity_store_demo PUBLIC entity_store)
 target_link_libraries(entity_store_demo PRIVATE project_options project_warnings)
+
+add_executable(entity_store_example_the_basic_store src/Examples/TheBasicStore.cpp)
+target_link_libraries(entity_store_example_the_basic_store PUBLIC entity_store)
+target_link_libraries(entity_store_example_the_basic_store PRIVATE project_options)
+
+add_executable(entity_store_example_queries src/Examples/Queries.cpp)
+target_link_libraries(entity_store_example_queries PUBLIC entity_store)
+target_link_libraries(entity_store_example_queries PRIVATE project_options)
+
+add_executable(entity_store_example_child_stores src/Examples/ChildStores.cpp)
+target_link_libraries(entity_store_example_child_stores PUBLIC entity_store)
+target_link_libraries(entity_store_example_child_stores PRIVATE project_options)
