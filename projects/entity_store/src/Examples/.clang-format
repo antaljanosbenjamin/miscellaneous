@@ -1,0 +1,18 @@
+﻿BreakConstructorInitializers: BeforeComma
+ColumnLimit: '80'
+ConstructorInitializerIndentWidth: '2'
+IndentWidth: '2'
+NamespaceIndentation: None
+UseTab: Never
+SortIncludes: true
+AllowShortFunctionsOnASingleLine: false
+SpaceBeforeRangeBasedForLoopColon: false
+AlwaysBreakTemplateDeclarations: Yes
+IndentPPDirectives: BeforeHash
+IncludeCategories:
+  - Regex:           '^<catch2/.*>'
+    Priority:        0
+  - Regex:            '^<.*>'
+    Priority:        1
+  - Regex:           '^".*"'
+    Priority:        2

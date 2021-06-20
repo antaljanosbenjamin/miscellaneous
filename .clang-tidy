@@ -1,6 +1,7 @@
 ---
 Checks:           >
   *,
+  -cert-err58-cpp,
   -clang-diagnostic-invalid-constexpr,
   -cppcoreguidelines-avoid-c-arrays,
   -cppcoreguidelines-avoid-magic-numbers,
@@ -11,16 +12,20 @@ Checks:           >
   -fuchsia-default-arguments-declarations,
   -fuchsia-overloaded-operator,
   -fuchsia-statically-constructed-objects,
+  -fuchsia-trailing-return,
   -google-runtime-references,
   -hicpp-avoid-c-arrays,
+  -hicpp-explicit-conversions,
   -hicpp-move-const-arg,
   -hicpp-no-array-decay,
-  -hicpp-use-emplace,-modernize-use-emplace,
+  -hicpp-special-member-functions,
+  -hicpp-use-emplace,
+  -hicpp-use-nullptr,
   -llvm-header-guard,
   -llvm-include-order,
   -llvmlibc*,
-  -llvmlibc-implementation-in-namespace,
   -misc-no-recursion,
+  -modernize-use-emplace,
   -modernize-use-trailing-return-type,
   -readability-avoid-const-params-in-decls,
   -readability-redundant-member-init,
@@ -28,7 +33,6 @@ Checks:           >
 
 WarningsAsErrors:      >
   *,
-  -hicpp-use-nullptr,
   -modernize-use-nullptr
 
 HeaderFilterRegex:     '(projects|experiments)/.*'

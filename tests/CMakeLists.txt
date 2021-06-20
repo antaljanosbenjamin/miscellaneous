@@ -10,5 +10,6 @@ set(UNIT_TEST_PREFIX "unittests.")
 
 add_subdirectory(minesweeper)
 add_subdirectory(color_finder)
+add_subdirectory(entity_store)
 add_subdirectory(kattis)
 add_subdirectory(kickstart)
