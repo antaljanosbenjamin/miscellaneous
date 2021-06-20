@@ -1,5 +1,8 @@
 add_subdirectory(codility)
+add_subdirectory(color_finder)
+add_subdirectory(entity_store)
 add_subdirectory(kattis)
 add_subdirectory(kickstart)
 add_subdirectory(komal)
+add_subdirectory(minesweeper)
 add_subdirectory(others)

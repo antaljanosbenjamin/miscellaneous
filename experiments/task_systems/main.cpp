@@ -10,9 +10,9 @@
 #include "TaskStealingTaskSystem.hpp"
 
 #ifdef MY_DEBUG
-std::atomic<uint64_t> NOT_USED;
-std::atomic<int> task_count{0};
-std::mutex mutex;
+std::atomic<uint64_t> NOT_USED; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+std::atomic<int> task_count{0}; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+std::mutex mutex;               // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 #endif
 
 template <typename TaskSystemType>
@@ -34,8 +34,8 @@ void AddTasks(TaskSystemType &ts, std::vector<uint64_t> &runningTimes) {
         result %= thirdMagicNumber;
       }
 #ifdef MY_DEBUG
-      NOT_USED.fetch_add(result, std::memory_order::memory_order_relaxed);
-      task_count.fetch_add(1, std::memory_order::memory_order_relaxed);
+      NOT_USED.fetch_add(result, std::memory_order_relaxed);
+      task_count.fetch_add(1, std::memory_order_relaxed);
 #endif
     });
   }
