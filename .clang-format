@@ -8,6 +8,7 @@ SortIncludes: true
 AllowShortFunctionsOnASingleLine: false
 SpaceBeforeRangeBasedForLoopColon: false
 AlwaysBreakTemplateDeclarations: Yes
+IndentPPDirectives: BeforeHash 
 IncludeCategories:
   - Regex:           '^<catch2/.*>'
     Priority:        0

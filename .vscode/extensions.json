@@ -9,7 +9,6 @@
 		"ms-vscode.cpptools",
 		"ms-vscode-remote.remote-ssh",
 		"ms-vscode-remote.remote-ssh-edit",
-		"ms-vscode-remote.remote-ssh-explorer",
 		"streetsidesoftware.code-spell-checker",
 		"twxs.cmake",
 		"vadimcn.vscode-lldb",

@@ -1,0 +1,3 @@
+[submodule "rust_projects"]
+	path = rust_projects
+	url = https://github.com/antaljanosbenjamin/rust_projects.git

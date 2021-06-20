@@ -7,7 +7,7 @@
 #endif
 
 #ifdef LOG_INTERNAL_RESULTS
-#include <iostream>
+  #include <iostream>
 #endif
 
 namespace KickStartAlarm {

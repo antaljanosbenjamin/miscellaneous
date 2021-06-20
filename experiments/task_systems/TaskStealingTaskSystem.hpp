@@ -60,7 +60,6 @@ public:
         return;
       }
     }
-    // cppcheck-suppress accessForwarded
     q_[i % count_].push(std::forward<F>(f)); // NOLINT(clang-analyzer-core.DivideZero)
   }
 };
