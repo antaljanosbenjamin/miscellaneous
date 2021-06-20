@@ -1,5 +1,6 @@
 #pragma once
 
+#include <concepts>
 #include <memory>
 #include <unordered_map>
 #include <utility>
@@ -16,14 +17,13 @@ public:
 // Represents a set of properties in a (key, value) format. It's interface is type safe in a way that a value identified
 // by a key can hold only the type that the key is associated with. The setter/getter where the property id is a
 // template parameter will cause a compile time error if one of the set/get calls don't conform the type system. On top
-// of that, the setter also offer conversion to the property's type if necessary and possible. Because of this that is
+// of that, the setter also offer conversion to the property's type if necessary and possible. Because of this it is
 // the recommended way to interact with Properties. If the runtime checked setter/getter is used where the property id
 // is a usual function parameter, then an exception will thrown in case of invalid type operations.
 
 // It does not support the text based lookups, although it can be done based on the propertyInfo array in Property.hpp.
 // If this functionality is really needed, then it can be done. The reason behind this decision is in that way it is
-// much clearer how to use this class, and its also reduces the possibility of runtime errors caused by this
-// class/library.
+// much clearer how to use this class, and its also reduces the possibility of runtime errors.
 
 class Properties {
 public:
@@ -77,6 +77,7 @@ public:
 
   template <typename TProperty>
   [[nodiscard]] const TProperty &getAs(const PropertyId &propertyId) const {
+    // TODO(antaljanosbenjamin) check if this works for arrays and function pointers
     static_assert(std::is_same_v<std::decay_t<TProperty>, TProperty>,
                   "getAs can be used only with lvalue types as template parameter!");
 
@@ -102,7 +103,7 @@ public:
 
   template <typename TVisitor>
   void tryVisit(PropertyId propertyId, TVisitor &&visitor) {
-    auto propertyPtr = tryGetProperty(propertyId);
+    const auto *propertyPtr = tryGetProperty(propertyId);
 
     if (propertyPtr != nullptr) {
       std::visit(std::forward<TVisitor>(visitor), *propertyPtr);
@@ -119,9 +120,9 @@ private:
   }
 
   [[nodiscard]] const Property &getProperty(PropertyId propertyId) const {
-    auto propertyPtr = tryGetProperty(propertyId);
+    const auto *propertyPtr = tryGetProperty(propertyId);
     if (propertyPtr == nullptr) {
-      throw DoesNotHavePropertyException(getPropertyNameFromId(propertyId));
+      throw DoesNotHavePropertyException(getPropertyName(propertyId));
     }
     return *propertyPtr;
   }
@@ -131,7 +132,7 @@ private:
     static_assert(std::is_same_v<std::decay_t<TProperty>, TProperty>,
                   "tryGetWithoutPropertyTypeCheck can be used only with lvalue types as template parameter!");
 
-    auto propertyPtr = tryGetProperty(propertyId);
+    const auto *propertyPtr = tryGetProperty(propertyId);
     if (propertyPtr == nullptr) {
       return nullptr;
     }
@@ -150,5 +151,8 @@ private:
 
   PropertyMap m_propertyMap;
 };
+
+template <typename T>
+concept SameAsProperties = std::same_as<std::decay_t<T>, Properties>;
 
 } // namespace EntityStore

@@ -1,11 +1,13 @@
 #include <iomanip>
 #include <iostream>
 
+#include "Entity.hpp"
+#include "EntityUtils.hpp"
 #include "Store.hpp"
-#include "Todo.hpp"
-#include "TodoUtils.hpp"
 
-using namespace EntityStore;
+using Store = EntityStore::Store;
+using Properties = EntityStore::Properties;
+using PropertyId = EntityStore::PropertyId;
 
 template <typename TCollection>
 void printCollection(std::ostream &os, const TCollection &collection, const std::string &prefix = "") {
@@ -28,16 +30,19 @@ void printTitle(const std::string &title) {
   std::cout << "##############################################\n\n";
 }
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define PRINT(expression, postfix)                                                                                     \
   do {                                                                                                                 \
     std::cout << #expression << ';' << (postfix) << "\n";                                                              \
   } while (false)
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define PRINT_AND_EXECUTE(expression)                                                                                  \
   PRINT(expression, "");                                                                                               \
   std::cout << '\n';                                                                                                   \
   expression;
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define PRINT_AND_EXECUTE_WITH_RESULT(expression)                                                                      \
   PRINT(expression, "");                                                                                               \
   do {                                                                                                                 \
@@ -45,20 +50,24 @@ void printTitle(const std::string &title) {
     std::cout << "  " << result << "\n\n";                                                                             \
   } while (false)
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define PRINT_AND_EXECUTE_COLLECTION(expression)                                                                       \
   PRINT(expression, " returned:");                                                                                     \
   printCollection(std::cout, (expression), "  ");                                                                      \
   std::cout << '\n';
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define PRINT_AND_EXECUTE_PROPERTIES(expression)                                                                       \
   PRINT(expression, " returned:");                                                                                     \
   printProperties(std::cout, (expression), "  ");                                                                      \
   std::cout << '\n';
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define PRINT_AND_EXECUTE_BOOLEAN(expression)                                                                          \
   PRINT(expression, " is:");                                                                                           \
   std::cout << "  " << std::boolalpha << (expression) << "\n\n";
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define PRINT_AND_EXECUTE_TROWABLE(expression)                                                                         \
   PRINT(expression, " throws:");                                                                                       \
   do {                                                                                                                 \
@@ -85,10 +94,11 @@ void aBasicStoreExample() {
                "setAs<long long>(PropertyId::Timestamp, 3) will fail, because there is no property with type long "
                "long). It also supports type conversion if the template parameter is specified, otherwise the template "
                "parameter will be deduced from the type of the parameter.\n";
-  PRINT_AND_EXECUTE_BOOLEAN(store.insert(2133, Properties()
-                                                   .set<PropertyId::Title>("Buy Milk")
-                                                   .setAs(PropertyId::Description, std::string("made of almonds!"))
-                                                   .setAs(PropertyId::Timestamp, 115.668)));
+  PRINT_AND_EXECUTE_BOOLEAN(
+      store.insert(2133, Properties()
+                             .set<PropertyId::Title>("Buy Milk")
+                             .setAs(PropertyId::Description, std::string("made of almonds!"))
+                             .setAs(PropertyId::Timestamp, 115.668))); // NOLINT(readability-magic-numbers)
   PRINT_AND_EXECUTE_TROWABLE(store.insert(2133, Properties().setAs<double>(PropertyId::Title, 4)));
 
   PRINT_AND_EXECUTE_BOOLEAN(
@@ -110,7 +120,7 @@ void aBasicStoreExample() {
   PRINT_AND_EXECUTE_BOOLEAN(store.contains(2133));
   PRINT_AND_EXECUTE_PROPERTIES(store.get(2133));
   std::cout << "// The same functionality can be achieved by tryGet, which returns a pointer. If the pointer is equals "
-               "to nullptr, then the store does not contain a todo with the specified value.\n";
+               "to nullptr, then the store does not contain a entity with the specified value.\n";
   PRINT_AND_EXECUTE_BOOLEAN(store.tryGet(2133) == nullptr);
 
   PRINT_AND_EXECUTE(store.remove(2133));
@@ -166,7 +176,7 @@ void childStoresExample() {
   //  * B OnlyUpdated,      A ReInsertedByThis: If the A commited first, then the updates in B will overwrite the values
   //  inserted by A. If B committed first, then the result will be the same as committing just A.
   //  * B OnlyUpdated,      A RemovedByThis   : If A commited first, then commiting B will throw an exception. If B
-  //  committed first, then A will remove the entire Todo.
+  //  committed first, then A will remove the entire Entity.
   //  * B InsertedByThis,   A InsertedByThis  : The second commit will throw an exception.
   //  * B ReInsertedByThis, A ReInsertedByThis: The second commit will overwrite the other one.
   //  * B ReInsertedByThis, A RemovedByThis   : If A committed first, then committing B will throw an exception. If B
@@ -188,23 +198,23 @@ void childStoresExample() {
   // not. To do this, the store needs to maintain some kind of history about the changed elements. Based on these
   // information, a check can be implemented to decide whether the commit can be done or not. The interesting part is
   // obviously is when a conflict occur. In that case, I think the best way to go is to provide conflicting information
-  // (e.g.: A removed, B updated the same version), and user (who is a developer) of the store can implement a logic how
-  // to solve the conflict. For this, the information can be per entity, or per property. The latter one offer more
-  // information, and because of that might result in a better solution. In return, it more complex and requires more
-  // memory. The former one requires simpler logic and less memory, but definitely tells less about the problem, so the
-  // solution might be not as good as with the former one. In both cases, the conflict info can contain the actual
+  // (e.g.: A removed, B updated the same version), and the user (who is a developer) of the store can implement a logic
+  // how to solve the conflict. For this, the information can be per entity, or per property. The latter one offer more
+  // information, and because of that it might result in a better solution. In return, it is more complex and requires
+  // more memory. The former one requires simpler logic and less memory, but definitely tells less about the problem, so
+  // the solution might be not as good as with the former one. In both cases, the conflict info can contain the actual
   // history chain, or just a flag that means there is a conflict with the regarding item, but don't specify which are
   // the conflicting operations. The absolute conservative solution could be to make the commit be able to fail without
   // giving any detailed information. This "solution" is not a good one, because if a conflict is detected, it is very
   // hard to do anything meaningful.
-  // As a real user point of view (let assume the store is a cloud database, the user modified the same Todo on
+  // As a real user point of view (let assume the store is a cloud database, the user modified the same Entity on
   // different devices while they were offline) there are two real solution exists:
-  //  1. Show that there is a conflict, and offer a way to save latter commited Todo as a different name/location etc.
+  //  1. Show that there is a conflict, and offer a way to save latter commited Entity as a different name/location etc.
   //  2. Show the user the conflicting information and let them decide what to do. At this point, the implementation can
   //  provide a "forced flag" while committing to ensure that the changes are saved to parent anyway.
 
-  //  Of course, the second one is only a real solution, if the conflicting data is not to complex (remember the
-  //  horrifying git merge conflict, ouch...). Knowing that a Todo can have a lot of properties, I think only the 1st
+  //  Of course, the second one is only a real solution, if the conflicting data is not to complex (remember a
+  //  horrifying git merge conflict, ouch...). Knowing that an Entity can have a lot of properties, I think only the 1st
   //  one can be a real solution from the user point of view.
 }
 
@@ -217,49 +227,53 @@ void queriesExample() {
   PRINT_AND_EXECUTE(store.insert(2, Properties().set<PropertyId::Title>("Don't Buy Chocolate")));
   PRINT_AND_EXECUTE(store.insert(3, Properties()
                                         .set<PropertyId::Title>("Or Do Whatever You Want")
-                                        .set<PropertyId::Description>("becuase you know what you want!")));
+                                        .set<PropertyId::Description>("because you know what you want!")));
 
-  PRINT_AND_EXECUTE(store.insert(4, Properties().set<PropertyId::Timestamp>(4)));
-  PRINT_AND_EXECUTE(store.insert(5, Properties().set<PropertyId::Timestamp>(5)));
-  PRINT_AND_EXECUTE(store.insert(6, Properties().set<PropertyId::Timestamp>(666)));
-  PRINT_AND_EXECUTE(store.insert(7, Properties().set<PropertyId::Timestamp>(6.99)));
-  PRINT_AND_EXECUTE(store.insert(8, Properties().set<PropertyId::Timestamp>(4)));
+  PRINT_AND_EXECUTE(store.insert(4, Properties().set<PropertyId::Timestamp>(4)));   // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE(store.insert(5, Properties().set<PropertyId::Timestamp>(5)));   // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE(store.insert(6, Properties().set<PropertyId::Timestamp>(666))); // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE(
+      store.insert(7, Properties().set<PropertyId::Timestamp>(6.99)));            // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE(store.insert(8, Properties().set<PropertyId::Timestamp>(4))); // NOLINT(readability-magic-numbers)
 
   std::cout << "// The query and rangeQuery functions have two types similar to setter/getter of properties:\n";
   std::cout
       << "//  * query/rangeQuery: receives the property id as a template argument, therefore every check that must be "
-         "done on the types are done compile time (query: existence of operator== for the property's and the query "
+         "done on the types are in done compile time (query: existence of operator== for the property's and the query "
          "parameter's type; rangeQuery: existence of operator>= for the property and the lower bound parameter's type, "
          "and operator < for property's and upper bound parameter's type). Type conversion for query parameters can be "
-         "achieved by sepcifying additional template parameters (2nd for query, 2nd and 3rd for rangeQuery). \n";
+         "achieved by specifying additional template parameters (2nd for query, 2nd and 3rd for rangeQuery). \n";
   std::cout << "//  * queryAs/rangeQueryAs: receives the property id as a runtime argument, but requires the property "
                "type in compile time similarly to the getAs function, the performed checks are also the same. The "
                "check for necessary operators are also checked at runtime. The conversion of parameters can be "
                "achieved as the same as in case of query/rangeQuery functions.\n";
   std::cout << "// The query functions get their parameters as const&, so there is no unnecessary copy or conversion, "
                "but conversion might happen during comparison. If the conversion is expensive, then the usage of "
-               "additional tmeplate  arguemnt is recommended in order to reduce the number of conversions.\n\n";
+               "additional template  argument is recommended in order to reduce the number of conversions.\n\n";
 
   PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Title>("Buy Cream"));
   PRINT_AND_EXECUTE_COLLECTION(store.queryAs<std::string>(PropertyId::Title, "Buy Chocolate"));
   PRINT_AND_EXECUTE_COLLECTION(store.queryAs<std::string>(PropertyId::Title, std::string("Or Do Whatever You Want")));
 
   PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Description>("because it doesn't exist"));
-  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Description>("becuase you know what you want!"));
+  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Description>("because you know what you want!"));
 
   std::cout << "// Query can also return multiple ids!\n";
-  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Timestamp>(4.0));
+  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Timestamp>(4.0)); // NOLINT(readability-magic-numbers)
 
   std::cout << "And let's see range queries!\n";
-  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 5));
-  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 7));
+  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 5)); // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 7)); // NOLINT(readability-magic-numbers)
 
   std::cout << "// rangeQuery doesn't complain by default if the specified range is not valid. If these checks are "
                "desired by the user, then the checkedRangeQueries should be used.\n";
-  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 4.0));
-  PRINT_AND_EXECUTE_COLLECTION(store.rangeQueryAs<double>(PropertyId::Timestamp, 4.0, 3.9));
-  PRINT_AND_EXECUTE_TROWABLE(store.checkedRangeQuery<PropertyId::Timestamp>(4.0, 4.0));
-  PRINT_AND_EXECUTE_TROWABLE(store.checkedRangeQueryAs<double>(PropertyId::Timestamp, 4.0, 3.9));
+  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 4.0)); // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE_COLLECTION(
+      store.rangeQueryAs<double>(PropertyId::Timestamp, 4.0, 3.9)); // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE_TROWABLE(
+      store.checkedRangeQuery<PropertyId::Timestamp>(4.0, 4.0)); // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE_TROWABLE(
+      store.checkedRangeQueryAs<double>(PropertyId::Timestamp, 4.0, 3.9)); // NOLINT(readability-magic-numbers)
 }
 
 // NOLINTNEXTLINE(bugprone-exception-escape)

@@ -18,6 +18,7 @@ void Properties::update(Properties &&properties) {
 }
 
 void Properties::update(const Properties &properties) {
+  // TODO(antaljanosbenjamin) Check if this can be done more efficiently
   PropertyMap tmp{properties.m_propertyMap};
   tmp.merge(std::move(m_propertyMap));
   m_propertyMap = std::move(tmp);

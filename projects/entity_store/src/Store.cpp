@@ -13,19 +13,19 @@ Store Store::create() {
   return Store(std::make_unique<RootStore>());
 }
 
-bool Store::contains(const TodoId id) const {
+bool Store::contains(const EntityId id) const {
   return m_store->contains(id);
 }
 
-const Properties *Store::tryGet(const TodoId id) const {
+const Properties *Store::tryGet(const EntityId id) const {
   return m_store->tryGet(id);
 }
 
-const Properties &Store::get(const TodoId id) const {
+const Properties &Store::get(const EntityId id) const {
   return m_store->get(id);
 }
 
-bool Store::remove(const TodoId id) {
+bool Store::remove(const EntityId id) {
   return m_store->remove(id);
 }
 

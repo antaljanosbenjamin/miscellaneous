@@ -2,19 +2,20 @@
 
 #include <iostream>
 
+#include "Entity.hpp"
 #include "Properties.hpp"
 #include "Property.hpp"
 #include "Store.hpp"
-#include "Todo.hpp"
 
 namespace EntityStore {
 
+// TODO(antaljanosbenjamin) Add printPropertiesWithPrefix
 void printProperties(std::ostream &os, const Properties &properties, const std::string &prefix = "");
 
-void printTodo(std::ostream &os, const Store &store, TodoId id);
+void printEntity(std::ostream &os, const Store &store, EntityId id);
 
 std::ostream &operator<<(std::ostream &os, const Properties &properties);
 
-std::ostream &operator<<(std::ostream &os, const Todo &todo);
+std::ostream &operator<<(std::ostream &os, const Entity &entity);
 
 } // namespace EntityStore
