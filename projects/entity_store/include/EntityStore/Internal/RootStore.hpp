@@ -5,10 +5,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Entity.hpp"
-#include "EntityPredicate.hpp"
-#include "IStore.hpp"
-#include "Properties.hpp"
+#include "EntityStore/Internal/Entity.hpp"
+#include "EntityStore/Internal/EntityPredicate.hpp"
+#include "EntityStore/Internal/IStore.hpp"
+#include "EntityStore/Properties.hpp"
 
 namespace EntityStore {
 

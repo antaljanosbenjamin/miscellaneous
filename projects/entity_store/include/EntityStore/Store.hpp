@@ -4,11 +4,11 @@
 #include <unordered_set>
 #include <vector>
 
-#include "Entity.hpp"
-#include "EntityPredicate.hpp"
-#include "IStore.hpp"
-#include "Properties.hpp"
-#include "StoreExceptions.hpp"
+#include "EntityStore/Internal/Entity.hpp"
+#include "EntityStore/Internal/EntityPredicate.hpp"
+#include "EntityStore/Internal/IStore.hpp"
+#include "EntityStore/Properties.hpp"
+#include "EntityStore/StoreExceptions.hpp"
 
 namespace EntityStore {
 

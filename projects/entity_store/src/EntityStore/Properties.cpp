@@ -1,4 +1,4 @@
-#include "Properties.hpp"
+#include "EntityStore/Properties.hpp"
 
 #include <utility>
 

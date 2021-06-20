@@ -1,7 +1,7 @@
-#include "Store.hpp"
+#include "EntityStore/Store.hpp"
 
-#include "NestedStore.hpp"
-#include "RootStore.hpp"
+#include "EntityStore/Internal/NestedStore.hpp"
+#include "EntityStore/Internal/RootStore.hpp"
 
 namespace EntityStore {
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Properties.hpp"
-#include "Property.hpp"
+#include "EntityStore/Properties.hpp"
+#include "EntityStore/Property.hpp"
 
 // Design principle: The more compile time check you do, the less runtime error you get!
 //

@@ -2,9 +2,9 @@
 
 #include <unordered_set>
 
-#include "Entity.hpp"
-#include "EntityPredicate.hpp"
-#include "Properties.hpp"
+#include "EntityStore/Internal/Entity.hpp"
+#include "EntityStore/Internal/EntityPredicate.hpp"
+#include "EntityStore/Properties.hpp"
 
 namespace EntityStore {
 

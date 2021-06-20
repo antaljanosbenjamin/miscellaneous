@@ -1,4 +1,4 @@
-#include "EntityStatesManager.hpp"
+#include "EntityStore/Internal/EntityStatesManager.hpp"
 
 namespace EntityStore {
 

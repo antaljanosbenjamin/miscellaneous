@@ -1,6 +1,6 @@
-#include "NestedStore.hpp"
+#include "EntityStore/Internal/NestedStore.hpp"
 
-#include "StoreExceptions.hpp"
+#include "EntityStore/StoreExceptions.hpp"
 
 namespace EntityStore {
 

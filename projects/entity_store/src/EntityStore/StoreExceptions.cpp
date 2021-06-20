@@ -1,4 +1,4 @@
-#include "StoreExceptions.hpp"
+#include "EntityStore/StoreExceptions.hpp"
 
 namespace EntityStore {
 

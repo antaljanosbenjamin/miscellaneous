@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <utility>
 
-#include "Property.hpp"
+#include "EntityStore/Property.hpp"
 
 namespace EntityStore {
 

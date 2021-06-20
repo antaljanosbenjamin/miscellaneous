@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include "Entity.hpp"
-#include "Properties.hpp"
-#include "Property.hpp"
-#include "Store.hpp"
+#include "EntityStore/Internal/Entity.hpp"
+#include "EntityStore/Properties.hpp"
+#include "EntityStore/Property.hpp"
+#include "EntityStore/Store.hpp"
 
 namespace EntityStore {
 

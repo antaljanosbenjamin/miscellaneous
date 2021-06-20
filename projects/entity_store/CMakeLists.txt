@@ -1,25 +1,25 @@
 add_library(
   entity_store
-  include/Entity.hpp
-  include/EntityPredicate.hpp
-  include/EntityStatesManager.hpp
-  include/EntityUtils.hpp
-  include/IStore.hpp
-  include/NestedStore.hpp
-  include/Properties.hpp
-  include/Property.hpp
-  include/RootStore.hpp
-  include/Store.hpp
-  include/StoreExceptions.hpp
-  src/Entity.cpp
-  src/EntityStatesManager.cpp
-  src/EntityUtils.cpp
-  src/NestedStore.cpp
-  src/Properties.cpp
-  src/Property.cpp
-  src/RootStore.cpp
-  src/Store.cpp
-  src/StoreExceptions.cpp
+  include/EntityStore/EntityUtils.hpp
+  include/EntityStore/Internal/Entity.hpp
+  include/EntityStore/Internal/EntityPredicate.hpp
+  include/EntityStore/Internal/EntityStatesManager.hpp
+  include/EntityStore/Internal/IStore.hpp
+  include/EntityStore/Internal/NestedStore.hpp
+  include/EntityStore/Internal/RootStore.hpp
+  include/EntityStore/Properties.hpp
+  include/EntityStore/Property.hpp
+  include/EntityStore/Store.hpp
+  include/EntityStore/StoreExceptions.hpp
+  src/EntityStore/EntityUtils.cpp
+  src/EntityStore/Internal/Entity.cpp
+  src/EntityStore/Internal/EntityStatesManager.cpp
+  src/EntityStore/Internal/NestedStore.cpp
+  src/EntityStore/Internal/RootStore.cpp
+  src/EntityStore/Properties.cpp
+  src/EntityStore/Property.cpp
+  src/EntityStore/Store.cpp
+  src/EntityStore/StoreExceptions.cpp
 )
 
 target_include_directories(entity_store PUBLIC include)
