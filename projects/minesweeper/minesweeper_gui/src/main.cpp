@@ -9,7 +9,7 @@ public:
   bool OnExceptionInMainLoop() override;
 };
 
-// NOLINTNEXTLINE(cert-err58-cpp, cppcoreguidelines-pro-type-static-cast-downcast)
+// NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
 wxIMPLEMENT_APP(MyApp); // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 
 std::unique_ptr<minesweeper_gui::FieldsFrame> frame; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
