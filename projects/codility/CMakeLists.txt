@@ -1,0 +1,23 @@
+function(add_codility_solution TARGET_NAME FILE_NAME)
+  add_library(
+    ${TARGET_NAME} ${TARGET_NAME}/include/${FILE_NAME}.hpp ${TARGET_NAME}/src/${FILE_NAME}.cpp
+  )
+  target_include_directories(${TARGET_NAME} PUBLIC ${TARGET_NAME}/include)
+  target_link_libraries(${TARGET_NAME} PUBLIC project_options)
+  target_link_libraries(${TARGET_NAME} PRIVATE project_warnings)
+  set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "codility")
+endfunction()
+
+add_codility_solution(binary_gap BinaryGap)
+add_codility_solution(max_double_slice_sum MaxDoubleSliceSum)
+add_codility_solution(max_profit MaxProfit)
+add_codility_solution(max_slice_sum MaxSliceSum)
+add_codility_solution(min_abs_sum MinAbsSum)
+add_codility_solution(min_abs_sum_of_two MinAbsSumOfTwo)
+add_codility_solution(min_avg_two_slice MinAvgTwoSlice)
+add_codility_solution(molybdenum2019 Molybdenum)
+add_codility_solution(niobium2019 Niobium)
+add_codility_solution(number_solitaire NumberSolitaire)
+add_codility_solution(rhodium2019 Rhodium)
+add_codility_solution(ruthenium2019 Ruthenium)
+add_codility_solution(zirconium2019 Zirconium)
