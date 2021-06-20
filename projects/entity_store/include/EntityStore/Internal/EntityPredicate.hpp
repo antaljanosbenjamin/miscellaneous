@@ -2,8 +2,8 @@
 
 #include <unordered_set>
 
-#include "Entity.hpp"
-#include "Properties.hpp"
+#include "EntityStore/Internal/Entity.hpp"
+#include "EntityStore/Properties.hpp"
 
 namespace EntityStore {
 

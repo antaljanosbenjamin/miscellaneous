@@ -1,4 +1,4 @@
-#include "Property.hpp"
+#include "EntityStore/Property.hpp"
 
 namespace EntityStore {
 

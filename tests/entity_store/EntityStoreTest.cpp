@@ -3,8 +3,8 @@
 #include <sstream>
 
 #include <catch2/catch.hpp>
-#include "EntityUtils.hpp"
-#include "Store.hpp"
+#include "EntityStore/EntityUtils.hpp"
+#include "EntityStore/Store.hpp"
 
 // TODO(antaljanosbenjamin) Add proper unit tests for Property, Properties, RootStore and NestedStore
 using Store = EntityStore::Store;

@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Entity.hpp"
+#include "EntityStore/Internal/Entity.hpp"
 
 namespace EntityStore {
 

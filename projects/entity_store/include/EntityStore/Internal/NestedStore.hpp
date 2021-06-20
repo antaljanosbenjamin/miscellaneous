@@ -2,12 +2,12 @@
 
 #include <unordered_set>
 
-#include "Entity.hpp"
-#include "EntityPredicate.hpp"
-#include "EntityStatesManager.hpp"
-#include "IStore.hpp"
-#include "Properties.hpp"
-#include "RootStore.hpp"
+#include "EntityStore/Internal/Entity.hpp"
+#include "EntityStore/Internal/EntityPredicate.hpp"
+#include "EntityStore/Internal/EntityStatesManager.hpp"
+#include "EntityStore/Internal/IStore.hpp"
+#include "EntityStore/Internal/RootStore.hpp"
+#include "EntityStore/Properties.hpp"
 
 namespace EntityStore {
 

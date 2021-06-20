@@ -1,9 +1,11 @@
 #include <iomanip>
 #include <iostream>
 
-#include "Entity.hpp"
-#include "EntityUtils.hpp"
-#include "Store.hpp"
+#include "EntityStore/EntityUtils.hpp"
+#include "EntityStore/Properties.hpp"
+#include "EntityStore/Property.hpp"
+#include "EntityStore/Store.hpp"
+#include "EntityStore/StoreExceptions.hpp"
 
 using Store = EntityStore::Store;
 using Properties = EntityStore::Properties;
@@ -78,8 +80,8 @@ void printTitle(const std::string &title) {
     }                                                                                                                  \
   } while (false)
 
-void aBasicStoreExample() {
-  printTitle("A Basic Store");
+void theBasicStoreExample() {
+  printTitle("The basic store");
 
   PRINT_AND_EXECUTE(Store store = Store::create());
 
@@ -96,8 +98,8 @@ void aBasicStoreExample() {
                "parameter will be deduced from the type of the parameter.\n";
   PRINT_AND_EXECUTE_BOOLEAN(
       store.insert(2133, Properties()
-                             .set<PropertyId::Title>("Buy Milk")
-                             .setAs(PropertyId::Description, std::string("made of almonds!"))
+                             .set<PropertyId::Title>("Darth Maul's lightsaber")
+                             .setAs(PropertyId::Description, std::string("One of the best!"))
                              .setAs(PropertyId::Timestamp, 115.668))); // NOLINT(readability-magic-numbers)
   PRINT_AND_EXECUTE_TROWABLE(store.insert(2133, Properties().setAs<double>(PropertyId::Title, 4)));
 
@@ -113,7 +115,7 @@ void aBasicStoreExample() {
   PRINT_AND_EXECUTE_WITH_RESULT(store.get(2133).getAs<std::string>(PropertyId::Title));
   PRINT_AND_EXECUTE_TROWABLE(store.get(2133).getAs<double>(PropertyId::Title));
 
-  PRINT_AND_EXECUTE_PROPERTIES(*store.update(2133, Properties().set<PropertyId::Title>("Buy Chocolate")));
+  PRINT_AND_EXECUTE_PROPERTIES(*store.update(2133, Properties().set<PropertyId::Title>("Darth Zannah's lightsaber")));
   PRINT_AND_EXECUTE_BOOLEAN(store.update(666, Properties().set<PropertyId::Title>("This should fail!")) == nullptr);
 
   std::cout << "// The following contains+get requires two lookups.\n";
@@ -130,25 +132,84 @@ void aBasicStoreExample() {
   PRINT_AND_EXECUTE_BOOLEAN(store.tryGet(2133) == nullptr);
 }
 
+void queriesExample() {
+  printTitle("Queries");
+
+  PRINT_AND_EXECUTE(Store store = Store::create());
+
+  PRINT_AND_EXECUTE(store.insert(1, Properties().set<PropertyId::Title>("Darth Zannah's lightsaber")));
+  PRINT_AND_EXECUTE(store.insert(2, Properties().set<PropertyId::Title>("Darth Bane's lightsaber")));
+  PRINT_AND_EXECUTE(store.insert(3, Properties()
+                                        .set<PropertyId::Title>("Count Dooku's lightsaber")
+                                        .set<PropertyId::Description>("It's a curved one!")));
+
+  PRINT_AND_EXECUTE(store.insert(4, Properties().set<PropertyId::Timestamp>(4)));   // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE(store.insert(5, Properties().set<PropertyId::Timestamp>(5)));   // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE(store.insert(6, Properties().set<PropertyId::Timestamp>(666))); // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE(
+      store.insert(7, Properties().set<PropertyId::Timestamp>(6.99)));            // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE(store.insert(8, Properties().set<PropertyId::Timestamp>(4))); // NOLINT(readability-magic-numbers)
+
+  std::cout << "// The query and rangeQuery functions have two types similar to setter/getter of properties:\n";
+  std::cout
+      << "//  * query/rangeQuery: receives the property id as a template argument, therefore every check that must be "
+         "done on the types are in done compile time (query: existence of operator== for the property's and the query "
+         "parameter's type; rangeQuery: existence of operator>= for the property and the lower bound parameter's type, "
+         "and operator < for property's and upper bound parameter's type). Type conversion for query parameters can be "
+         "achieved by specifying additional template parameters (2nd for query, 2nd and 3rd for rangeQuery). \n";
+  std::cout << "//  * queryAs/rangeQueryAs: receives the property id as a runtime argument, but requires the property "
+               "type in compile time similarly to the getAs function, the performed checks are also the same. The "
+               "check for necessary operators are also checked at runtime. The conversion of parameters can be "
+               "achieved as the same as in case of query/rangeQuery functions.\n";
+  std::cout << "// The query functions get their parameters as const&, so there is no unnecessary copy or conversion, "
+               "but conversion might happen during comparison. If the conversion is expensive, then the usage of "
+               "additional template  argument is recommended in order to reduce the number of conversions.\n\n";
+
+  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Title>("Master Yoda's lightsaber"));
+  PRINT_AND_EXECUTE_COLLECTION(store.queryAs<std::string>(PropertyId::Title, "Darth Zannah's lightsaber"));
+  PRINT_AND_EXECUTE_COLLECTION(store.queryAs<std::string>(PropertyId::Title, std::string("Count Dooku's lightsaber")));
+
+  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Description>("it doesn't exist"));
+  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Description>("It's a curved one!"));
+
+  std::cout << "// Query can also return multiple ids!\n";
+  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Timestamp>(4.0)); // NOLINT(readability-magic-numbers)
+
+  std::cout << "And let's see range queries!\n";
+  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 5)); // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 7)); // NOLINT(readability-magic-numbers)
+
+  std::cout << "// rangeQuery doesn't complain by default if the specified range is not valid. If these checks are "
+               "desired by the user, then the checkedRangeQueries should be used.\n";
+  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 4.0)); // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE_COLLECTION(
+      store.rangeQueryAs<double>(PropertyId::Timestamp, 4.0, 3.9)); // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE_TROWABLE(
+      store.checkedRangeQuery<PropertyId::Timestamp>(4.0, 4.0)); // NOLINT(readability-magic-numbers)
+  PRINT_AND_EXECUTE_TROWABLE(
+      store.checkedRangeQueryAs<double>(PropertyId::Timestamp, 4.0, 3.9)); // NOLINT(readability-magic-numbers)
+}
+
 void childStoresExample() {
   printTitle("Child Stores");
 
   PRINT_AND_EXECUTE(Store store = Store::create());
-  PRINT_AND_EXECUTE(std::string description2133 = "made of almonds!");
+  PRINT_AND_EXECUTE(std::string description2133 = "One of the best!");
   PRINT_AND_EXECUTE_BOOLEAN(store.insert(
-      2133, Properties().set<PropertyId::Title>("Buy Milk").setAs(PropertyId::Description, description2133)));
+      2133,
+      Properties().set<PropertyId::Title>("Darth Maul's lightsaber").setAs(PropertyId::Description, description2133)));
 
   PRINT_AND_EXECUTE(Store child = store.createChild());
 
   PRINT_AND_EXECUTE_PROPERTIES(child.get(2133));
 
-  PRINT_AND_EXECUTE(child.update(2133, Properties().set<PropertyId::Title>("Buy Cream")));
+  PRINT_AND_EXECUTE(child.update(2133, Properties().set<PropertyId::Title>("Master Yoda's lightsaber")));
 
   PRINT_AND_EXECUTE_PROPERTIES(child.get(2133));
 
   PRINT_AND_EXECUTE_PROPERTIES(store.get(2133));
 
-  PRINT_AND_EXECUTE_COLLECTION(child.query<PropertyId::Title>("Buy Cream"));
+  PRINT_AND_EXECUTE_COLLECTION(child.query<PropertyId::Title>("Master Yoda's lightsaber"));
 
   PRINT_AND_EXECUTE(child.commit());
 
@@ -218,67 +279,9 @@ void childStoresExample() {
   //  one can be a real solution from the user point of view.
 }
 
-void queriesExample() {
-  printTitle("Queries");
-
-  PRINT_AND_EXECUTE(Store store = Store::create());
-
-  PRINT_AND_EXECUTE(store.insert(1, Properties().set<PropertyId::Title>("Buy Chocolate")));
-  PRINT_AND_EXECUTE(store.insert(2, Properties().set<PropertyId::Title>("Don't Buy Chocolate")));
-  PRINT_AND_EXECUTE(store.insert(3, Properties()
-                                        .set<PropertyId::Title>("Or Do Whatever You Want")
-                                        .set<PropertyId::Description>("because you know what you want!")));
-
-  PRINT_AND_EXECUTE(store.insert(4, Properties().set<PropertyId::Timestamp>(4)));   // NOLINT(readability-magic-numbers)
-  PRINT_AND_EXECUTE(store.insert(5, Properties().set<PropertyId::Timestamp>(5)));   // NOLINT(readability-magic-numbers)
-  PRINT_AND_EXECUTE(store.insert(6, Properties().set<PropertyId::Timestamp>(666))); // NOLINT(readability-magic-numbers)
-  PRINT_AND_EXECUTE(
-      store.insert(7, Properties().set<PropertyId::Timestamp>(6.99)));            // NOLINT(readability-magic-numbers)
-  PRINT_AND_EXECUTE(store.insert(8, Properties().set<PropertyId::Timestamp>(4))); // NOLINT(readability-magic-numbers)
-
-  std::cout << "// The query and rangeQuery functions have two types similar to setter/getter of properties:\n";
-  std::cout
-      << "//  * query/rangeQuery: receives the property id as a template argument, therefore every check that must be "
-         "done on the types are in done compile time (query: existence of operator== for the property's and the query "
-         "parameter's type; rangeQuery: existence of operator>= for the property and the lower bound parameter's type, "
-         "and operator < for property's and upper bound parameter's type). Type conversion for query parameters can be "
-         "achieved by specifying additional template parameters (2nd for query, 2nd and 3rd for rangeQuery). \n";
-  std::cout << "//  * queryAs/rangeQueryAs: receives the property id as a runtime argument, but requires the property "
-               "type in compile time similarly to the getAs function, the performed checks are also the same. The "
-               "check for necessary operators are also checked at runtime. The conversion of parameters can be "
-               "achieved as the same as in case of query/rangeQuery functions.\n";
-  std::cout << "// The query functions get their parameters as const&, so there is no unnecessary copy or conversion, "
-               "but conversion might happen during comparison. If the conversion is expensive, then the usage of "
-               "additional template  argument is recommended in order to reduce the number of conversions.\n\n";
-
-  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Title>("Buy Cream"));
-  PRINT_AND_EXECUTE_COLLECTION(store.queryAs<std::string>(PropertyId::Title, "Buy Chocolate"));
-  PRINT_AND_EXECUTE_COLLECTION(store.queryAs<std::string>(PropertyId::Title, std::string("Or Do Whatever You Want")));
-
-  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Description>("because it doesn't exist"));
-  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Description>("because you know what you want!"));
-
-  std::cout << "// Query can also return multiple ids!\n";
-  PRINT_AND_EXECUTE_COLLECTION(store.query<PropertyId::Timestamp>(4.0)); // NOLINT(readability-magic-numbers)
-
-  std::cout << "And let's see range queries!\n";
-  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 5)); // NOLINT(readability-magic-numbers)
-  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 7)); // NOLINT(readability-magic-numbers)
-
-  std::cout << "// rangeQuery doesn't complain by default if the specified range is not valid. If these checks are "
-               "desired by the user, then the checkedRangeQueries should be used.\n";
-  PRINT_AND_EXECUTE_COLLECTION(store.rangeQuery<PropertyId::Timestamp>(4.0, 4.0)); // NOLINT(readability-magic-numbers)
-  PRINT_AND_EXECUTE_COLLECTION(
-      store.rangeQueryAs<double>(PropertyId::Timestamp, 4.0, 3.9)); // NOLINT(readability-magic-numbers)
-  PRINT_AND_EXECUTE_TROWABLE(
-      store.checkedRangeQuery<PropertyId::Timestamp>(4.0, 4.0)); // NOLINT(readability-magic-numbers)
-  PRINT_AND_EXECUTE_TROWABLE(
-      store.checkedRangeQueryAs<double>(PropertyId::Timestamp, 4.0, 3.9)); // NOLINT(readability-magic-numbers)
-}
-
 // NOLINTNEXTLINE(bugprone-exception-escape)
 int main() {
-  aBasicStoreExample();
-  childStoresExample();
+  theBasicStoreExample();
   queriesExample();
+  childStoresExample();
 }

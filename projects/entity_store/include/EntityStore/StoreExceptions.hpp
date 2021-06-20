@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-#include "Entity.hpp"
+#include "EntityStore/Internal/Entity.hpp"
 
 namespace EntityStore {
 

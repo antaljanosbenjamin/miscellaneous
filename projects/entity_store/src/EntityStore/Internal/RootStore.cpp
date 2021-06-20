@@ -1,8 +1,8 @@
-﻿#include "RootStore.hpp"
+﻿#include "EntityStore/Internal/RootStore.hpp"
 
 #include <cassert>
 
-#include "StoreExceptions.hpp"
+#include "EntityStore/StoreExceptions.hpp"
 
 namespace EntityStore {
 

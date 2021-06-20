@@ -1,4 +1,4 @@
-#include "EntityUtils.hpp"
+#include "EntityStore/EntityUtils.hpp"
 
 namespace EntityStore {
 
