@@ -1,6 +1,7 @@
 ---
 Checks:           >
   *,
+  -cert-err58-cpp,
   -clang-diagnostic-invalid-constexpr,
   -cppcoreguidelines-avoid-c-arrays,
   -cppcoreguidelines-avoid-magic-numbers,
@@ -11,6 +12,7 @@ Checks:           >
   -fuchsia-default-arguments-declarations,
   -fuchsia-overloaded-operator,
   -fuchsia-statically-constructed-objects,
+  -fuchsia-trailing-return,
   -google-runtime-references,
   -hicpp-avoid-c-arrays,
   -hicpp-move-const-arg,
