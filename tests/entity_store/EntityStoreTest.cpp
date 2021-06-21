@@ -429,7 +429,7 @@ TEST_CASE("SimpleQuery") {
     CHECK(store.query<PropertyId::Timestamp>(2).empty());
 
     constexpr EntityId maxInsertedId = 6;
-    for (auto i{3}; i <= maxInsertedId; ++i) {
+    for (auto i{3U}; i <= maxInsertedId; ++i) {
       checkOneId(store, i, i);
     }
   };
