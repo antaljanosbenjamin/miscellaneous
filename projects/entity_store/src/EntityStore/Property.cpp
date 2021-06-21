@@ -2,8 +2,9 @@
 
 namespace EntityStore {
 
-InvalidPropertyTypeException::InvalidPropertyTypeException(const std::string &propertyName)
-  : std::runtime_error("Property \"" + propertyName + "\" is not compatible with the requested type!") {
+InvalidPropertyTypeException::InvalidPropertyTypeException(std::string_view propertyName)
+  : std::runtime_error(std::string("Property \"") + propertyName.data() +
+                       "\" is not compatible with the requested type!") {
 }
 
 } // namespace EntityStore

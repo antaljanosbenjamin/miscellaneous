@@ -4,8 +4,8 @@
 
 namespace EntityStore {
 
-DoesNotHavePropertyException::DoesNotHavePropertyException(const std::string &propertyName)
-  : std::out_of_range("Properties does not contain " + propertyName + " property!") {
+DoesNotHavePropertyException::DoesNotHavePropertyException(const std::string_view propertyName)
+  : std::out_of_range(std::string("Properties does not contain ") + propertyName.data() + " property!") {
 }
 
 bool Properties::hasProperty(const PropertyId propertyId) const {

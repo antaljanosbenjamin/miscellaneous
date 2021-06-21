@@ -4,6 +4,7 @@
 #include <array>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <variant>
 
 namespace EntityStore {
@@ -130,7 +131,7 @@ using AreAllPropertyDescriptorDefined = AreAllNotGreaterPropertyDescriptorDefine
 static_assert(AreAllPropertyDescriptorDefined::value, "not all property descriptor is defined!");
 
 struct PropertyInfo {
-  const char *name;
+  std::string_view name;
   PropertyType type;
 };
 
@@ -141,10 +142,11 @@ constexpr std::array<PropertyInfo, asUnderlying(PropertyId::LAST) + 1> propertyI
     PropertyInfo{"cstyledstring", PropertyDescriptor<PropertyId::CStyledString>::propertyType},
 };
 
-// TODO(antaljanosbenjamin) Is this needed? Specifying the size of propertyInfos doesn't achieve the same thing?
 static_assert(asUnderlying(PropertyId::LAST) + 1 == std::size(propertyInfos),
               "The propertyInfos array does not contain exactly the same number of elements as the PropertyId "
               "enumeration! Check the PropertyId::LAST and the propertyInfos array!");
+
+static_assert(!propertyInfos.back().name.empty(), "propertyInfos is probably not fully initialized!");
 
 constexpr bool areAllPropertyTypeUsed() {
   std::array<bool, asUnderlying(PropertyType::LAST) + 1> isTypeUsed{};
@@ -167,7 +169,7 @@ constexpr PropertyType getPropertyType(const PropertyId &propertyId) {
   return propertyInfos[asUnderlying(propertyId)].type;
 }
 
-constexpr char const *getPropertyName(const PropertyId &propertyId) {
+constexpr std::string_view getPropertyName(const PropertyId &propertyId) {
   return propertyInfos[asUnderlying(propertyId)].name;
 }
 
@@ -178,7 +180,7 @@ constexpr bool doesTypeMatchProperty(const PropertyId &propertyId) {
 
 class InvalidPropertyTypeException : public std::runtime_error {
 public:
-  explicit InvalidPropertyTypeException(const std::string &propertyName);
+  explicit InvalidPropertyTypeException(const std::string_view propertyName);
 };
 
 template <typename TProperty>
