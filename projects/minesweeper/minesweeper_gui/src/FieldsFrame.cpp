@@ -187,6 +187,7 @@ void FieldsFrame::onNewGame(wxCommandEvent &event) {
     case NewGameId::LastLevel:
       return this->gameLevel;
     };
+    throw std::runtime_error(fmt::format("Invalid value of NewGameId {}", event.GetId()));
   }();
   this->game = minesweeper::Minesweeper::create(gameLevel).value();
   createFields();
