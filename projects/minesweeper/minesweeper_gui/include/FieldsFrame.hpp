@@ -27,6 +27,7 @@ private:
   FieldBitmaps bitmaps{getDefaultBitmaps()};
   FieldPanels panels{};
   std::experimental::propagate_const<wxPanel *> fieldHolderPanel{nullptr};
+  minesweeper::GameLevel gameLevel{minesweeper::GameLevel::Beginner};
   minesweeper::Minesweeper game;
 };
 } // namespace minesweeper_gui
