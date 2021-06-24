@@ -1,5 +1,7 @@
 #include "FieldPanel.hpp"
 
+#include <stdexcept>
+
 #include "FieldsFrame.hpp"
 
 namespace minesweeper_gui {
@@ -25,14 +27,43 @@ void FieldPanel::rightClickEvent(wxMouseEvent & /*unused*/) {
 }
 
 void FieldPanel::leftClickEvent(wxMouseEvent & /*unused*/) {
-  auto newlyOpenedFields = this->state.open(*game);
-  for (const auto &newlyOpenedField: newlyOpenedFields) {
-    auto &fieldPanel =
-        FieldsFrame::getFieldPanel(*panels, static_cast<uint64_t>(newlyOpenedField.row),
-                                   static_cast<uint64_t>(newlyOpenedField.column), game->getSize().value());
-    fieldPanel.state.updateWithBaseState(BaseState::Opened);
-    fieldPanel.state.updateWithFigureType(static_cast<FigureType>(newlyOpenedField.type));
-    fieldPanel.Refresh();
+  const auto openInfo = this->state.open(*game);
+  switch (openInfo.openResult) {
+  case minesweeper::OpenResult::Ok:
+  case minesweeper::OpenResult::Winner: {
+    for (const auto &newlyOpenedField: openInfo.newlyOpenedFields) {
+      auto &fieldPanel =
+          FieldsFrame::getFieldPanel(*panels, static_cast<uint64_t>(newlyOpenedField.row),
+                                     static_cast<uint64_t>(newlyOpenedField.column), game->getSize().value());
+      fieldPanel.state.updateWithBaseState(BaseState::Opened);
+      fieldPanel.state.updateWithFigureType(static_cast<FigureType>(newlyOpenedField.type));
+      fieldPanel.Refresh();
+    }
+    break;
+  }
+  case minesweeper::OpenResult::IsFlagged: {
+    if (!openInfo.newlyOpenedFields.empty()) {
+      throw std::runtime_error("Unexpected newly opened fields!");
+    }
+    break;
+  }
+  case minesweeper::OpenResult::Boom: {
+    for (const auto &newlyOpenedField: openInfo.newlyOpenedFields) {
+      if (newlyOpenedField.type == minesweeper::FieldType::Mine) {
+        auto &fieldPanel =
+            FieldsFrame::getFieldPanel(*panels, static_cast<uint64_t>(newlyOpenedField.row),
+                                       static_cast<uint64_t>(newlyOpenedField.column), game->getSize().value());
+
+        if (&fieldPanel == this) {
+          fieldPanel.state.updateWithBaseState(BaseState::Boomed);
+        } else {
+          fieldPanel.state.updateWithBaseState(BaseState::Opened);
+        }
+        fieldPanel.state.updateWithFigureType(static_cast<FigureType>(newlyOpenedField.type));
+        fieldPanel.Refresh();
+      }
+    }
+  }
   }
 }
 

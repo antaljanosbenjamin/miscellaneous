@@ -24,12 +24,12 @@ void FieldState::toggleFlag(minesweeper::Minesweeper &game) {
   });
 }
 
-std::vector<minesweeper::OpenedField> FieldState::open(minesweeper::Minesweeper &game) {
+minesweeper::OpenInfo FieldState::open(minesweeper::Minesweeper &game) {
   return game.open(row, column)
       .and_then([this](minesweeper::Result<minesweeper::OpenInfo> &&result) {
         auto &openInfo = *result;
 
-        return minesweeper::Result<std::vector<minesweeper::OpenedField>>(std::move(openInfo.newlyOpenedFields));
+        return minesweeper::Result<minesweeper::OpenInfo>(std::move(openInfo));
       })
       .value();
 }
