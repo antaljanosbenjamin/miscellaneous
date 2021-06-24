@@ -63,6 +63,7 @@ void FieldPanel::leftClickEvent(wxMouseEvent & /*unused*/) {
         fieldPanel.Refresh();
       }
     }
+    break;
   }
   }
 }
