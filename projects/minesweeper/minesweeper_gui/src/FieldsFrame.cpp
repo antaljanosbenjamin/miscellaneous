@@ -35,9 +35,9 @@ FieldsFrame::FieldsFrame()
   SetMenuBar(menuBar.get());
   static_cast<void>(menuBar.release());
   CreateStatusBar();
-  Bind(wxEVT_MENU, &FieldsFrame::OnNewGame, this, ID_NewGame);
-  Bind(wxEVT_MENU, &FieldsFrame::OnAbout, this, wxID_ABOUT);
-  Bind(wxEVT_MENU, &FieldsFrame::OnExit, this, wxID_EXIT);
+  Bind(wxEVT_MENU, &FieldsFrame::onNewGame, this, ID_NewGame);
+  Bind(wxEVT_MENU, &FieldsFrame::onAbout, this, wxID_ABOUT);
+  Bind(wxEVT_MENU, &FieldsFrame::onExit, this, wxID_EXIT);
 
   std::unique_ptr<wxBoxSizer> topSizer{new wxBoxSizer(wxVERTICAL)};
   auto fieldHolderPanelOwner = std::make_unique<wxPanel>(this);
@@ -46,7 +46,7 @@ FieldsFrame::FieldsFrame()
   SetSizerAndFit(topSizer.get());
   static_cast<void>(topSizer.release());
 
-  CreateFields();
+  createFields();
 }
 
 FieldPanel &FieldsFrame::getFieldPanel(FieldPanels &panels, uint64_t row, uint64_t col,
@@ -93,7 +93,7 @@ FieldBitmaps FieldsFrame::getDefaultBitmaps() {
   return bitmaps;
 }
 
-void FieldsFrame::CreateFields() {
+void FieldsFrame::createFields() {
   fieldHolderPanel->Freeze();
 
   if (auto *sizer = fieldHolderPanel->GetSizer(); nullptr != sizer) {
@@ -136,20 +136,20 @@ void FieldsFrame::CreateFields() {
   GetSizer()->Fit(this);
 }
 
-void FieldsFrame::OnExit(wxCommandEvent & /*unused*/) {
+void FieldsFrame::onExit(wxCommandEvent & /*unused*/) {
   Close(true);
 }
 
 // Because it is a binded event handler, in has to be a member function
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-void FieldsFrame::OnAbout(wxCommandEvent & /*unused*/) {
+void FieldsFrame::onAbout(wxCommandEvent & /*unused*/) {
   wxMessageBox("This is the ultimate Minesweeper game!", "About Minesweeper",
                wxOK | wxICON_INFORMATION); // NOLINT(hicpp-signed-bitwise, readability-magic-numbers)
 }
 
-void FieldsFrame::OnNewGame(wxCommandEvent & /*unused*/) {
+void FieldsFrame::onNewGame(wxCommandEvent & /*unused*/) {
   this->game = minesweeper::Minesweeper::create(minesweeper::GameLevel::Beginner).value();
-  CreateFields();
+  createFields();
   Refresh();
 }
 } // namespace minesweeper_gui
