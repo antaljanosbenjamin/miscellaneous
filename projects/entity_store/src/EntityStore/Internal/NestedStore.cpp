@@ -24,6 +24,30 @@ bool doInsert(const IStore &parentStore, RootStore &ownStore, EntityStatesManage
   return isOwnInsertSuccessfull;
 }
 
+template <SameAsProperties TProperties>
+const Properties *doUpdate(const IStore &parentStore, RootStore &ownStore, EntityStatesManager &statesManager,
+                           const EntityId id, TProperties &&properties) {
+  auto transaction = statesManager.startUpdate(id);
+  if (transaction->state() == EntityState::RemovedByThis) {
+    transaction.abort();
+    return nullptr;
+  }
+
+  const auto *updatedPropertiesPtr = ownStore.update(id, std::forward<TProperties>(properties));
+  if (updatedPropertiesPtr != nullptr) {
+    return updatedPropertiesPtr;
+  }
+
+  const auto *parentPropertiesPtr = parentStore.tryGet(id);
+  if (parentPropertiesPtr == nullptr) {
+    transaction.abort();
+    return nullptr;
+  }
+
+  ownStore.insert(id, *parentPropertiesPtr);
+  return ownStore.update(id, std::forward<TProperties>(properties));
+}
+
 NestedStore::NestedStore(IStore &parentStore)
   : m_parentStore{parentStore}
   , m_ownStore{}
@@ -47,79 +71,13 @@ bool NestedStore::insert(const EntityId id, const Properties &properties) {
   return doInsert(m_parentStore, m_ownStore, m_statesManager, id, properties);
 }
 
-// The update function is totally correct without the second condition too, but it might be less efficient.
-// The complexity of these algorithms can be compared by counting the lookups they require:
-//
-// in P means parent store contains an Entity with the specified id
-// in O means own store contains an Entity with the specified id
-// none means neither parent nor own store contains an Entity with the specified id
-// P means lookup in parent store
-// O means lookup in own store
-// +---------------+---------------+---------------+
-// | Case          |  w/ condition | w/o condition |
-// +---------------+---------------+---------------+
-// | in P          |          OPOO |           POO |
-// +---------------+---------------+---------------+
-// | in O          |            OO |            PO |
-// +---------------+---------------+---------------+
-// | in P, in O    |            OO |           POO |
-// +---------------+---------------+---------------+
-// | none          |            OP |            PO |
-// +---------------+---------------+---------------+
-// As the table shows, there is no obviously better solution. The better solution highly depends on how the store is
-// used. I assume that the parent store is significantly bigger, therefore the w/ version could perform better as it has
-// to do a lookup in the parent store only when our own store does not contain the value. The code is slightly more
-// complex, but it is not a big price.
 const Properties *NestedStore::update(const EntityId id, Properties &&properties) {
-  auto transaction = m_statesManager.startUpdate(id);
-  if (transaction->state() == EntityState::RemovedByThis) {
-    transaction.abort();
-    return nullptr;
-  }
-
-  // The update would work without this condition too, but it might be more efficient in this way. For further
-  // explanation please see the comment above
-  if (m_ownStore.contains(id)) {
-    return m_ownStore.update(id, std::move(properties));
-  }
-
-  const auto *parentPropertiesPtr = m_parentStore.tryGet(id);
-  if (parentPropertiesPtr == nullptr) {
-    transaction.abort();
-    return nullptr;
-  }
-
-  m_ownStore.insert(id, *parentPropertiesPtr);
-  return m_ownStore.update(id, std::move(properties));
+  return doUpdate(m_parentStore, m_ownStore, m_statesManager, id, std::move(properties));
 }
 
 // This function differs from the && version, see the comments:
 const Properties *NestedStore::update(const EntityId id, const Properties &properties) {
-  auto transaction = m_statesManager.startUpdate(id);
-  if (transaction->state() == EntityState::RemovedByThis) {
-    transaction.abort();
-    return nullptr;
-  }
-
-  // TODO(antaljanosbenjamin) Make sure RootStore::update only moves when the update can happen and unify the two
-  // version of NestedStore::update.
-
-  // The next few lines are different then the regarding lines in the && version of update. The reason for that is in
-  // the && version we cannot move the properties twice, therefore, we cannot use the update function with the moved
-  // properties without being 100% sure that the insert will succeed.
-  const auto *updatedPropertiesPtr = m_ownStore.update(id, properties);
-  if (updatedPropertiesPtr != nullptr) {
-    return updatedPropertiesPtr;
-  }
-
-  const auto *parentPropertiesPtr = m_parentStore.tryGet(id);
-  if (parentPropertiesPtr == nullptr) {
-    transaction.abort();
-    return nullptr;
-  }
-
-  m_ownStore.insert(id, *parentPropertiesPtr);
-  return m_ownStore.update(id, properties);
+  return doUpdate(m_parentStore, m_ownStore, m_statesManager, id, properties);
 }
 
 bool NestedStore::contains(const EntityId id) const {
