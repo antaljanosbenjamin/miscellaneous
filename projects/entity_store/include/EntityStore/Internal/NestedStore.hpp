@@ -17,7 +17,7 @@ namespace EntityStore {
 class NestedStore : public IStore {
 public:
   explicit NestedStore(IStore &parentStore);
-  ~NestedStore() override;
+  ~NestedStore() override = default;
 
   // For NestedStore, these operations are ambiguous:
   //  * Default Ctor: what will be the parent store?

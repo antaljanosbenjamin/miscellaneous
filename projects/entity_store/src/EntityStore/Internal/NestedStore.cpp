@@ -54,14 +54,6 @@ NestedStore::NestedStore(IStore &parentStore)
   , m_statesManager{}
   , m_isCommitting{false} {
 }
-NestedStore::~NestedStore() {
-  try {
-    // TODO(antaljanosbenjamin) Do not do anything in the destructor
-    doCommitChanges();
-  } catch (...) {
-    // logging something is a better idea then doing nothing
-  }
-}
 
 bool NestedStore::insert(const EntityId id, Properties &&properties) {
   return doInsert(m_parentStore, m_ownStore, m_statesManager, id, std::move(properties));

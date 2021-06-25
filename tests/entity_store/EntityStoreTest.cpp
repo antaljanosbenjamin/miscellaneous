@@ -92,15 +92,14 @@ void checkEmptyStore(const Store &store, const EntityId start = 0, const EntityI
 
 enum class CommitType {
   Commit,
-  CommitByDtor,
   DoubleCommit,
   Rollback,
+  RollbackByDtor,
 };
 
 template <typename TInit, typename TUpdate, typename TCheckOriginal, typename TCheckUpdated>
 void checkWithChild(Store &s, const CommitType commitType, TInit &init, TUpdate &update, TCheckOriginal &checkOriginal,
                     TCheckUpdated &checkUpdated) {
-
   INFO("checkWithChild");
   init(s);
 
@@ -132,9 +131,9 @@ void checkWithChild(Store &s, const CommitType commitType, TInit &init, TUpdate 
       checkUpdated(cs);
     }
   }
-  if (commitType != CommitType::Rollback) {
-    INFO("checkWithChild CommitByDtor");
-    checkUpdated(s);
+  if (commitType == CommitType::RollbackByDtor) {
+    INFO("checkWithChild RollbackByDtor");
+    checkOriginal(s);
   }
 }
 
@@ -145,7 +144,7 @@ void checkWithGrandChild(const CommitType commitType, TInit &init, TUpdate &upda
     Store s = Store::create();
 
     auto checkAfterChanges = [&childCommitType, &checkOriginal, &checkUpdated](Store &store) {
-      if (childCommitType == CommitType::Rollback) {
+      if (childCommitType == CommitType::Rollback || childCommitType == CommitType::RollbackByDtor) {
         checkOriginal(store);
       } else {
         checkUpdated(store);
@@ -177,14 +176,16 @@ void checkWithGrandChild(const CommitType commitType, TInit &init, TUpdate &upda
         checkAfterChanges(cs);
       }
     }
-    if (commitType != CommitType::Rollback) {
+    if (commitType == CommitType::Rollback || commitType == CommitType::RollbackByDtor) {
+      checkEmptyStore(s);
+    } else {
       checkAfterChanges(s);
     }
   };
   doCheck(CommitType::Commit);
-  doCheck(CommitType::CommitByDtor);
   doCheck(CommitType::DoubleCommit);
   doCheck(CommitType::Rollback);
+  doCheck(CommitType::RollbackByDtor);
 }
 
 template <typename TInit, typename TUpdate, typename TCheck>
@@ -204,11 +205,6 @@ void checkConfig(TInit &init, TUpdate &update, TCheckOriginal &checkOriginal, TC
     checkWithChild(s, CommitType::Commit, init, update, checkOriginal, checkUpdated);
   }
   {
-    INFO("checkConfig checkWithChild CommitByDtor");
-    Store s = Store::create();
-    checkWithChild(s, CommitType::CommitByDtor, init, update, checkOriginal, checkUpdated);
-  }
-  {
     INFO("checkConfig checkWithChild DoubleCommit");
     Store s = Store::create();
     checkWithChild(s, CommitType::DoubleCommit, init, update, checkOriginal, checkUpdated);
@@ -219,12 +215,13 @@ void checkConfig(TInit &init, TUpdate &update, TCheckOriginal &checkOriginal, TC
     checkWithChild(s, CommitType::Rollback, init, update, checkOriginal, checkUpdated);
   }
   {
-    INFO("checkConfig checkWithGrandChild Commit");
-    checkWithGrandChild(CommitType::Commit, init, update, checkOriginal, checkUpdated);
+    INFO("checkConfig checkWithChild RollbackByDtor");
+    Store s = Store::create();
+    checkWithChild(s, CommitType::RollbackByDtor, init, update, checkOriginal, checkUpdated);
   }
   {
-    INFO("checkConfig checkWithGrandChild CommitByDtor");
-    checkWithGrandChild(CommitType::CommitByDtor, init, update, checkOriginal, checkUpdated);
+    INFO("checkConfig checkWithGrandChild Commit");
+    checkWithGrandChild(CommitType::Commit, init, update, checkOriginal, checkUpdated);
   }
   {
     INFO("checkConfig checkWithGrandChild DoubleCommit");
@@ -233,6 +230,10 @@ void checkConfig(TInit &init, TUpdate &update, TCheckOriginal &checkOriginal, TC
   {
     INFO("checkConfig checkWithGrandChild Rollback");
     checkWithGrandChild(CommitType::Rollback, init, update, checkOriginal, checkUpdated);
+  }
+  {
+    INFO("checkConfig checkWithGrandChild RollbackByDtor");
+    checkWithGrandChild(CommitType::RollbackByDtor, init, update, checkOriginal, checkUpdated);
   }
   {
     INFO("checkConfig checkWithStore");
@@ -747,10 +748,9 @@ TEST_CASE("SimpleOutput") {
   }
   {
     constexpr EntityId entity12Id = 12;
-    {
-      auto cs = s.createChild();
-      cs.insert(entity12Id, Properties().set<PropertyId::Title>("Twelve"));
-    }
+    auto cs = s.createChild();
+    cs.insert(entity12Id, Properties().set<PropertyId::Title>("Twelve"));
+    cs.commit();
     printEntity(ss, s, entity12Id);
   }
   {
@@ -797,6 +797,7 @@ TEST_CASE("SimpleOutput") {
                 Properties().set<PropertyId::Title>("Only title and timestamp").set<PropertyId::Timestamp>(-3));
       cs.remove(entity60Id);
       cs.insert(entity60Id, Properties().set<PropertyId::Title>("ShouldBeThere"));
+      cs.commit();
     }
     printEntity(ss, s, entity60Id);
   }
@@ -813,6 +814,7 @@ TEST_CASE("SimpleOutput") {
     {
       auto cs = s.createChild();
       cs.update(entity60Id, Properties().setAs(PropertyId::Description, std::string("Road 60")));
+      cs.commit();
     }
     printEntity(ss, s, entity60Id);
   }
