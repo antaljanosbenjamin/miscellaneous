@@ -21,13 +21,13 @@ public:
   DECLARE_EVENT_TABLE() // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-non-const-global-variables)
 
 private:
-  void Render(wxDC &dc);
+  void render(wxDC &dc);
 
-  void PaintEvent(wxPaintEvent & /*unused*/);
-  void RightClickEvent(wxMouseEvent & /*unused*/);
-  void LeftClickEvent(wxMouseEvent & /*unused*/);
-  void MouseEnterEvent(wxMouseEvent &event);
-  void MouseLeaveEvent(wxMouseEvent &event);
+  void paintEvent(wxPaintEvent & /*unused*/);
+  void rightClickEvent(wxMouseEvent & /*unused*/);
+  void leftClickEvent(wxMouseEvent & /*unused*/);
+  void mouseEnterEvent(wxMouseEvent &event);
+  void mouseLeaveEvent(wxMouseEvent &event);
 
   FieldState state;
   const FieldBitmaps *bitmaps;

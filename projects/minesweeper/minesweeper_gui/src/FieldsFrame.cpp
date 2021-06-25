@@ -1,7 +1,10 @@
 #include "FieldsFrame.hpp"
 
+#include <concepts>
 #include <map>
+#include <stdexcept>
 #include <string>
+#include <type_traits>
 
 #include "BaseState.hpp"
 #include "FigureType.hpp"
@@ -9,20 +12,42 @@
 #include "utils/SafeCast.hpp"
 
 namespace {
-enum {
-  ID_NewGame = 1,
+enum class NewGameId : int {
+  LastLevel = 1,
+  Beginner = 2,
+  Intermediate = 3,
+  Expert = 4,
 };
+
+constexpr int toInt(NewGameId id) {
+  static_assert(std::same_as<std::underlying_type_t<NewGameId>, int>);
+  return static_cast<int>(id);
+}
+
+NewGameId toNewGameId(int id) {
+  static_assert(std::same_as<std::underlying_type_t<NewGameId>, int>);
+  constexpr auto minValue = toInt(NewGameId::LastLevel);
+  constexpr auto maxValue = toInt(NewGameId::Expert);
+  if (id < minValue || id > maxValue) {
+    throw std::logic_error(fmt::format("Invalid NewGameId {} (minimum {}, maximum {})", id, minValue, maxValue));
+  }
+  return static_cast<NewGameId>(id);
+}
 
 } // namespace
 
 namespace minesweeper_gui {
 FieldsFrame::FieldsFrame()
-  : wxFrame(nullptr, wxID_ANY, "Hello World", wxDefaultPosition, wxDefaultSize,
+  : wxFrame(nullptr, wxID_ANY, "Minesweeper", wxDefaultPosition, wxDefaultSize,
             wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER) // NOLINT(hicpp-signed-bitwise)
-  , game{minesweeper::Minesweeper::create(minesweeper::GameLevel::Beginner).value()} {
+  , game{minesweeper::Minesweeper::create(gameLevel).value()} {
 
   auto menuFile = std::make_unique<wxMenu>();
-  menuFile->Append(ID_NewGame, "&New game\tCtrl-N", "Start new game");
+  menuFile->Append(toInt(NewGameId::LastLevel), "&New game\tCtrl-N", "Start new game");
+  menuFile->AppendSeparator();
+  menuFile->AppendRadioItem(toInt(NewGameId::Beginner), "Beginner");
+  menuFile->AppendRadioItem(toInt(NewGameId::Intermediate), "Intermediate");
+  menuFile->AppendRadioItem(toInt(NewGameId::Expert), "Expert");
   menuFile->AppendSeparator();
   menuFile->Append(wxID_EXIT);
   auto menuHelp = std::make_unique<wxMenu>();
@@ -35,9 +60,12 @@ FieldsFrame::FieldsFrame()
   SetMenuBar(menuBar.get());
   static_cast<void>(menuBar.release());
   CreateStatusBar();
-  Bind(wxEVT_MENU, &FieldsFrame::OnNewGame, this, ID_NewGame);
-  Bind(wxEVT_MENU, &FieldsFrame::OnAbout, this, wxID_ABOUT);
-  Bind(wxEVT_MENU, &FieldsFrame::OnExit, this, wxID_EXIT);
+  Bind(wxEVT_MENU, &FieldsFrame::onNewGame, this, toInt(NewGameId::LastLevel));
+  Bind(wxEVT_MENU, &FieldsFrame::onNewGame, this, toInt(NewGameId::Beginner));
+  Bind(wxEVT_MENU, &FieldsFrame::onNewGame, this, toInt(NewGameId::Intermediate));
+  Bind(wxEVT_MENU, &FieldsFrame::onNewGame, this, toInt(NewGameId::Expert));
+  Bind(wxEVT_MENU, &FieldsFrame::onAbout, this, wxID_ABOUT);
+  Bind(wxEVT_MENU, &FieldsFrame::onExit, this, wxID_EXIT);
 
   std::unique_ptr<wxBoxSizer> topSizer{new wxBoxSizer(wxVERTICAL)};
   auto fieldHolderPanelOwner = std::make_unique<wxPanel>(this);
@@ -46,7 +74,7 @@ FieldsFrame::FieldsFrame()
   SetSizerAndFit(topSizer.get());
   static_cast<void>(topSizer.release());
 
-  CreateFields();
+  createFields();
 }
 
 FieldPanel &FieldsFrame::getFieldPanel(FieldPanels &panels, uint64_t row, uint64_t col,
@@ -93,7 +121,7 @@ FieldBitmaps FieldsFrame::getDefaultBitmaps() {
   return bitmaps;
 }
 
-void FieldsFrame::CreateFields() {
+void FieldsFrame::createFields() {
   fieldHolderPanel->Freeze();
 
   if (auto *sizer = fieldHolderPanel->GetSizer(); nullptr != sizer) {
@@ -136,20 +164,33 @@ void FieldsFrame::CreateFields() {
   GetSizer()->Fit(this);
 }
 
-void FieldsFrame::OnExit(wxCommandEvent & /*unused*/) {
+void FieldsFrame::onExit(wxCommandEvent & /*unused*/) {
   Close(true);
 }
 
 // Because it is a binded event handler, in has to be a member function
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-void FieldsFrame::OnAbout(wxCommandEvent & /*unused*/) {
+void FieldsFrame::onAbout(wxCommandEvent & /*unused*/) {
   wxMessageBox("This is the ultimate Minesweeper game!", "About Minesweeper",
                wxOK | wxICON_INFORMATION); // NOLINT(hicpp-signed-bitwise, readability-magic-numbers)
 }
 
-void FieldsFrame::OnNewGame(wxCommandEvent & /*unused*/) {
-  this->game = minesweeper::Minesweeper::create(minesweeper::GameLevel::Beginner).value();
-  CreateFields();
+void FieldsFrame::onNewGame(wxCommandEvent &event) {
+  gameLevel = [this, &event] {
+    switch (toNewGameId(event.GetId())) {
+    case NewGameId::Beginner:
+      return minesweeper::GameLevel::Beginner;
+    case NewGameId::Intermediate:
+      return minesweeper::GameLevel::Intermediate;
+    case NewGameId::Expert:
+      return minesweeper::GameLevel::Expert;
+    case NewGameId::LastLevel:
+      return this->gameLevel;
+    };
+    throw std::runtime_error(fmt::format("Invalid value of NewGameId {}", event.GetId()));
+  }();
+  this->game = minesweeper::Minesweeper::create(gameLevel).value();
+  createFields();
   Refresh();
 }
 } // namespace minesweeper_gui

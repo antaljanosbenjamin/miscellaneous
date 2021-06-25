@@ -1,5 +1,7 @@
 #include "FieldPanel.hpp"
 
+#include <stdexcept>
+
 #include "FieldsFrame.hpp"
 
 namespace minesweeper_gui {
@@ -14,29 +16,59 @@ FieldPanel::FieldPanel(wxPanel &parent, const uint64_t row, const uint64_t colum
   SetBackgroundStyle(wxBG_STYLE_PAINT);
 }
 
-void FieldPanel::PaintEvent(wxPaintEvent & /*unused*/) {
+void FieldPanel::paintEvent(wxPaintEvent & /*unused*/) {
   wxBufferedPaintDC dc(this);
-  Render(dc);
+  render(dc);
 }
 
-void FieldPanel::RightClickEvent(wxMouseEvent & /*unused*/) {
+void FieldPanel::rightClickEvent(wxMouseEvent & /*unused*/) {
   this->state.toggleFlag(*game);
   Refresh();
 }
 
-void FieldPanel::LeftClickEvent(wxMouseEvent & /*unused*/) {
-  auto newlyOpenedFields = this->state.open(*game);
-  for (const auto &newlyOpenedField: newlyOpenedFields) {
-    auto &fieldPanel =
-        FieldsFrame::getFieldPanel(*panels, static_cast<uint64_t>(newlyOpenedField.row),
-                                   static_cast<uint64_t>(newlyOpenedField.column), game->getSize().value());
-    fieldPanel.state.updateWithBaseState(BaseState::Opened);
-    fieldPanel.state.updateWithFigureType(static_cast<FigureType>(newlyOpenedField.type));
-    fieldPanel.Refresh();
+void FieldPanel::leftClickEvent(wxMouseEvent & /*unused*/) {
+  const auto openInfo = this->state.open(*game);
+  switch (openInfo.openResult) {
+  case minesweeper::OpenResult::Ok:
+  case minesweeper::OpenResult::Winner: {
+    for (const auto &newlyOpenedField: openInfo.newlyOpenedFields) {
+      auto &fieldPanel =
+          FieldsFrame::getFieldPanel(*panels, static_cast<uint64_t>(newlyOpenedField.row),
+                                     static_cast<uint64_t>(newlyOpenedField.column), game->getSize().value());
+      fieldPanel.state.updateWithBaseState(BaseState::Opened);
+      fieldPanel.state.updateWithFigureType(static_cast<FigureType>(newlyOpenedField.type));
+      fieldPanel.Refresh();
+    }
+    break;
+  }
+  case minesweeper::OpenResult::IsFlagged: {
+    if (!openInfo.newlyOpenedFields.empty()) {
+      throw std::runtime_error("Unexpected newly opened fields!");
+    }
+    break;
+  }
+  case minesweeper::OpenResult::Boom: {
+    for (const auto &newlyOpenedField: openInfo.newlyOpenedFields) {
+      if (newlyOpenedField.type == minesweeper::FieldType::Mine) {
+        auto &fieldPanel =
+            FieldsFrame::getFieldPanel(*panels, static_cast<uint64_t>(newlyOpenedField.row),
+                                       static_cast<uint64_t>(newlyOpenedField.column), game->getSize().value());
+
+        if (&fieldPanel == this) {
+          fieldPanel.state.updateWithBaseState(BaseState::Boomed);
+        } else {
+          fieldPanel.state.updateWithBaseState(BaseState::Opened);
+        }
+        fieldPanel.state.updateWithFigureType(static_cast<FigureType>(newlyOpenedField.type));
+        fieldPanel.Refresh();
+      }
+    }
+    break;
+  }
   }
 }
 
-void FieldPanel::MouseEnterEvent(wxMouseEvent &event) {
+void FieldPanel::mouseEnterEvent(wxMouseEvent &event) {
   if (!event.LeftIsDown()) {
     return;
   }
@@ -44,7 +76,7 @@ void FieldPanel::MouseEnterEvent(wxMouseEvent &event) {
   Refresh();
 }
 
-void FieldPanel::MouseLeaveEvent(wxMouseEvent &event) {
+void FieldPanel::mouseLeaveEvent(wxMouseEvent &event) {
   if (!event.LeftIsDown()) {
     return;
   }
@@ -52,17 +84,17 @@ void FieldPanel::MouseLeaveEvent(wxMouseEvent &event) {
   Refresh();
 }
 
-void FieldPanel::Render(wxDC &dc) {
+void FieldPanel::render(wxDC &dc) {
   state.draw(dc, *bitmaps);
 }
 // NOLINTNEXTLINE(modernize-avoid-c-arrays,cppcoreguidelines-avoid-non-const-global-variables)
 BEGIN_EVENT_TABLE(FieldPanel, wxPanel)
-EVT_PAINT(FieldPanel::PaintEvent)
-EVT_LEFT_UP(FieldPanel::LeftClickEvent)
-EVT_RIGHT_DOWN(FieldPanel::RightClickEvent)
-EVT_RIGHT_DCLICK(FieldPanel::RightClickEvent)
-EVT_ENTER_WINDOW(FieldPanel::MouseEnterEvent)
-EVT_LEAVE_WINDOW(FieldPanel::MouseLeaveEvent)
+EVT_PAINT(FieldPanel::paintEvent)
+EVT_LEFT_UP(FieldPanel::leftClickEvent)
+EVT_RIGHT_DOWN(FieldPanel::rightClickEvent)
+EVT_RIGHT_DCLICK(FieldPanel::rightClickEvent)
+EVT_ENTER_WINDOW(FieldPanel::mouseEnterEvent)
+EVT_LEAVE_WINDOW(FieldPanel::mouseLeaveEvent)
 END_EVENT_TABLE()
 
 } // namespace minesweeper_gui
