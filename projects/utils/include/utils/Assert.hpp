@@ -10,4 +10,4 @@ namespace utils::detail::assert {
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define MY_ASSERT(expression, message)                                                                                 \
   MY_LIKELY(!!(expression)) ? static_cast<void>(0)                                                                     \
-                            : utils::detail::assert::HandleFailedAssert(__FILE__, __LINE__, #expression, message);\
+                            : utils::detail::assert::HandleFailedAssert(__FILE__, __LINE__, #expression, message);
