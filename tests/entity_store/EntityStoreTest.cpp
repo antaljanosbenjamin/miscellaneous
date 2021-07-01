@@ -84,17 +84,40 @@ void checkStoreDoesNotContainEntity(const Store &store, const EntityId id) {
   CHECK_THROWS(store.get(id));
 }
 
-void checkEmptyStore(const Store &store, const EntityId start = 0, const EntityId end = 10) {
+void checkEmptyStore(const Store &store) {
+  constexpr EntityId start = 0;
+  constexpr EntityId end = 10;
   for (EntityId id = start; id <= end; ++id) {
     checkStoreDoesNotContainEntity(store, id);
   }
 }
 
+template <typename TCheckOriginal>
+void checkRollback(TCheckOriginal &checkOriginal, Store &s, Store &cs) {
+  INFO("checkRollback rollback");
+  cs.rollback();
+  checkOriginal(cs);
+  checkOriginal(s);
+  INFO("checkRollback commit after rollback");
+  cs.commit();
+  checkOriginal(cs);
+  checkOriginal(s);
+}
+
+template <typename TCheckUpdated>
+void checkCommit(TCheckUpdated &checkUpdated, Store &s, Store &cs) {
+  cs.commit();
+  checkUpdated(s);
+  checkUpdated(cs);
+};
+
 enum class CommitType {
   Commit,
   DoubleCommit,
+  CommitAfterMove,
   Rollback,
   RollbackByDtor,
+  RollbackAfterMove,
 };
 
 template <typename TInit, typename TUpdate, typename TCheckOriginal, typename TCheckUpdated>
@@ -104,36 +127,38 @@ void checkWithChild(Store &s, const CommitType commitType, TInit &init, TUpdate 
   init(s);
 
   {
-    auto cs = s.createChild();
-    update(cs);
+    std::optional<Store> cs = s.createChild();
+    update(*cs);
 
     checkOriginal(s);
-    checkUpdated(cs);
+    checkUpdated(*cs);
     if (commitType == CommitType::Rollback) {
       INFO("checkWithChild Rollback");
-      cs.rollback();
-      checkOriginal(cs);
-      checkOriginal(s);
-      INFO("checkWithChild Rollback with commit");
-      cs.commit();
-      checkOriginal(cs);
-      checkOriginal(s);
+      checkRollback(checkOriginal, s, *cs);
+    } else if (commitType == CommitType::RollbackAfterMove) {
+      INFO("checkWithChild RollbackAfterMove");
+      auto movedCs = std::move(*cs);
+      cs.reset();
+      checkRollback(checkOriginal, s, movedCs);
+    } else if (commitType == CommitType::CommitAfterMove) {
+      INFO("checkWithChild CommitAfterMove");
+      auto movedCs = std::move(*cs);
+      cs.reset();
+      checkCommit(checkUpdated, s, movedCs);
     } else if (commitType == CommitType::Commit || commitType == CommitType::DoubleCommit) {
       INFO("checkWithChild Commit");
-      cs.commit();
-      checkUpdated(s);
-      checkUpdated(cs);
+      checkCommit(checkUpdated, s, *cs);
     }
     if (commitType == CommitType::DoubleCommit) {
       INFO("checkWithChild DoubleCommit");
-      cs.commit();
-      checkUpdated(s);
-      checkUpdated(cs);
+      checkCommit(checkUpdated, s, *cs);
     }
   }
-  if (commitType == CommitType::RollbackByDtor) {
-    INFO("checkWithChild RollbackByDtor");
+  if (commitType == CommitType::Rollback || commitType == CommitType::RollbackByDtor ||
+      commitType == CommitType::RollbackAfterMove) {
     checkOriginal(s);
+  } else {
+    checkUpdated(s);
   }
 }
 
@@ -144,39 +169,40 @@ void checkWithGrandChild(const CommitType commitType, TInit &init, TUpdate &upda
     Store s = Store::create();
 
     auto checkAfterChanges = [&childCommitType, &checkOriginal, &checkUpdated](Store &store) {
-      if (childCommitType == CommitType::Rollback || childCommitType == CommitType::RollbackByDtor) {
+      if (childCommitType == CommitType::Rollback || childCommitType == CommitType::RollbackByDtor ||
+          childCommitType == CommitType::RollbackAfterMove) {
         checkOriginal(store);
       } else {
         checkUpdated(store);
       }
     };
     {
-      Store cs = s.createChild();
-      checkWithChild(cs, childCommitType, init, update, checkOriginal, checkUpdated);
-      checkAfterChanges(cs);
+      std::optional<Store> cs = s.createChild();
+      checkWithChild(*cs, childCommitType, init, update, checkOriginal, checkUpdated);
+      checkAfterChanges(*cs);
       if (commitType == CommitType::Rollback) {
         INFO("checkWithGrandChild Rollback");
-        cs.rollback();
-        checkEmptyStore(cs);
-        checkEmptyStore(s);
-        INFO("checkWithGrandChild Rollback with commit");
-        cs.commit();
-        checkEmptyStore(cs);
-        checkEmptyStore(s);
+        checkRollback(checkEmptyStore, s, *cs);
+      } else if (commitType == CommitType::RollbackAfterMove) {
+        auto movedCs = std::move(*cs);
+        cs.reset();
+        checkRollback(checkEmptyStore, s, movedCs);
+      } else if (commitType == CommitType::CommitAfterMove) {
+        INFO("checkWithChild CommitAfterMove");
+        auto movedCs = std::move(*cs);
+        cs.reset();
+        checkCommit(checkAfterChanges, s, movedCs);
       } else if (commitType == CommitType::Commit || commitType == CommitType::DoubleCommit) {
         INFO("checkWithGrandChild Commit");
-        cs.commit();
-        checkAfterChanges(cs);
-        checkAfterChanges(s);
+        checkCommit(checkAfterChanges, s, *cs);
       }
       if (commitType == CommitType::DoubleCommit) {
         INFO("checkWithGrandChild DoubleCommit");
-        cs.commit();
-        checkAfterChanges(s);
-        checkAfterChanges(cs);
+        checkCommit(checkAfterChanges, s, *cs);
       }
     }
-    if (commitType == CommitType::Rollback || commitType == CommitType::RollbackByDtor) {
+    if (commitType == CommitType::Rollback || commitType == CommitType::RollbackByDtor ||
+        commitType == CommitType::RollbackAfterMove) {
       checkEmptyStore(s);
     } else {
       checkAfterChanges(s);
@@ -184,8 +210,10 @@ void checkWithGrandChild(const CommitType commitType, TInit &init, TUpdate &upda
   };
   doCheck(CommitType::Commit);
   doCheck(CommitType::DoubleCommit);
+  doCheck(CommitType::CommitAfterMove);
   doCheck(CommitType::Rollback);
   doCheck(CommitType::RollbackByDtor);
+  doCheck(CommitType::RollbackAfterMove);
 }
 
 template <typename TInit, typename TUpdate, typename TCheck>
@@ -210,6 +238,11 @@ void checkConfig(TInit &init, TUpdate &update, TCheckOriginal &checkOriginal, TC
     checkWithChild(s, CommitType::DoubleCommit, init, update, checkOriginal, checkUpdated);
   }
   {
+    INFO("checkConfig checkWithChild CommitAfterMove");
+    Store s = Store::create();
+    checkWithChild(s, CommitType::CommitAfterMove, init, update, checkOriginal, checkUpdated);
+  }
+  {
     INFO("checkConfig checkWithChild Rollback");
     Store s = Store::create();
     checkWithChild(s, CommitType::Rollback, init, update, checkOriginal, checkUpdated);
@@ -220,6 +253,11 @@ void checkConfig(TInit &init, TUpdate &update, TCheckOriginal &checkOriginal, TC
     checkWithChild(s, CommitType::RollbackByDtor, init, update, checkOriginal, checkUpdated);
   }
   {
+    INFO("checkConfig checkWithChild RollbackAfterMove");
+    Store s = Store::create();
+    checkWithChild(s, CommitType::RollbackAfterMove, init, update, checkOriginal, checkUpdated);
+  }
+  {
     INFO("checkConfig checkWithGrandChild Commit");
     checkWithGrandChild(CommitType::Commit, init, update, checkOriginal, checkUpdated);
   }
@@ -228,12 +266,20 @@ void checkConfig(TInit &init, TUpdate &update, TCheckOriginal &checkOriginal, TC
     checkWithGrandChild(CommitType::DoubleCommit, init, update, checkOriginal, checkUpdated);
   }
   {
+    INFO("checkConfig checkWithGrandChild CommitAfterMove");
+    checkWithGrandChild(CommitType::CommitAfterMove, init, update, checkOriginal, checkUpdated);
+  }
+  {
     INFO("checkConfig checkWithGrandChild Rollback");
     checkWithGrandChild(CommitType::Rollback, init, update, checkOriginal, checkUpdated);
   }
   {
     INFO("checkConfig checkWithGrandChild RollbackByDtor");
     checkWithGrandChild(CommitType::RollbackByDtor, init, update, checkOriginal, checkUpdated);
+  }
+  {
+    INFO("checkConfig checkWithGrandChild RollbackAfterMove");
+    checkWithGrandChild(CommitType::RollbackAfterMove, init, update, checkOriginal, checkUpdated);
   }
   {
     INFO("checkConfig checkWithStore");

@@ -8,6 +8,7 @@
 #include "EntityStore/Internal/IStore.hpp"
 #include "EntityStore/Internal/RootStore.hpp"
 #include "EntityStore/Properties.hpp"
+#include "utils/PropagateConst.hpp"
 
 namespace EntityStore {
 
@@ -30,9 +31,9 @@ public:
   //  * operator=: the same reasons as above.
   NestedStore() = delete;
   NestedStore(const NestedStore &) = delete;
-  NestedStore(NestedStore &&) = delete;
+  NestedStore(NestedStore &&other);
   NestedStore &operator=(const NestedStore &) = delete;
-  NestedStore &operator=(NestedStore &&) = delete;
+  NestedStore &operator=(NestedStore &&other);
 
   bool insert(const EntityId id, Properties &&properties) override;
   bool insert(const EntityId id, const Properties &properties) override;
@@ -59,11 +60,9 @@ private:
   void doCommitChanges();
   void reset();
 
-  // TODO(antaljanosbenjamin) User pointer instead of reference and make move work
-  IStore &m_parentStore;
+  utils::PropagateConst<IStore *> m_parentStore;
   RootStore m_ownStore;
   EntityStatesManager m_statesManager;
-  bool m_isCommitting;
 };
 
 } // namespace EntityStore

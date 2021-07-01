@@ -1,16 +1,10 @@
 add_executable(entity_store_test EntityStoreTest.cpp)
 
 target_link_libraries(
-  entity_store_test
-  PRIVATE entity_store
-          project_options
-          project_warnings
-          catch_main
+  entity_store_test PRIVATE entity_store project_options project_warnings catch_main
 )
 
 catch_discover_tests(
-  entity_store_test
-  TEST_PREFIX
-  "unittests.entity_store."
+  entity_store_test TEST_PREFIX "${UNIT_TEST_PREFIX}entity_store."
   # EXTRA_ARGS -s --reporter=xml --out=tests.xml
 )

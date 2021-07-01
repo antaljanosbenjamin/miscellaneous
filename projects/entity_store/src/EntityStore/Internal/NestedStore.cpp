@@ -1,5 +1,7 @@
 #include "EntityStore/Internal/NestedStore.hpp"
 
+#include <utility>
+
 #include "EntityStore/StoreExceptions.hpp"
 
 namespace EntityStore {
@@ -49,31 +51,46 @@ const Properties *doUpdate(const IStore &parentStore, RootStore &ownStore, Entit
 }
 
 NestedStore::NestedStore(IStore &parentStore)
-  : m_parentStore{parentStore}
+  : m_parentStore{&parentStore}
   , m_ownStore{}
-  , m_statesManager{}
-  , m_isCommitting{false} {
+  , m_statesManager{} {
+}
+
+NestedStore::NestedStore(NestedStore &&other)
+  : m_parentStore{other.m_parentStore.get()}
+  , m_ownStore{std::move(other.m_ownStore)}
+  , m_statesManager{std::move(other.m_statesManager)} {
+  other.m_parentStore = nullptr;
+}
+
+NestedStore &NestedStore::operator=(NestedStore &&other) {
+  if (&other != this) {
+    m_parentStore = std::exchange(other.m_parentStore, nullptr);
+    m_ownStore = std::move(other.m_ownStore);
+    m_statesManager = std::move(other.m_statesManager);
+  }
+  return *this;
 }
 
 bool NestedStore::insert(const EntityId id, Properties &&properties) {
-  return doInsert(m_parentStore, m_ownStore, m_statesManager, id, std::move(properties));
+  return doInsert(*m_parentStore, m_ownStore, m_statesManager, id, std::move(properties));
 }
 
 bool NestedStore::insert(const EntityId id, const Properties &properties) {
-  return doInsert(m_parentStore, m_ownStore, m_statesManager, id, properties);
+  return doInsert(*m_parentStore, m_ownStore, m_statesManager, id, properties);
 }
 
 const Properties *NestedStore::update(const EntityId id, Properties &&properties) {
-  return doUpdate(m_parentStore, m_ownStore, m_statesManager, id, std::move(properties));
+  return doUpdate(*m_parentStore, m_ownStore, m_statesManager, id, std::move(properties));
 }
 
 // This function differs from the && version, see the comments:
 const Properties *NestedStore::update(const EntityId id, const Properties &properties) {
-  return doUpdate(m_parentStore, m_ownStore, m_statesManager, id, properties);
+  return doUpdate(*m_parentStore, m_ownStore, m_statesManager, id, properties);
 }
 
 bool NestedStore::contains(const EntityId id) const {
-  return m_ownStore.contains(id) || (!isRemovedByThisChild(id) && m_parentStore.contains(id));
+  return m_ownStore.contains(id) || (!isRemovedByThisChild(id) && m_parentStore->contains(id));
 }
 
 const Properties *NestedStore::tryGet(const EntityId id) const {
@@ -85,7 +102,7 @@ const Properties *NestedStore::tryGet(const EntityId id) const {
   if (isRemovedByThisChild(id)) {
     return nullptr;
   }
-  return m_parentStore.tryGet(id);
+  return m_parentStore->tryGet(id);
 }
 
 const Properties &NestedStore::get(const EntityId id) const {
@@ -105,7 +122,7 @@ bool NestedStore::remove(const EntityId id) {
 
   auto isRemoveSuccessfull = m_ownStore.remove(id);
   if (!isRemoveSuccessfull) {
-    isRemoveSuccessfull = m_parentStore.contains(id);
+    isRemoveSuccessfull = m_parentStore->contains(id);
   }
 
   if (!isRemoveSuccessfull) {
@@ -118,7 +135,7 @@ bool NestedStore::remove(const EntityId id) {
 std::unordered_set<EntityId> NestedStore::filterIds(const EntityPredicate &predicate) const {
   std::unordered_set<EntityId> result;
   result = m_ownStore.filterIds(predicate);
-  result.merge(m_parentStore.filterIds(IgnoreIds{m_statesManager.createEntityIdsSet()} | predicate));
+  result.merge(m_parentStore->filterIds(IgnoreIds{m_statesManager.createEntityIdsSet()} | predicate));
   return result;
 }
 
@@ -141,24 +158,18 @@ bool NestedStore::isRemovedByThisChild(const EntityId id) const {
 }
 
 void NestedStore::doCommitChanges() {
-  if (m_isCommitting) {
-    // The purpose of this is to prevent committing from destructor when the NestedStore is destructed because of an
-    // exception is thrown from this function.
-    return;
-  }
-
   const auto removeWithCheck = [this](const EntityId id) {
-    if (!m_parentStore.remove(id)) {
+    if (!m_parentStore->remove(id)) {
       throw std::logic_error("Cannot remove Entity while committing changes to parent!");
     }
   };
 
-  const auto handleEntity = [this, &removeWithCheck](Entity &entity) {
+  const auto handleEntity = [this, &removeWithCheck](Entity &&entity) {
     const auto &stateHandler = m_statesManager.getState(entity.id());
 
     if (stateHandler.needsToUpdateInParent()) {
       const auto entityId = entity.id();
-      if (m_parentStore.update(entityId, std::move(entity).properties()) == nullptr) {
+      if (m_parentStore->update(entityId, std::move(entity).properties()) == nullptr) {
         throw std::logic_error("Cannot update Entity while committing changes to parent!");
       }
     } else {
@@ -167,19 +178,18 @@ void NestedStore::doCommitChanges() {
       }
       if (stateHandler.needsToInsertToParent()) {
         const auto entityId = entity.id();
-        if (!m_parentStore.insert(entityId, std::move(entity).properties())) {
+        if (!m_parentStore->insert(entityId, std::move(entity).properties())) {
           throw std::logic_error("Cannot insert Entity while committing changes to parent!");
         }
       }
     }
   };
 
-  m_isCommitting = true;
-  for (auto &entityHolder: std::move(m_ownStore)) {
+  for (auto &&entityHolder: std::move(m_ownStore)) {
     if (entityHolder.has_value()) {
-      auto &entity = *entityHolder;
-      handleEntity(entity);
-      m_statesManager.eraseStateHandler(entity.id());
+      auto entityId = entityHolder->id();
+      handleEntity(std::move(*entityHolder));
+      m_statesManager.eraseStateHandler(entityId);
     }
   }
 
@@ -189,7 +199,6 @@ void NestedStore::doCommitChanges() {
     }
     removeWithCheck(entityId);
   }
-  m_isCommitting = false;
 }
 
 void NestedStore::reset() {
