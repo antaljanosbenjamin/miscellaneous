@@ -109,7 +109,7 @@ void checkCommit(TCheckUpdated &checkUpdated, Store &s, Store &cs) {
   cs.commit();
   checkUpdated(s);
   checkUpdated(cs);
-};
+}
 
 enum class CommitType {
   Commit,
