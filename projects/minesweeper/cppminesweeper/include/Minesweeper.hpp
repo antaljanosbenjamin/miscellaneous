@@ -4,7 +4,7 @@
 #include <optional>
 #include <string>
 #include <tl/expected.hpp>
-#include "PropagateConstWrapper.hpp"
+#include "utils/PropagateConst.hpp"
 
 namespace minesweeper {
 
@@ -94,6 +94,6 @@ private:
 
   explicit Minesweeper(std::unique_ptr<Impl> &&impl);
 
-  std::experimental::propagate_const<std::unique_ptr<Impl>> impl;
+  utils::PropagateConst<std::unique_ptr<Impl>> impl;
 };
 } // namespace minesweeper

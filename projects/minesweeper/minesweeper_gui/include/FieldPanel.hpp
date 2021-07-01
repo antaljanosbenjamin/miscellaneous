@@ -5,8 +5,8 @@
 #include <Minesweeper.hpp>
 #include "FieldBitmaps.hpp"
 #include "FieldState.hpp"
-#include "PropagateConstWrapper.hpp"
 #include "WxWidgetsWrapper.hpp"
+#include "utils/PropagateConst.hpp"
 
 namespace minesweeper_gui {
 class FieldPanel;
@@ -31,8 +31,8 @@ private:
 
   FieldState state;
   const FieldBitmaps *bitmaps;
-  std::experimental::propagate_const<FieldPanels *> panels;
-  std::experimental::propagate_const<minesweeper::Minesweeper *> game;
+  utils::PropagateConst<FieldPanels *> panels;
+  utils::PropagateConst<minesweeper::Minesweeper *> game;
 };
 
 } // namespace minesweeper_gui

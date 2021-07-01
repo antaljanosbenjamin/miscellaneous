@@ -58,6 +58,7 @@ if(NOT TI_IS_CLANG_CL)
     minesweeper_gui
     PRIVATE cppminesweeper
             minesweeper_gui_resources
+            utils
             CONAN_PKG::wxwidgets
             CONAN_PKG::fmt
             project_options
