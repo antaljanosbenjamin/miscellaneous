@@ -15,7 +15,7 @@ public:
   FieldState(const uint64_t row, const uint64_t column);
 
   void toggleFlag(minesweeper::Minesweeper &game);
-  std::vector<minesweeper::OpenedField> open(minesweeper::Minesweeper &game);
+  minesweeper::OpenInfo open(minesweeper::Minesweeper &game);
   void updateWithBaseState(const BaseState &newBaseState);
   void updateWithFigureType(const FigureType &newFigureType);
   void draw(wxDC &dc, const FieldBitmaps &bitmaps) const;
