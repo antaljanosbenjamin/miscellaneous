@@ -1,1 +1,11 @@
-Checks: '-*,readability-*,performance-*, modernize-*,cppcoreguidelines-*,clang-analyzer-*'
+Checks:            >
+    -*,
+    readability-*,
+    performance-*,
+    modernize-*,
+    cppcoreguidelines-*,
+    clang-analyzer-*,
+    -readability-magic-numbers,
+    -modernize-use-trailing-return-type,
+    -cppcoreguidelines-avoid-magic-numbers
+

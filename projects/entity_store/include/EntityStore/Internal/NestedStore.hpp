@@ -31,8 +31,10 @@ public:
   //  * operator=: the same reasons as above.
   NestedStore() = delete;
   NestedStore(const NestedStore &) = delete;
+  // NOLINTNEXTLINE(performance-noexcept-move-constructor)
   NestedStore(NestedStore &&other);
   NestedStore &operator=(const NestedStore &) = delete;
+  // NOLINTNEXTLINE(performance-noexcept-move-constructor)
   NestedStore &operator=(NestedStore &&other);
 
   bool insert(const EntityId id, Properties &&properties) override;

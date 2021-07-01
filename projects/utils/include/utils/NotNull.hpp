@@ -15,7 +15,8 @@ enum class ErrorReportType {
 template <std::equality_comparable_with<std::nullptr_t> TPtr, ErrorReportType reportType = ErrorReportType::Assert>
 class NotNull {
 public:
-  NotNull(TPtr ptr)
+  // NOLINTNEXTLINE(google-explicit-constructor)
+  NotNull(TPtr ptr) noexcept(reportType == ErrorReportType::Assert)
     : m_ptr{ptr} {
     if constexpr (reportType == ErrorReportType::Assert) {
       MY_ASSERT(nullptr != m_ptr, "nullptr in NotNull");
@@ -24,13 +25,20 @@ public:
     }
   }
 
+  NotNull(std::nullptr_t) = delete;
+
   NotNull(const NotNull &other)
     : m_ptr{other.m_ptr} {
   }
 
+  // NOLINTNEXTLINE(cert-oop54-cpp) self assignment is no problem here
   NotNull &operator=(const NotNull &other) {
     m_ptr = other.m_ptr;
   }
+
+  NotNull(NotNull &&) = delete;
+  NotNull &operator=(NotNull &&) = delete;
+
   ~NotNull() = default;
 
   decltype(auto) operator->() const {
@@ -41,7 +49,7 @@ public:
     return *get();
   }
 
-  decltype(auto) get() const {
+  [[nodiscard]] decltype(auto) get() const {
     return m_ptr;
   }
 

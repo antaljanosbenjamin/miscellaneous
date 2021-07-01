@@ -56,6 +56,7 @@ NestedStore::NestedStore(IStore &parentStore)
   , m_statesManager{} {
 }
 
+// NOLINTNEXTLINE(performance-noexcept-move-constructor)
 NestedStore::NestedStore(NestedStore &&other)
   : m_parentStore{other.m_parentStore.get()}
   , m_ownStore{std::move(other.m_ownStore)}
@@ -63,6 +64,7 @@ NestedStore::NestedStore(NestedStore &&other)
   other.m_parentStore = nullptr;
 }
 
+// NOLINTNEXTLINE(performance-noexcept-move-constructor)
 NestedStore &NestedStore::operator=(NestedStore &&other) {
   if (&other != this) {
     m_parentStore = std::exchange(other.m_parentStore, nullptr);
