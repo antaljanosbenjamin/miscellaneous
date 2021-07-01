@@ -1,4 +1,11 @@
-add_library(utils include/utils/PropagateConst.hpp)
+add_library(
+  utils
+  include/utils/Assert.hpp
+  include/utils/Likely.hpp
+  include/utils/NotNull.hpp
+  include/utils/PropagateConst.hpp
+  src/Assert.cpp
+)
 
 target_include_directories(utils PUBLIC include)
 target_link_libraries(utils PUBLIC project_options)
