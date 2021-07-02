@@ -4,6 +4,7 @@ function(add_codility_test LIBRARY_TO_TEST TEST_SOURCE_FILE)
   target_link_libraries(
     ${TEST_TARGET_NAME} PRIVATE ${LIBRARY_TO_TEST} project_options project_warnings catch_main
   )
+  set_target_properties(${TEST_TARGET_NAME} PROPERTIES FOLDER "codility")
   catch_discover_tests(
     ${TEST_TARGET_NAME} TEST_PREFIX "${UNIT_TEST_PREFIX}codility.${LIBRARY_TO_TEST}."
   )
