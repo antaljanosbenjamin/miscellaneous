@@ -9,8 +9,8 @@
 
 namespace EntityStore {
 
-// TODO(antaljanosbenjamin) Add printPropertiesWithPrefix
-void printProperties(std::ostream &os, const Properties &properties, const std::string &prefix = "");
+void printProperties(std::ostream &os, const Properties &properties);
+void printPropertiesWithPrefix(std::ostream &os, const Properties &properties, const std::string &prefix);
 
 void printEntity(std::ostream &os, const Store &store, EntityId id);
 

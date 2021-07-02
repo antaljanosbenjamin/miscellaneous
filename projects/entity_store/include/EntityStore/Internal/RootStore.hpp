@@ -17,7 +17,8 @@ namespace EntityStore {
 
 class RootStore : public IStore {
 private:
-  // TODO(antaljanosbenjamin) Eliminate optional to reduce memory footprint
+  static_assert((sizeof(Entity) + sizeof(void *)) == sizeof(std::optional<Entity>),
+                "The overhead of optional is too big!");
   using EntityVector = std::vector<std::optional<Entity>>;
 
 public:

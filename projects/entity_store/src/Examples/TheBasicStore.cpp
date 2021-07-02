@@ -26,7 +26,7 @@ int main() {
       store.get(2133).getAs<std::string>(PropertyId::Title);
 
   try {
-    const auto invalidGetResult =
+    [[maybe_unused]] const auto invalidGetResult =
         store.get(2133).getAs<double>(PropertyId::Title);
   } catch (EntityStore::InvalidPropertyTypeException &exception) {
     std::cerr << "Property called " << exception.what()

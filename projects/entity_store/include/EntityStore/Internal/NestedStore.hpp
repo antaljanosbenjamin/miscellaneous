@@ -8,6 +8,7 @@
 #include "EntityStore/Internal/IStore.hpp"
 #include "EntityStore/Internal/RootStore.hpp"
 #include "EntityStore/Properties.hpp"
+#include "utils/PropagateConst.hpp"
 
 namespace EntityStore {
 
@@ -17,7 +18,7 @@ namespace EntityStore {
 class NestedStore : public IStore {
 public:
   explicit NestedStore(IStore &parentStore);
-  ~NestedStore() override;
+  ~NestedStore() override = default;
 
   // For NestedStore, these operations are ambiguous:
   //  * Default Ctor: what will be the parent store?
@@ -30,9 +31,11 @@ public:
   //  * operator=: the same reasons as above.
   NestedStore() = delete;
   NestedStore(const NestedStore &) = delete;
-  NestedStore(NestedStore &&) = delete;
+  // NOLINTNEXTLINE(performance-noexcept-move-constructor)
+  NestedStore(NestedStore &&other);
   NestedStore &operator=(const NestedStore &) = delete;
-  NestedStore &operator=(NestedStore &&) = delete;
+  // NOLINTNEXTLINE(performance-noexcept-move-constructor)
+  NestedStore &operator=(NestedStore &&other);
 
   bool insert(const EntityId id, Properties &&properties) override;
   bool insert(const EntityId id, const Properties &properties) override;
@@ -59,11 +62,9 @@ private:
   void doCommitChanges();
   void reset();
 
-  // TODO(antaljanosbenjamin) User pointer instead of reference and make move work
-  IStore &m_parentStore;
+  utils::PropagateConst<IStore *> m_parentStore;
   RootStore m_ownStore;
   EntityStatesManager m_statesManager;
-  bool m_isCommitting;
 };
 
 } // namespace EntityStore

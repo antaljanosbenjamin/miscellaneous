@@ -61,7 +61,7 @@ void printTitle(const std::string &title) {
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define PRINT_AND_EXECUTE_PROPERTIES(expression)                                                                       \
   PRINT(expression, " returned:");                                                                                     \
-  printProperties(std::cout, (expression), "  ");                                                                      \
+  printPropertiesWithPrefix(std::cout, (expression), "  ");                                                            \
   std::cout << '\n';
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)

@@ -13,7 +13,7 @@
 
 namespace EntityStore {
 
-using EntityId = int64_t;
+using EntityId = uint64_t;
 
 class Entity final {
 public:

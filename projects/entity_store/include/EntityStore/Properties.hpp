@@ -2,6 +2,7 @@
 
 #include <concepts>
 #include <memory>
+#include <string_view>
 #include <unordered_map>
 #include <utility>
 
@@ -11,7 +12,7 @@ namespace EntityStore {
 
 class DoesNotHavePropertyException : public std::out_of_range {
 public:
-  explicit DoesNotHavePropertyException(const std::string &propertyName);
+  explicit DoesNotHavePropertyException(const std::string_view propertyName);
 };
 
 // Represents a set of properties in a (key, value) format. It's interface is type safe in a way that a value identified

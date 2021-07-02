@@ -4,8 +4,8 @@
 
 namespace EntityStore {
 
-DoesNotHavePropertyException::DoesNotHavePropertyException(const std::string &propertyName)
-  : std::out_of_range("Properties does not contain " + propertyName + " property!") {
+DoesNotHavePropertyException::DoesNotHavePropertyException(const std::string_view propertyName)
+  : std::out_of_range(std::string("Properties does not contain ") + propertyName.data() + " property!") {
 }
 
 bool Properties::hasProperty(const PropertyId propertyId) const {
@@ -18,10 +18,9 @@ void Properties::update(Properties &&properties) {
 }
 
 void Properties::update(const Properties &properties) {
-  // TODO(antaljanosbenjamin) Check if this can be done more efficiently
-  PropertyMap tmp{properties.m_propertyMap};
-  tmp.merge(std::move(m_propertyMap));
-  m_propertyMap = std::move(tmp);
+  for (const auto &[id, property]: properties.m_propertyMap) {
+    m_propertyMap.insert_or_assign(id, property);
+  }
 }
 
 bool operator==(const Properties &lhs, const Properties &rhs) {

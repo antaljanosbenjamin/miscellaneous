@@ -6,13 +6,13 @@ set(CPPMINESWEEPER_DEMO_SOURCES src/main.cpp)
 add_library(cppminesweeper ${CPPMINESWEEPER_HEADERS} ${CPPMINESWEEPER_SOURCES})
 target_include_directories(cppminesweeper PUBLIC include)
 target_link_libraries(
-  cppminesweeper PUBLIC cminesweeper_wrapper CONAN_PKG::tl-expected project_options
-                        project_warnings
+  cppminesweeper
+  PUBLIC cminesweeper_wrapper
+         utils
+         CONAN_PKG::tl-expected
+         project_options
+         project_warnings
 )
-
-if(WIN32)
-  target_link_libraries(cppminesweeper PUBLIC propagate_const)
-endif()
 
 target_link_libraries(cppminesweeper PRIVATE project_warnings)
 set_target_properties(cppminesweeper PROPERTIES FOLDER "minesweeper")

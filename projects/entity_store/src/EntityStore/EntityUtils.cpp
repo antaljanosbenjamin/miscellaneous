@@ -2,7 +2,11 @@
 
 namespace EntityStore {
 
-void printProperties(std::ostream &os, const Properties &properties, const std::string &prefix) {
+void printProperties(std::ostream &os, const Properties &properties) {
+  printPropertiesWithPrefix(os, properties, "");
+}
+
+void printPropertiesWithPrefix(std::ostream &os, const Properties &properties, const std::string &prefix) {
   for (std::underlying_type_t<PropertyId> propertyIndex{0U}; propertyIndex <= asUnderlying(PropertyId::LAST);
        ++propertyIndex) {
     auto propertyId = static_cast<PropertyId>(propertyIndex);
@@ -19,7 +23,7 @@ void printEntity(std::ostream &os, const Store &store, EntityId id) {
   if (propertiesPtr == nullptr) {
     os << "\tIsn't in store!\n";
   } else {
-    printProperties(os, *store.tryGet(id), "\t");
+    printPropertiesWithPrefix(os, *store.tryGet(id), "\t");
   }
 }
 
@@ -30,7 +34,7 @@ std::ostream &operator<<(std::ostream &os, const Properties &properties) {
 
 std::ostream &operator<<(std::ostream &os, const Entity &entity) {
   os << "Entity{" << entity.id() << "}\n";
-  printProperties(os, entity.properties(), "\t");
+  printPropertiesWithPrefix(os, entity.properties(), "\t");
   return os;
 }
 
