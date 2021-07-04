@@ -92,7 +92,7 @@ FieldBitmaps FieldsFrame::getDefaultBitmaps() {
     const auto backgroundImageBindings = std::map<BaseState, std::string>{
         {BaseState::Closed, "closed.png"},
         {BaseState::Boomed, "boomed.png"},
-        {BaseState::Hoovered, "hoovered.png"},
+        {BaseState::Hovered, "hovered.png"},
         {BaseState::Opened, "opened.png"},
     };
 

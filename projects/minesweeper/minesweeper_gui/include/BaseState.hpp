@@ -6,7 +6,7 @@ namespace minesweeper_gui {
 
 enum class BaseState : uint8_t {
   Closed = 0,
-  Hoovered,
+  Hovered,
   Boomed,
   Opened,
 };
