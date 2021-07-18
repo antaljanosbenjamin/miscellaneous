@@ -21,9 +21,9 @@ public:
   void draw(wxDC &dc, const FieldBitmaps &bitmaps) const;
 
 private:
-  [[nodiscard]] bool canBeHoover() const;
+  [[nodiscard]] bool canBeHover() const;
 
-  [[nodiscard]] bool isHoovered() const;
+  [[nodiscard]] bool isHovered() const;
 
   [[nodiscard]] bool shouldDrawFigure() const;
 

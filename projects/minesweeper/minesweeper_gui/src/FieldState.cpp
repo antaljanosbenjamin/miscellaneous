@@ -35,10 +35,10 @@ minesweeper::OpenInfo FieldState::open(minesweeper::Minesweeper &game) {
 }
 
 void FieldState::updateWithBaseState(const BaseState &newBaseState) {
-  if (newBaseState == BaseState::Hoovered && !canBeHoover()) {
+  if (newBaseState == BaseState::Hovered && !canBeHover()) {
     return;
   }
-  if (newBaseState == BaseState::Closed && !isHoovered()) {
+  if (newBaseState == BaseState::Closed && !isHovered()) {
     return;
   }
   baseState = newBaseState;
@@ -59,12 +59,12 @@ void FieldState::draw(wxDC &dc, const FieldBitmaps &bitmaps) const {
   }
 }
 
-[[nodiscard]] bool FieldState::canBeHoover() const {
+[[nodiscard]] bool FieldState::canBeHover() const {
   return baseState == BaseState::Closed;
 }
 
-[[nodiscard]] bool FieldState::isHoovered() const {
-  return baseState == BaseState::Hoovered;
+[[nodiscard]] bool FieldState::isHovered() const {
+  return baseState == BaseState::Hovered;
 }
 
 [[nodiscard]] bool FieldState::shouldDrawFigure() const {

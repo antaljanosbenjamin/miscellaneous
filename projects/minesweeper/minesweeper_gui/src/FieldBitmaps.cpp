@@ -15,7 +15,7 @@ FieldBitmaps::FieldBitmaps(int bitmapSize) {
                 "Number of background bitmaps doesn't match the count of enum values");
   switch (guiState) {
   case BaseState::Closed:
-  case BaseState::Hoovered:
+  case BaseState::Hovered:
   case BaseState::Boomed:
   case BaseState::Opened:
     return backgrounds[getNumericValue(guiState)];

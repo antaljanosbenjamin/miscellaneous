@@ -13,7 +13,7 @@ if(NOT TI_IS_CLANG_CL)
     res/five.png
     res/flag.png
     res/four.png
-    res/hoovered.png
+    res/hovered.png
     res/mine.png
     res/mine_2.png
     res/one.png

@@ -72,7 +72,7 @@ void FieldPanel::mouseEnterEvent(wxMouseEvent &event) {
   if (!event.LeftIsDown()) {
     return;
   }
-  state.updateWithBaseState(BaseState::Hoovered);
+  state.updateWithBaseState(BaseState::Hovered);
   Refresh();
 }
 

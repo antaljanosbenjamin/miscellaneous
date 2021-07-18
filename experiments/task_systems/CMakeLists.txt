@@ -9,7 +9,7 @@ add_executable(
   OracleTaskSystem.hpp
 )
 
-set_target_properties(task_systems PROPERTIES FOLDER "TaskSystems")
+set_target_properties(task_systems PROPERTIES FOLDER "task_systems")
 
 find_package(Threads REQUIRED)
 
