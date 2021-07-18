@@ -5,8 +5,8 @@
 	"recommendations": [
 		"alefragnani.bookmarks",
 		"cheshirekow.cmake-format",
+		"llvm-vs-code-extensions.vscode-clangd",
 		"ms-python.python",
-		"ms-vscode.cpptools",
 		"ms-vscode-remote.remote-ssh",
 		"ms-vscode-remote.remote-ssh-edit",
 		"streetsidesoftware.code-spell-checker",

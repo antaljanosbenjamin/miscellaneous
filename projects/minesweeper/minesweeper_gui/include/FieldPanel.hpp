@@ -5,6 +5,7 @@
 #include <Minesweeper.hpp>
 #include "FieldBitmaps.hpp"
 #include "FieldState.hpp"
+#include "MouseStateHandler.hpp"
 #include "WxWidgetsWrapper.hpp"
 #include "utils/PropagateConst.hpp"
 
@@ -28,6 +29,8 @@ private:
   void leftClickEvent(wxMouseEvent & /*unused*/);
   void mouseEnterEvent(wxMouseEvent &event);
   void mouseLeaveEvent(wxMouseEvent &event);
+  void handleMouseAction(const MouseStateHandler::Action action);
+  void processOpenInfo(const minesweeper::OpenInfo openInfo);
 
   FieldState state;
   const FieldBitmaps *bitmaps;

@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include <utils/Likely.hpp>
 #include "FieldsFrame.hpp"
 
 namespace minesweeper_gui {
@@ -27,7 +28,49 @@ void FieldPanel::rightClickEvent(wxMouseEvent & /*unused*/) {
 }
 
 void FieldPanel::leftClickEvent(wxMouseEvent & /*unused*/) {
-  const auto openInfo = this->state.open(*game);
+  this->processOpenInfo(this->state.open(*game));
+}
+
+void FieldPanel::mouseEnterEvent(wxMouseEvent &event) {
+  if (!event.LeftIsDown()) {
+    return;
+  }
+  state.updateWithBaseState(BaseState::Hovered);
+  Refresh();
+}
+
+void FieldPanel::mouseLeaveEvent(wxMouseEvent &event) {
+  if (!event.LeftIsDown()) {
+    return;
+  }
+  state.updateWithBaseState(BaseState::Closed);
+  Refresh();
+}
+
+void FieldPanel::handleMouseAction(const MouseStateHandler::Action action) {
+  using Action = MouseStateHandler::Action;
+  switch (action) {
+  case Action::Hover:
+    state.updateWithBaseState(BaseState::Hovered);
+    return;
+  case Action::Unhover:
+    state.updateWithBaseState(BaseState::Closed);
+    return;
+  case Action::Open:
+    this->processOpenInfo(this->state.open(*game));
+    return;
+  case Action::Flag:
+    this->state.toggleFlag(*game);
+    Refresh();
+  case Action::HoverNeighbors:
+  case Action::UnhoverNeighbors:
+  case Action::OpenNeighbors:
+  case Action::None:
+    return;
+  }
+}
+
+void FieldPanel::processOpenInfo(const minesweeper::OpenInfo openInfo) {
   switch (openInfo.openResult) {
   case minesweeper::OpenResult::Ok:
   case minesweeper::OpenResult::Winner: {
@@ -42,7 +85,7 @@ void FieldPanel::leftClickEvent(wxMouseEvent & /*unused*/) {
     break;
   }
   case minesweeper::OpenResult::IsFlagged: {
-    if (!openInfo.newlyOpenedFields.empty()) {
+    if (MY_UNLIKELY(!openInfo.newlyOpenedFields.empty())) {
       throw std::runtime_error("Unexpected newly opened fields!");
     }
     break;
@@ -66,22 +109,6 @@ void FieldPanel::leftClickEvent(wxMouseEvent & /*unused*/) {
     break;
   }
   }
-}
-
-void FieldPanel::mouseEnterEvent(wxMouseEvent &event) {
-  if (!event.LeftIsDown()) {
-    return;
-  }
-  state.updateWithBaseState(BaseState::Hovered);
-  Refresh();
-}
-
-void FieldPanel::mouseLeaveEvent(wxMouseEvent &event) {
-  if (!event.LeftIsDown()) {
-    return;
-  }
-  state.updateWithBaseState(BaseState::Closed);
-  Refresh();
 }
 
 void FieldPanel::render(wxDC &dc) {

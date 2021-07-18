@@ -36,6 +36,7 @@ if(NOT TI_IS_CLANG_CL)
       include/FieldPanel.hpp
       include/FieldsFrame.hpp
       include/FieldState.hpp
+      include/MouseStateHandler.hpp
       include/Resources.hpp
       include/utils/EnumHelper.hpp
       include/utils/SafeCast.hpp
@@ -50,6 +51,7 @@ if(NOT TI_IS_CLANG_CL)
       src/FieldsFrame.cpp
       src/FieldState.cpp
       src/main.cpp
+      src/MouseStateHandler.cpp
   )
 
   add_executable(minesweeper_gui ${MINESWEEPER_GUI_HEADERS} ${MINESWEEPER_GUI_SOURCES})
@@ -64,6 +66,14 @@ if(NOT TI_IS_CLANG_CL)
             project_options
             project_warnings
   )
+  source_group(
+    TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Source Files" FILES ${MINESWEEPER_GUI_SOURCES}
+  )
+  source_group(
+    TREE ${CMAKE_CURRENT_SOURCE_DIR}/include PREFIX "Header Files" FILES ${MINESWEEPER_GUI_HEADERS}
+  )
+
+  source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/res PREFIX res)
 
   if(WIN32)
     target_link_options(minesweeper_gui PRIVATE "/SUBSYSTEM:WINDOWS")

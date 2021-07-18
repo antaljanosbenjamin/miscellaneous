@@ -1,6 +1,5 @@
 #include "utils/Assert.hpp"
 
-#include <exception>
 #include <iostream>
 
 namespace utils::detail::assert {
