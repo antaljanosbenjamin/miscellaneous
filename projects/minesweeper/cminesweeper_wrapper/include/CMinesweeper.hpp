@@ -7,13 +7,13 @@ extern "C" {
 using CMGameSizeType = int64_t;
 using CMArraySizeType = uint64_t;
 
-enum CMError : uint32_t {
-  CME_Ok,
-  CME_InvalidInput,
-  CME_NullPointerAsInput,
-  CME_IndexIsOutOfRange,
-  CME_InsufficientBuffer,
-  CME_UnexpectedError,
+enum CMResult : uint32_t {
+  CMR_Ok,
+  CMR_InvalidInput,
+  CMR_NullPointerAsInput,
+  CMR_IndexIsOutOfRange,
+  CMR_InsufficientBuffer,
+  CMR_UnexpectedError,
 };
 
 enum CMFieldTypeTag : uint32_t {
@@ -52,7 +52,7 @@ struct CMOpenInfo {
 };
 
 struct CMErrorInfo {
-  CMError errorCode{CMError::CME_UnexpectedError};
+  CMResult resultCode{CMResult::CMR_UnexpectedError};
   CMArraySizeType errorMessageLength{0U};
   CMArraySizeType errorMessageMaxLength{0U};
   char *errorMessage{nullptr};
@@ -70,14 +70,14 @@ enum CMFieldFlagResult {
   CMFFR_AlreadyOpened,
 };
 
-enum CMFieldState {
+enum CMField {
   CMFS_Closed,
   CMFS_Opened,
   CMFS_Flagged,
 };
 
 struct CMFieldInfo {
-  CMFieldState fieldState{CMFieldState::CMFS_Closed};
+  CMField fieldState{CMField::CMFS_Closed};
   CMFieldType fieldType;
 };
 

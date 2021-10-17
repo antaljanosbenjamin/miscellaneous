@@ -1,35 +1,36 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>
+
 #include <tl/expected.hpp>
 #include "utils/PropagateConst.hpp"
 
 namespace minesweeper {
 
-enum class Error {
-  Ok,
+enum class Error : uint8_t {
   InvalidInput,
   IndexIsOutOfRange,
   ConversionError,
   UnexpectedError,
 };
 
-enum class GameLevel {
+enum class GameLevel : uint8_t {
   Beginner,
   Intermediate,
   Expert,
 };
 
-enum class OpenResult {
+enum class OpenResult : uint8_t {
   Ok,
   IsFlagged,
   Boom,
   Winner,
 };
 
-enum class FieldFlagResult {
+enum class FieldFlagResult : uint8_t {
   Flagged,
   FlagRemoved,
   AlreadyOpened,
