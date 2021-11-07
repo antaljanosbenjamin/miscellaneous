@@ -4,6 +4,7 @@
 
 conan user
 conan profile new default --detect
+conan config set general.revisions_enabled=1
 
 if [ "$COMPILER" = "MSVC" ]
 then
@@ -19,7 +20,7 @@ else
   exit 1
 fi
 
-if test ! -z "$INSTALL_PACKAGES" 
+if test ! -z "$INSTALL_PACKAGES"
 then
   choco install $INSTALL_PACKAGES
 fi
