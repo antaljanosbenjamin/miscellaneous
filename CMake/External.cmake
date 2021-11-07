@@ -11,7 +11,7 @@ macro(run_conan)
 
   include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-  conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
+  conan_add_remote(NAME bincrafters URL https://bincrafters.jfrog.io/artifactory/api/conan/public-conan)
   set(CONAN_DEPENDENCIES catch2/2.11.0 tl-expected/20190710)
   set(CONAN_OPTIONS "")
 
