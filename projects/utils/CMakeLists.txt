@@ -2,7 +2,6 @@ add_library(
   utils
   include/utils/Assert.hpp
   include/utils/HashCombine.hpp
-  include/utils/Likely.hpp
   include/utils/NotNull.hpp
   include/utils/PropagateConst.hpp
   src/Assert.cpp
