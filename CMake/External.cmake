@@ -11,12 +11,14 @@ macro(run_conan)
 
   include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-  conan_add_remote(NAME bincrafters URL https://bincrafters.jfrog.io/artifactory/api/conan/public-conan)
-  set(CONAN_DEPENDENCIES catch2/2.11.0 tl-expected/20190710)
+  conan_add_remote(
+    NAME bincrafters URL https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
+  )
+  set(CONAN_DEPENDENCIES catch2/2.13.8 tl-expected/20190710)
   set(CONAN_OPTIONS "")
 
   if(NOT TI_IS_CLANG_CL)
-    list(APPEND CONAN_DEPENDENCIES wxwidgets/3.1.4@bincrafters/stable fmt/7.0.3)
+    list(APPEND CONAN_DEPENDENCIES wxwidgets/3.1.5@bincrafters/stable fmt/8.1.1)
     list(
       APPEND
       CONAN_OPTIONS
