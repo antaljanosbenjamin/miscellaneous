@@ -4,19 +4,21 @@ macro(run_conan)
   # Download automatically, you can also just copy the conan.cmake  file
   if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
     message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-    file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake"
+    file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/develop/conan.cmake"
          "${CMAKE_BINARY_DIR}/conan.cmake"
     )
   endif()
 
   include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-  conan_add_remote(NAME bincrafters URL https://bincrafters.jfrog.io/artifactory/api/conan/public-conan)
-  set(CONAN_DEPENDENCIES catch2/2.11.0 tl-expected/20190710)
+  conan_add_remote(
+    NAME bincrafters URL https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
+  )
+  set(CONAN_DEPENDENCIES catch2/2.13.8 tl-expected/20190710)
   set(CONAN_OPTIONS "")
 
   if(NOT TI_IS_CLANG_CL)
-    list(APPEND CONAN_DEPENDENCIES wxwidgets/3.1.4@bincrafters/stable fmt/7.0.3)
+    list(APPEND CONAN_DEPENDENCIES wxwidgets/3.1.5@bincrafters/stable fmt/8.1.1)
     list(
       APPEND
       CONAN_OPTIONS
