@@ -9,4 +9,9 @@ void HandleFailedAssert(const char *filename, int lineNumber, const char *expres
             << " with message " << message << std::endl;
   std::terminate();
 }
+
+void HandleFatal(const char *filename, int lineNumber, const char *message) {
+  std::cerr << "Fatal error occured in " << filename << " on line " << lineNumber << " with message " << message
+            << std::endl;
+}
 } // namespace  utils::detail::assert
