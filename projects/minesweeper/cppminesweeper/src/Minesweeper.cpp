@@ -5,21 +5,22 @@
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
+#include <utils/Assert.hpp>
 #include "CMinesweeper.hpp"
 
 static_assert(std::is_same_v<minesweeper::SizeType, CMGameSizeType>, "Type mistmatch!");
 
 namespace {
-minesweeper::Error convert(const CMError cError) {
+minesweeper::Error convert(const CMResult cError) {
   switch (cError) {
-  case CMError::CME_Ok:
-    return minesweeper::Error::Ok;
-  case CMError::CME_IndexIsOutOfRange:
+  case CMResult::CMR_Ok:
+    MY_ASSERT(false, "Cannot convert CMResult::CMR_Ok to minesweeper::Error")
+  case CMResult::CMR_IndexIsOutOfRange:
     return minesweeper::Error::IndexIsOutOfRange;
-  case CMError::CME_InvalidInput:
-  case CMError::CME_NullPointerAsInput:
-  case CMError::CME_InsufficientBuffer:
-  case CMError::CME_UnexpectedError:
+  case CMResult::CMR_InvalidInput:
+  case CMResult::CMR_NullPointerAsInput:
+  case CMResult::CMR_InsufficientBuffer:
+  case CMResult::CMR_UnexpectedError:
     return minesweeper::Error::UnexpectedError;
   }
   return minesweeper::Error::UnexpectedError;
@@ -123,11 +124,11 @@ public:
   }
 
   [[maybe_unused]] [[nodiscard]] bool isOk() const noexcept {
-    return cErrorInfo.errorCode == CMError::CME_Ok;
+    return cErrorInfo.resultCode == CMResult::CMR_Ok;
   }
 
   [[nodiscard]] minesweeper::Error getCode() const noexcept {
-    return convert(cErrorInfo.errorCode);
+    return convert(cErrorInfo.resultCode);
   }
 
   [[maybe_unused]] [[nodiscard]] std::string_view getErrorMessage() const noexcept {
@@ -135,26 +136,26 @@ public:
   }
 
   template <typename TFunc, typename... TArgs>
-  bool call(const TFunc &func, TArgs &&... args) noexcept {
+  bool call(const TFunc &func, TArgs &&...args) noexcept {
     reset();
     func(std::forward<TArgs>(args)..., &cErrorInfo);
-    return cErrorInfo.errorCode == CMError::CME_Ok;
+    return cErrorInfo.resultCode == CMResult::CMR_Ok;
   }
 
 private:
   void reset() noexcept {
-    cErrorInfo.errorCode = CMError::CME_Ok;
+    cErrorInfo.resultCode = CMResult::CMR_Ok;
     cErrorInfo.errorMessageLength = 0;
   };
 
-  CMErrorInfo cErrorInfo{CMError::CME_Ok, 0U, 0U, nullptr};
+  CMErrorInfo cErrorInfo{CMResult::CMR_Ok, 0U, 0U, nullptr};
   std::vector<char> buffer;
 };
 
 template <typename TValue, typename TFunc, typename... TArgs>
 // NOLINTNEXTLINE(misc-misplaced-const)
 minesweeper::Result<TValue> getValue(const TFunc &func, const CMGameHandle handle, ErrorInfo &errorInfo,
-                                     TArgs &&... args) noexcept {
+                                     TArgs &&...args) noexcept {
   CType_t<TValue> cValue;
   if (errorInfo.call(func, handle, std::forward<TArgs>(args)..., &cValue)) {
     try {

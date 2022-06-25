@@ -19,10 +19,10 @@ int main() {
 
   const auto &properties = store.get(2133);
 
-  const auto &compileTimeTypeCheckedTitle =
+  [[maybe_unused]] const auto &compileTimeTypeCheckedTitle =
       store.get(2133).get<PropertyId::Title>();
 
-  const auto &runtimeTypeCheckedTitle =
+  [[maybe_unused]] const auto &runtimeTypeCheckedTitle =
       store.get(2133).getAs<std::string>(PropertyId::Title);
 
   try {
