@@ -1,9 +1,12 @@
+#include <bit>
 #include <map>
 #include <random>
 #include <unordered_map>
 
 #include <benchmark/benchmark.h>
 #include <robin_hood.h>
+
+#include "memory_manager.hpp"
 
 template <typename T, typename THash = robin_hood::hash<T>>
 struct PairHash {
@@ -19,7 +22,7 @@ struct PairHash {
 };
 
 template <typename TMap, size_t kMaxDimension, size_t kFilledItems>
-static void HashMap(benchmark::State &state) {
+static void Map(benchmark::State &state) {
   std::random_device rd;
   std::mt19937 mt(rd());
   std::uniform_int_distribution<size_t> r1(0, kMaxDimension - 1);
@@ -34,7 +37,6 @@ static void HashMap(benchmark::State &state) {
     benchmark::DoNotOptimize(map.contains(key));
   }
 }
-// Register the function as a benchmark
 
 template <typename T>
 bool operator<(const std::pair<T, T> &a, const std::pair<T, T> &b) {
@@ -42,54 +44,36 @@ bool operator<(const std::pair<T, T> &a, const std::pair<T, T> &b) {
 }
 
 template <size_t kMaxDimension, size_t kFilledItems>
-static void OrderedMap(benchmark::State &state) {
-  std::random_device rd;
-  robin_hood::unordered_flat_map<std::pair<size_t, size_t>, int64_t, PairHash<size_t>> a;
-  std::mt19937 mt(rd());
-  std::uniform_int_distribution<size_t> r1(0, kMaxDimension - 1);
-  std::map<std::pair<size_t, size_t>, int64_t> map;
-  for (auto i = 0ULL; i < kFilledItems; ++i) {
-    map.emplace(std::make_pair(r1(mt), r1(mt)), 0);
-  }
-  // Code inside this loop is measured repeatedly
-  for (auto _: state) {
-    // Make sure the variable is not optimized away by compiler
-    const auto key = std::make_pair(r1(mt), r1(mt));
-    benchmark::DoNotOptimize(map.contains(key));
-  }
-}
-
-template <size_t kMaxDimension, size_t kFilledItems>
 static void Vector(benchmark::State &state) {
   std::random_device rd;
   std::mt19937 mt(rd());
   std::uniform_int_distribution<size_t> r1(0, kMaxDimension - 1);
-  std::vector<uint32_t> vec(kMaxDimension * kMaxDimension, 0);
-  // Code inside this loop is measured repeatedly
+  std::vector<uint64_t> vec(kMaxDimension * kMaxDimension, 0);
   for (auto _: state) {
-    // Make sure the variable is not optimized away by compiler
     const auto key = std::make_pair(r1(mt), r1(mt));
     benchmark::DoNotOptimize(vec[key.first * kMaxDimension + key.second]);
   }
 }
 
 #define BENCH(kMaxDimension, kFilledItems)                                                                             \
-  BENCHMARK_TEMPLATE(HashMap,                                                                                          \
-                     robin_hood::unordered_flat_map<std::pair<uint32_t, uint32_t>, uint32_t, PairHash<uint32_t>>,      \
+  BENCHMARK_TEMPLATE(Vector, kMaxDimension, kFilledItems);                                                             \
+  BENCHMARK_TEMPLATE(Map, std::unordered_map<std::pair<uint32_t, uint32_t>, uint64_t, PairHash<uint32_t>>,             \
+                     kMaxDimension, kFilledItems);                                                                     \
+  BENCHMARK_TEMPLATE(Map, std::map<std::pair<uint32_t, uint32_t>, uint64_t>, kMaxDimension, kFilledItems);             \
+  BENCHMARK_TEMPLATE(Map, robin_hood::unordered_flat_map<std::pair<uint32_t, uint32_t>, uint64_t, PairHash<uint32_t>>, \
+                     kMaxDimension, kFilledItems);                                                                     \
+  BENCHMARK_TEMPLATE(Map, robin_hood::unordered_node_map<std::pair<uint32_t, uint32_t>, uint64_t, PairHash<size_t>>,   \
                      kMaxDimension, kFilledItems);
 
-// #define BENCH(kMaxDimension, kFilledItems) BENCHMARK_TEMPLATE(Vector, kMaxDimension, kFilledItems)
-
-// BENCHMARK_TEMPLATE(HashMap, robin_hood::unordered_node_map<std::pair<size_t, size_t>, int64_t, PairHash<size_t>>,
-// kMaxDimension, kFilledItems); BENCHMARK_TEMPLATE(HashMap, std::unordered_map<std::pair<size_t, size_t>, int64_t,
-// PairHash<size_t>>, kMaxDimension, kFilledItems);
-
-// BENCHMARK_TEMPLATE(OrderedMap, kMaxDimension, kFilledItems);
-
-// BENCH(50'000, 1'000'000'000);
+BENCH(5, 10);
+BENCH(50, 1'000);
+BENCH(500, 100'000);
 BENCH(5'000, 10'000'000);
-// BENCH(500, 100'000);
-// BENCH(50, 1'000);
-// BENCH(5, 10);
+BENCHMARK_TEMPLATE(Vector, 50'000, 1'000'000'000);
 
-BENCHMARK_MAIN();
+int main(int argc, char **argv) {
+  ::benchmark::RegisterMemoryManager(&getMemoryManager());
+  ::benchmark::Initialize(&argc, argv);
+  ::benchmark::RunSpecifiedBenchmarks();
+  ::benchmark::RegisterMemoryManager(nullptr);
+}
