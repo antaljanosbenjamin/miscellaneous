@@ -1,6 +1,7 @@
 #pragma once
 
 #include <concepts>
+#include <cstdint>
 #include <stdexcept>
 #include <vector>
 
@@ -11,7 +12,7 @@ class Matrix {
 public:
   using ValueType = typename std::vector<TValue>::value_type;
 
-  Matrix(size_t height, size_t width, TValue defaultValue = TValue{})
+  Matrix(int64_t height, int64_t width, TValue defaultValue = TValue{})
     : m_height(height)
     , m_width(width)
     , m_values(this->m_height * this->m_width, defaultValue) {
@@ -44,70 +45,70 @@ public:
     return Matrix<TValue>{container.height(), container.width()};
   }
 
-  TValue &get(const size_t row, const size_t column) {
+  TValue &get(const int64_t row, const int64_t column) {
     return this->m_values[this->getIndexFromRowAndColumn(row, column)];
   }
 
-  const TValue &get(const size_t row, const size_t column) const {
+  const TValue &get(const int64_t row, const int64_t column) const {
     return this->m_values[this->getIndexFromRowAndColumn(row, column)];
   }
 
-  TValue *tryGet(const size_t row, const size_t column) {
+  TValue *tryGet(const int64_t row, const int64_t column) {
     if (this->areValidRowAndColumn(row, column)) {
-      return &this->m_values[this->getIndexFromRowAndColumn(row, column)];
+      return &this->get(row, column);
     }
     return nullptr;
   }
 
-  const TValue *tryGet(const size_t row, const size_t column) const {
+  const TValue *tryGet(const int64_t row, const int64_t column) const {
     if (this->areValidRowAndColumn(row, column)) {
-      return &this->m_values[this->getIndexFromRowAndColumn(row, column)];
+      return &this->get(row, column);
     }
     return nullptr;
   }
 
-  TValue &getChecked(const size_t row, const size_t column) {
-    if (this->areValidRowAndColumn(row, column)) {
-      return this->m_values[this->getIndexFromRowAndColumn(row, column)];
+  TValue &getChecked(const int64_t row, const int64_t column) {
+    if (const auto *ptr = this->tryGet(row, column); nullptr == ptr) {
+      return *ptr;
     }
     throw std::out_of_range{"Invalid row or column"};
   }
 
-  const TValue *getChecked(const size_t row, const size_t column) const {
-
-    if (this->areValidRowAndColumn(row, column)) {
-      return this->m_values[this->getIndexFromRowAndColumn(row, column)];
+  const TValue *getChecked(const int64_t row, const int64_t column) const {
+    if (const auto *ptr = this->tryGet(row, column); nullptr == ptr) {
+      return *ptr;
     }
     throw std::out_of_range{"Invalid row or column"};
   }
 
-  [[nodiscard]] size_t height() const noexcept {
+  [[nodiscard]] int64_t height() const noexcept {
     return this->m_height;
   }
 
-  [[nodiscard]] size_t width() const noexcept {
+  [[nodiscard]] int64_t width() const noexcept {
     return this->m_width;
   }
 
 private:
-  [[nodiscard]] size_t getIndexFromRowAndColumn(const size_t row, const size_t column) const noexcept {
+  [[nodiscard]] int64_t getIndexFromRowAndColumn(const int64_t row, const int64_t column) const noexcept {
     return row * this->m_width + column;
   }
 
-  [[nodiscard]] bool isValidRow(const size_t row) const noexcept {
+  [[nodiscard]] bool isValidRow(const int64_t row) const noexcept {
     return row < this->m_height;
   }
 
-  [[nodiscard]] bool isValidColumn(const size_t column) const noexcept {
+  [[nodiscard]] bool isValidColumn(const int64_t column) const noexcept {
     return column < this->m_width;
   }
 
-  [[nodiscard]] bool areValidRowAndColumn(const size_t row, const size_t column) const noexcept {
+  [[nodiscard]] bool areValidRowAndColumn(const int64_t row, const int64_t column) const noexcept {
     return this->isValidRow(row) && this->isValidColumn(column);
   }
 
-  size_t m_height;
-  size_t m_width;
+  // Signed sizes https://www.open-std.org/JTC1/sc22/wg21/docs/papers/2019/p1428r0.pdf
+  int64_t m_height;
+  int64_t m_width;
   std::vector<TValue> m_values;
 };
 } // namespace utils
