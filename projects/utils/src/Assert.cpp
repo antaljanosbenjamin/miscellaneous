@@ -9,4 +9,4 @@ void HandleFailedAssert(const char *filename, int lineNumber, const char *expres
             << " with message " << message << std::endl;
   std::terminate();
 }
-} // namespace  utils::detail::assert
+} // namespace utils::detail::assert
