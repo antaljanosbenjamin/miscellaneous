@@ -1,4 +1,5 @@
 #include <bit>
+#include <iostream>
 #include <map>
 #include <random>
 #include <unordered_map>
@@ -21,14 +22,29 @@ struct PairHash {
   }
 };
 
-template <typename TMap, size_t kMaxDimension, size_t kFilledItems>
+#define SIZE_TYPE int64_t
+#define LABEL_TYPE int64_t
+
+template <typename T>
+struct StringRep {};
+
+template <>
+struct StringRep<int32_t> {
+  static constexpr std::string_view value{"int32_t"};
+};
+
+template <>
+struct StringRep<int64_t> {
+  static constexpr std::string_view value{"int64_t"};
+};
+
+template <typename TMap, SIZE_TYPE kMaxDimension, SIZE_TYPE kFilledItems>
 static void Map(benchmark::State &state) {
-  std::random_device rd;
-  std::mt19937 mt(rd());
-  std::uniform_int_distribution<size_t> r1(0, kMaxDimension - 1);
+  std::mt19937 mt(1); // NOLINTNEXTLINE(cert-msc32-c)
+  std::uniform_int_distribution<SIZE_TYPE> r1(0, kMaxDimension - 1);
   TMap map;
   for (auto i = 0ULL; i < kFilledItems; ++i) {
-    map.emplace(std::make_pair(r1(mt), r1(mt)), 0);
+    map.emplace(std::make_pair(r1(mt), r1(mt)), 1);
   }
   // Code inside this loop is measured repeatedly
   for (auto _: state) {
@@ -43,12 +59,11 @@ bool operator<(const std::pair<T, T> &a, const std::pair<T, T> &b) {
   return (a.first < b.first) || (a.first == b.first && a.second < b.second);
 }
 
-template <size_t kMaxDimension, size_t kFilledItems>
+template <typename TVector, size_t kMaxDimension, size_t kFilledItems>
 static void Vector(benchmark::State &state) {
-  std::random_device rd;
-  std::mt19937 mt(rd());
-  std::uniform_int_distribution<size_t> r1(0, kMaxDimension - 1);
-  std::vector<uint64_t> vec(kMaxDimension * kMaxDimension, 0);
+  std::mt19937 mt(1); // NOLINTNEXTLINE(cert-msc32-c)
+  std::uniform_int_distribution<SIZE_TYPE> r1(0, kMaxDimension - 1);
+  TVector vec(kMaxDimension * kMaxDimension, 0);
   for (auto _: state) {
     const auto key = std::make_pair(r1(mt), r1(mt));
     benchmark::DoNotOptimize(vec[key.first * kMaxDimension + key.second]);
@@ -56,22 +71,26 @@ static void Vector(benchmark::State &state) {
 }
 
 #define BENCH(kMaxDimension, kFilledItems)                                                                             \
-  BENCHMARK_TEMPLATE(Vector, kMaxDimension, kFilledItems);                                                             \
-  BENCHMARK_TEMPLATE(Map, std::unordered_map<std::pair<uint32_t, uint32_t>, uint64_t, PairHash<uint32_t>>,             \
+  BENCHMARK_TEMPLATE(Vector, std::vector<LABEL_TYPE>, kMaxDimension, kFilledItems);                                    \
+  BENCHMARK_TEMPLATE(Map, std::unordered_map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE, PairHash<uint32_t>>,         \
                      kMaxDimension, kFilledItems);                                                                     \
-  BENCHMARK_TEMPLATE(Map, std::map<std::pair<uint32_t, uint32_t>, uint64_t>, kMaxDimension, kFilledItems);             \
-  BENCHMARK_TEMPLATE(Map, robin_hood::unordered_flat_map<std::pair<uint32_t, uint32_t>, uint64_t, PairHash<uint32_t>>, \
+  BENCHMARK_TEMPLATE(Map, std::map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE>, kMaxDimension, kFilledItems);         \
+  BENCHMARK_TEMPLATE(Map,                                                                                              \
+                     robin_hood::unordered_flat_map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE, PairHash<uint32_t>>,  \
                      kMaxDimension, kFilledItems);                                                                     \
-  BENCHMARK_TEMPLATE(Map, robin_hood::unordered_node_map<std::pair<uint32_t, uint32_t>, uint64_t, PairHash<size_t>>,   \
+  BENCHMARK_TEMPLATE(Map,                                                                                              \
+                     robin_hood::unordered_node_map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE, PairHash<size_t>>,    \
                      kMaxDimension, kFilledItems)
 
 BENCH(5, 10);
 BENCH(50, 1'000);
 BENCH(500, 100'000);
 BENCH(5'000, 10'000'000);
-BENCHMARK_TEMPLATE(Vector, 50'000, 1'000'000'000);
+BENCHMARK_TEMPLATE(Vector, std::vector<LABEL_TYPE>, 50'000, 1'000'000'000);
 
 int main(int argc, char **argv) {
+  std::cout << "Size type is " << StringRep<SIZE_TYPE>::value << std::endl;
+  std::cout << "Label type is " << StringRep<LABEL_TYPE>::value << std::endl;
   ::benchmark::RegisterMemoryManager(&getMemoryManager());
   ::benchmark::Initialize(&argc, argv);
   ::benchmark::RunSpecifiedBenchmarks();
