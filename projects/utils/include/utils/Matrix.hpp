@@ -16,6 +16,12 @@ public:
     : m_height(height)
     , m_width(width)
     , m_values(this->m_height * this->m_width, defaultValue) {
+    if (this->m_height < 1) {
+      throw std::invalid_argument{"The height of the matrix must be positive!"};
+    }
+    if (this->m_width < 1) {
+      throw std::invalid_argument{"The width of the matrix must be positive!"};
+    }
   }
 
   Matrix(const Matrix &) = default;
