@@ -55,8 +55,7 @@ private:
   int64_t m_width_offset{0};
   int64_t m_height{0};
   int64_t m_width{0};
-  // utils::PropagateConst<utils::NotNull<TMatrix *>> m_matrix;
-  utils::PropagateConst<utils::NotNull<TMatrix *>> m_matrix;
+  utils::NotNull<TMatrix *> m_matrix;
 };
 
 template <typename TMatrix, typename TMatrix::ValueType kDefaultValue = typename TMatrix::ValueType{}>

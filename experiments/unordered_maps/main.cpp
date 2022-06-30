@@ -63,7 +63,7 @@ static void Vector(benchmark::State &state) {
   BENCHMARK_TEMPLATE(Map, robin_hood::unordered_flat_map<std::pair<uint32_t, uint32_t>, uint64_t, PairHash<uint32_t>>, \
                      kMaxDimension, kFilledItems);                                                                     \
   BENCHMARK_TEMPLATE(Map, robin_hood::unordered_node_map<std::pair<uint32_t, uint32_t>, uint64_t, PairHash<size_t>>,   \
-                     kMaxDimension, kFilledItems);
+                     kMaxDimension, kFilledItems)
 
 BENCH(5, 10);
 BENCH(50, 1'000);
