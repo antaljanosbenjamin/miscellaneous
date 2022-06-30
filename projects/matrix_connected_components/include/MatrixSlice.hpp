@@ -10,7 +10,7 @@
 
 namespace matrix_connected_components {
 
-template <typename TMatrix, typename TMatrix::ValueType kDefaultValue = typename TMatrix::ValueType{}>
+template <typename TMatrix>
 class MatrixSlice {
 
 public:
