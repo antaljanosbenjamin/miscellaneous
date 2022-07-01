@@ -27,16 +27,16 @@ DisjointSets::Node &findParent(DisjointSets::Node *node) {
 } // namespace
 
 [[nodiscard]] int64_t DisjointSets::size() const noexcept {
-  return static_cast<int64_t>(this->m_nodes.size());
+  return static_cast<int64_t>(this->m_valueToNodeMap.size());
 }
 
 bool DisjointSets::add(const ValueType value) {
   if (this->m_valueToNodeMap.contains(value)) {
     return false;
   }
-  this->m_nodes.push_back(Node{nullptr, value});
-  auto &node = this->m_nodes.back();
+  auto &node = this->createNode();
   node.parent = &node;
+  node.value = value;
   this->m_valueToNodeMap.emplace(value, node);
   return true;
 }
@@ -82,6 +82,14 @@ DisjointSets::findNodeByValue(const ValueType value) {
     return std::nullopt;
   }
   return it->second;
+}
+
+[[nodiscard]] DisjointSets::Node &DisjointSets::createNode() {
+  if (this->m_nodes.empty() || this->m_nodes.back().size() == kNodesBufferSize) {
+    m_nodes.emplace_back().reserve(kNodesBufferSize);
+  }
+
+  return this->m_nodes.back().emplace_back();
 }
 
 } // namespace utils

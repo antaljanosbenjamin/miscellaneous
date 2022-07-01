@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <functional>
-#include <list>
 #include <optional>
 #include <unordered_map>
 
@@ -28,9 +27,12 @@ public:
   bool merge(const ValueType lhs, const ValueType rhs);
 
 private:
+  static constexpr size_t kNodesBufferSize{1000};
   [[nodiscard]] std::optional<std::reference_wrapper<Node>> findNodeByValue(const ValueType value);
 
-  std::list<Node> m_nodes;
+  [[nodiscard]] Node &createNode();
+
+  std::vector<std::vector<Node>> m_nodes;
   std::unordered_map<ValueType, std::reference_wrapper<Node>> m_valueToNodeMap;
 };
 } // namespace utils
