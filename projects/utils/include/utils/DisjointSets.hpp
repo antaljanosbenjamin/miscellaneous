@@ -13,11 +13,6 @@ class DisjointSets {
 public:
   using ValueType = int64_t;
 
-  struct Node {
-    Node *parent;
-    ValueType value;
-  };
-
   [[nodiscard]] int64_t size() const noexcept;
 
   bool add(const ValueType value);
@@ -28,11 +23,7 @@ public:
 
 private:
   static constexpr size_t kNodesBufferSize{1000};
-  [[nodiscard]] std::optional<std::reference_wrapper<Node>> findNodeByValue(const ValueType value);
 
-  [[nodiscard]] Node &createNode();
-
-  std::vector<std::vector<Node>> m_nodes;
-  std::unordered_map<ValueType, std::reference_wrapper<Node>> m_valueToNodeMap;
+  std::unordered_map<ValueType, ValueType> m_parents;
 };
 } // namespace utils

@@ -6,90 +6,64 @@
 namespace utils {
 
 namespace {
-DisjointSets::Node &findParent(DisjointSets::Node *node) {
+using ValueType = DisjointSets::ValueType;
+using NoteIterator = typename std::unordered_map<ValueType, ValueType>::iterator;
+NoteIterator findParent(std::unordered_map<ValueType, ValueType> &parents, NoteIterator it) {
 
-  if (node->parent == node) {
-    return *node;
+  std::vector<typename std::unordered_map<ValueType, ValueType>::iterator> visitedNodesIts;
+
+  while (it->first != it->second) {
+    visitedNodesIts.push_back(it);
+    it = parents.find(it->second);
   }
 
-  std::vector<DisjointSets::Node *> visitedNodes;
-  auto *parentNode = node;
-  while (parentNode->parent != parentNode) {
-    visitedNodes.push_back(parentNode);
-    parentNode = parentNode->parent;
+  for (auto &visitedNodeIt: visitedNodesIts) {
+    visitedNodeIt->second = it->second;
   }
-
-  for (auto *visitedNode: visitedNodes) {
-    visitedNode->parent = parentNode;
-  }
-  return *parentNode;
+  return it;
 }
 } // namespace
 
 [[nodiscard]] int64_t DisjointSets::size() const noexcept {
-  return static_cast<int64_t>(this->m_valueToNodeMap.size());
+  return static_cast<int64_t>(this->m_parents.size());
 }
 
 bool DisjointSets::add(const ValueType value) {
-  if (this->m_valueToNodeMap.contains(value)) {
+  if (this->m_parents.contains(value)) {
     return false;
   }
-  auto &node = this->createNode();
-  node.parent = &node;
-  node.value = value;
-  this->m_valueToNodeMap.emplace(value, node);
+  this->m_parents.emplace(value, value);
   return true;
 }
 
 std::optional<DisjointSets::ValueType> DisjointSets::find(const ValueType value) {
-  auto maybe_node = this->findNodeByValue(value);
-  if (!maybe_node.has_value()) {
-    return std::nullopt;
+  if (auto it = this->m_parents.find(value); it != this->m_parents.end()) {
+    return findParent(this->m_parents, it)->first;
   }
-
-  return findParent(&maybe_node->get()).value;
+  return std::nullopt;
 }
 
 bool DisjointSets::merge(const ValueType lhs, const ValueType rhs) {
-  auto maybeLhs = this->findNodeByValue(lhs);
-  if (!maybeLhs.has_value()) {
+  auto lhsIts = this->m_parents.find(lhs);
+  if (lhsIts == this->m_parents.end()) {
     return false;
   }
-  auto maybeRhs = this->findNodeByValue(rhs);
-  if (!maybeRhs.has_value()) {
+  auto rhsIts = this->m_parents.find(rhs);
+  if (rhsIts == this->m_parents.end()) {
     return false;
   }
 
-  auto &lhsParent = findParent(&maybeLhs->get());
-  auto &rhsParent = findParent(&maybeRhs->get());
+  auto lhsParent = findParent(this->m_parents, lhsIts);
+  auto rhsParent = findParent(this->m_parents, rhsIts);
   if (&lhsParent == &rhsParent) {
     return false;
   }
 
-  if (lhsParent.value < rhsParent.value) {
-    rhsParent.parent = &lhsParent;
+  if (lhsParent->first < rhsParent->first) {
+    rhsParent->second = lhsParent->first;
   } else {
-    lhsParent.parent = &rhsParent;
+    lhsParent->second = rhsParent->first;
   }
   return true;
 }
-
-[[nodiscard]] std::optional<std::reference_wrapper<DisjointSets::Node>>
-DisjointSets::findNodeByValue(const ValueType value) {
-
-  const auto it = m_valueToNodeMap.find(value);
-  if (it == this->m_valueToNodeMap.end()) {
-    return std::nullopt;
-  }
-  return it->second;
-}
-
-[[nodiscard]] DisjointSets::Node &DisjointSets::createNode() {
-  if (this->m_nodes.empty() || this->m_nodes.back().size() == kNodesBufferSize) {
-    m_nodes.emplace_back().reserve(kNodesBufferSize);
-  }
-
-  return this->m_nodes.back().emplace_back();
-}
-
 } // namespace utils
