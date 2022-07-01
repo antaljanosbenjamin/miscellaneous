@@ -18,7 +18,11 @@ set(MATRIX_CONNECTED_COMPONENTS_DEMO_SOURCES src/main.cpp)
 add_executable(matrix_connected_components_demo ${MATRIX_CONNECTED_COMPONENTS_DEMO_SOURCES})
 
 target_link_libraries(
-  matrix_connected_components_demo matrix_connected_components project_options project_warnings
+  matrix_connected_components_demo
+  matrix_connected_components
+  project_options
+  project_warnings
+  CONAN_PKG::jemalloc
 )
 
 set_target_properties(
