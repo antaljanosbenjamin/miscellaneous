@@ -4,9 +4,8 @@
 #include <stdexcept>
 #include <type_traits>
 
-#include "utils/Matrix.hpp"
 #include "utils/NotNull.hpp"
-#include "utils/PropagateConst.hpp"
+#include "utils/containers/Matrix.hpp"
 
 namespace matrix_connected_components {
 
@@ -22,6 +21,7 @@ public:
     , m_height{height}
     , m_width{width}
     , m_matrix{&matrix} {
+    // TODO(antaljanosbenjamin): improve checks
     if (this->m_height_offset + this->m_height > this->m_matrix->height()) {
       throw std::invalid_argument{"Invalid height ot height offset"};
     }
@@ -48,6 +48,14 @@ public:
   }
   [[nodiscard]] int64_t width() const noexcept {
     return this->m_width;
+  }
+
+  [[nodiscard]] ValueType &get(const int64_t row, const int64_t column) {
+    return m_matrix->get(m_height_offset + row, m_width_offset + column);
+  }
+
+  [[nodiscard]] ValueType &get(const int64_t row, const int64_t column) const {
+    return m_matrix->get(m_height_offset + row, m_width_offset + column);
   }
 
 private:

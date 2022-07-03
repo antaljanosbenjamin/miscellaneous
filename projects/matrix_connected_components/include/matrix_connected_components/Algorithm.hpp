@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <limits>
 
+#include "matrix_connected_components/MatrixSlice.hpp"
 #include "utils/Concepts.hpp"
 #include "utils/containers/DisjointSets.hpp"
 #include "utils/containers/Matrix.hpp"

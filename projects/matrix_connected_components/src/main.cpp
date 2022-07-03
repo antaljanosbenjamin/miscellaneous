@@ -4,7 +4,7 @@
 #include <chrono>
 #include <random>
 
-#include "Algorithm.hpp"
+#include "matrix_connected_components/Algorithm.hpp"
 #include "utils/containers/Matrix.hpp"
 
 template <typename T>
