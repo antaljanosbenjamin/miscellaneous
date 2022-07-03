@@ -5,8 +5,8 @@
 #include <limits>
 
 #include "utils/Concepts.hpp"
-#include "utils/DisjointSets.hpp"
-#include "utils/Matrix.hpp"
+#include "utils/containers/DisjointSets.hpp"
+#include "utils/containers/Matrix.hpp"
 
 namespace matrix_connected_components {
 

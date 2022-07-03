@@ -2,9 +2,9 @@ add_library(
   utils
   include/utils/Assert.hpp
   include/utils/Concepts.hpp
-  include/utils/DisjointSets.hpp
+  include/utils/containers/DisjointSets.hpp
+  include/utils/containers/Matrix.hpp
   include/utils/Likely.hpp
-  include/utils/Matrix.hpp
   include/utils/NotNull.hpp
   include/utils/PropagateConst.hpp
   src/Assert.cpp

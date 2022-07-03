@@ -5,7 +5,7 @@
 #include <random>
 
 #include "Algorithm.hpp"
-#include "utils/Matrix.hpp"
+#include "utils/containers/Matrix.hpp"
 
 template <typename T>
 struct StringRep {};
