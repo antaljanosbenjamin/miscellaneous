@@ -7,6 +7,19 @@
 #include "Algorithm.hpp"
 #include "utils/Matrix.hpp"
 
+template <typename T>
+struct StringRep {};
+
+template <>
+struct StringRep<uint64_t> {
+  static constexpr std::string_view value{"uint64_t"};
+};
+
+template <>
+struct StringRep<int64_t> {
+  static constexpr std::string_view value{"int64_t"};
+};
+
 int main() {
   // using ValueType = int64_t;
   // static constexpr int64_t width{6};
@@ -48,7 +61,7 @@ int main() {
     matrix.get(r1(mt), r1(mt)) = matrix_connected_components::kMarkedField<ValueType>;
   }
 
-  std::cout << "Start\n";
+  std::cout << "Start " << StringRep<ValueType>::value << '\n';
   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
   matrix_connected_components::doMagic(matrix);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
