@@ -35,7 +35,7 @@ int main() {
   // }
   // for (auto row = 0U; row < height; ++row) {
   //   for (auto column = 0U; column < width; ++column) {
-  //     std::cout << static_cast<int>(m.get(row, column)) << ' ';
+  //     std::cout << static_cast<ValueType>(m.get(row, column)) << ' ';
   //   }
   //   std::cout << std::endl;
   // }
