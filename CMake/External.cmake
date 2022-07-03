@@ -14,13 +14,14 @@ macro(run_conan)
   conan_add_remote(
     NAME bincrafters URL https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
   )
-  set(CONAN_DEPENDENCIES
-      catch2/2.13.8
-      tl-expected/20190710
-      robin-hood-hashing/3.11.5
-      benchmark/1.6.1
-      jemalloc/5.2.1
+  set(CONAN_DEPENDENCIES catch2/2.13.8 tl-expected/20190710 robin-hood-hashing/3.11.5
+                         benchmark/1.6.1
   )
+
+  if(NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    list(APPEND CONAN_DEPENDENCIES jemalloc/5.2.1)
+  endif()
+
   set(CONAN_OPTIONS "")
 
   if(NOT TI_IS_CLANG_CL)

@@ -17,12 +17,12 @@ set(MATRIX_CONNECTED_COMPONENTS_DEMO_SOURCES src/main.cpp)
 add_executable(matrix_connected_components_demo ${MATRIX_CONNECTED_COMPONENTS_DEMO_SOURCES})
 
 target_link_libraries(
-  matrix_connected_components_demo
-  matrix_connected_components
-  project_options
-  project_warnings
-  CONAN_PKG::jemalloc
+  matrix_connected_components_demo matrix_connected_components project_options project_warnings
 )
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+  target_link_libraries(matrix_connected_components_demo CONAN_PKG::jemalloc)
+endif()
 
 set_target_properties(
   matrix_connected_components_demo PROPERTIES FOLDER "matrix_connected_components"
