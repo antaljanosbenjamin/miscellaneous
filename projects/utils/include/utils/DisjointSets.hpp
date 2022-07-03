@@ -58,10 +58,10 @@ public:
   }
 
 private:
-  using NoteIterator = typename std::unordered_map<ValueType, ValueType>::iterator;
-  [[nodiscard]] NoteIterator findParent(NoteIterator it) {
+  using NodeIterator = typename std::unordered_map<ValueType, ValueType>::iterator;
+  [[nodiscard]] NodeIterator findParent(NodeIterator it) {
 
-    std::vector<typename std::unordered_map<ValueType, ValueType>::iterator> visitedNodesIts;
+    std::vector<NodeIterator> visitedNodesIts;
 
     while (it->first != it->second) {
       visitedNodesIts.push_back(it);
