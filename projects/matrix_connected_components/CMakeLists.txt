@@ -1,5 +1,4 @@
 # Library
-set(MATRIX_CONNECTED_COMPONENTS_SOURCES src/Algorithm.cpp)
 set(MATRIX_CONNECTED_COMPONENTS_HEADERS include/Algorithm.hpp include/MatrixSlice.hpp)
 
 add_library(
