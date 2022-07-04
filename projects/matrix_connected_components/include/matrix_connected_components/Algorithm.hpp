@@ -8,6 +8,7 @@
 #include "utils/Concepts.hpp"
 #include "utils/containers/DisjointSets.hpp"
 #include "utils/containers/Matrix.hpp"
+#include "utils/containers/ValueTypeOf.hpp"
 
 namespace matrix_connected_components {
 
@@ -18,13 +19,15 @@ template <utils::NumericIntegral TValue>
 static constexpr TValue kMarkedField = kUnmarkedField<TValue> + 1;
 
 template <utils::NumericIntegral TValue>
-void doMagic(utils::Matrix<TValue> &matrix) {
+void labelConnectedCompnents(utils::containers::Matrix<TValue> &matrix) {
 
-  using LabelType = TValue;
-  utils::DisjointSets<LabelType> labelUnions;
-  static constexpr TValue kUnmarked = kUnmarkedField<TValue>;
-  static constexpr TValue kMarked = kMarkedField<TValue>;
-  static constexpr TValue kFirstLabel = kMarked + 1;
+  using ValueType = TValue;
+  using LabelType = ValueType;
+
+  utils::containers::DisjointSets<LabelType> labelUnions;
+  static constexpr ValueType kUnmarked = kUnmarkedField<ValueType>;
+  static constexpr ValueType kMarked = kMarkedField<ValueType>;
+  static constexpr ValueType kFirstLabel = kMarked + 1;
 
   auto currentLabel = kFirstLabel;
   const auto width = matrix.width();

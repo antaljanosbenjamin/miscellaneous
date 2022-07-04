@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace utils {
+namespace utils::containers {
 
 template <typename TValue>
 class Matrix {
@@ -119,4 +119,4 @@ private:
   int64_t m_width;
   std::vector<TValue> m_values;
 };
-} // namespace utils
+} // namespace utils::containers

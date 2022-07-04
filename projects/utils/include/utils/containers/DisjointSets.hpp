@@ -7,7 +7,7 @@
 
 #include "utils/Concepts.hpp"
 
-namespace utils {
+namespace utils::containers {
 
 template <NumericIntegral TValue>
 class DisjointSets {
@@ -75,4 +75,4 @@ private:
   }
   std::unordered_map<ValueType, ValueType> m_parents;
 };
-} // namespace utils
+} // namespace utils::containers

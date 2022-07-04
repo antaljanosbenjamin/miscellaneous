@@ -21,10 +21,10 @@ struct StringRep<int64_t> {
 };
 
 int main() {
-  // using ValueType = int64_t;
+  // using ValueType = uint64_t;
   // static constexpr int64_t width{6};
   // static constexpr int64_t height{5};
-  // utils::Matrix<ValueType> m{height, width, matrix_connected_components::kUnmarkedField<ValueType>};
+  // utils::containers::Matrix<ValueType> m{height, width, matrix_connected_components::kUnmarkedField<ValueType>};
 
   // std::vector<std::pair<int64_t, int64_t>> markedFields = {
   //     {0, 0}, {1, 0}, {1, 2}, {1, 3}, {2, 1}, {2, 3}, {3, 1}, {3, 2}, {3, 3}, {4, 4},
@@ -40,7 +40,7 @@ int main() {
   //   std::cout << std::endl;
   // }
   // std::cout << std::endl;
-  // matrix_connected_components::doMagic(m);
+  // matrix_connected_components::labelConnectedCompnents(m);
   // for (auto row = 0U; row < height; ++row) {
   //   for (auto column = 0U; column < width; ++column) {
   //     std::cout << static_cast<ValueType>(m.get(row, column)) << ' ';
@@ -54,7 +54,8 @@ int main() {
   using ValueType = uint64_t;
   std::mt19937 mt(1); // NOLINTNEXTLINE(cert-msc32-c)
   std::uniform_int_distribution<int64_t> r1(0, kDimension - 1);
-  utils::Matrix<ValueType> matrix(kDimension, kDimension, matrix_connected_components::kUnmarkedField<ValueType>);
+  utils::containers::Matrix<ValueType> matrix(kDimension, kDimension,
+                                              matrix_connected_components::kUnmarkedField<ValueType>);
 
   static constexpr int64_t kIterations = kNumberOfFields / 5 * 2;
   for (auto i = 0; i < kIterations; ++i) {
@@ -63,7 +64,7 @@ int main() {
 
   std::cout << "Start " << StringRep<ValueType>::value << '\n';
   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-  matrix_connected_components::doMagic(matrix);
+  matrix_connected_components::labelConnectedCompnents(matrix);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   std::cout << "Done\n";
 
