@@ -4,16 +4,17 @@
 #include <stdexcept>
 #include <type_traits>
 
+#include "matrix_connected_components/MatrixUtils.hpp"
 #include "utils/NotNull.hpp"
 #include "utils/containers/Matrix.hpp"
+#include "utils/containers/ValueTypeOf.hpp"
 
 namespace matrix_connected_components {
 
-template <typename TMatrix>
+template <IsNumericalMatrixLike TMatrix>
 class MatrixSlice {
-
 public:
-  using ValueType = typename TMatrix::ValueType;
+  using ValueType = utils::containers::ValueTypeOf<TMatrix>;
 
   MatrixSlice(TMatrix &matrix, int64_t height_offset, int64_t width_offset, int64_t height, int64_t width)
     : m_height_offset{height_offset}
@@ -51,11 +52,11 @@ public:
   }
 
   [[nodiscard]] ValueType &get(const int64_t row, const int64_t column) {
-    return m_matrix->get(m_height_offset + row, m_width_offset + column);
+    return this->m_matrix->get(m_height_offset + row, m_width_offset + column);
   }
 
-  [[nodiscard]] ValueType &get(const int64_t row, const int64_t column) const {
-    return m_matrix->get(m_height_offset + row, m_width_offset + column);
+  [[nodiscard]] const ValueType &get(const int64_t row, const int64_t column) const {
+    return this->m_matrix->get(m_height_offset + row, m_width_offset + column);
   }
 
 private:
@@ -66,9 +67,12 @@ private:
   utils::NotNull<TMatrix *> m_matrix;
 };
 
-template <typename TMatrix, typename TMatrix::ValueType kDefaultValue = typename TMatrix::ValueType{}>
+template <typename TMatrix>
 MatrixSlice(TMatrix, int64_t, int64_t, int64_t, int64_t) -> MatrixSlice<TMatrix>;
 
-static_assert(std::is_nothrow_move_constructible_v<MatrixSlice<utils::Matrix<int>>>);
+static_assert(IsNumericalMatrixLike<MatrixSlice<utils::containers::Matrix<uint64_t>>>,
+              "MatrixSlice has to satisfy IsNumericalMatrixLike, please check the requirements");
+static_assert(IsNumericalMatrixLike<MatrixSlice<utils::containers::Matrix<int64_t>>>,
+              "MatrixSlice has to satisfy IsNumericalMatrixLike, please check the requirements");
 
 } // namespace matrix_connected_components

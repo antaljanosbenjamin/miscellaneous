@@ -2,9 +2,11 @@
 
 #include <concepts>
 #include <cstdint>
+#include <ctime>
 #include <limits>
 
 #include "matrix_connected_components/MatrixSlice.hpp"
+#include "matrix_connected_components/MatrixUtils.hpp"
 #include "utils/Concepts.hpp"
 #include "utils/containers/DisjointSets.hpp"
 #include "utils/containers/Matrix.hpp"
@@ -18,10 +20,10 @@ static constexpr TValue kUnmarkedField = std::numeric_limits<TValue>::min();
 template <utils::NumericIntegral TValue>
 static constexpr TValue kMarkedField = kUnmarkedField<TValue> + 1;
 
-template <utils::NumericIntegral TValue>
-void labelConnectedCompnents(utils::containers::Matrix<TValue> &matrix) {
+template <IsNumericalMatrixLike TMatrix>
+void labelConnectedCompnents(TMatrix &matrix) {
 
-  using ValueType = TValue;
+  using ValueType = utils::containers::ValueTypeOf<TMatrix>;
   using LabelType = ValueType;
 
   utils::containers::DisjointSets<LabelType> labelUnions;

@@ -1,6 +1,8 @@
 # Library
-set(MATRIX_CONNECTED_COMPONENTS_HEADERS include/matrix_connected_components/Algorithm.hpp
-                                        include/matrix_connected_components/MatrixSlice.hpp
+set(MATRIX_CONNECTED_COMPONENTS_HEADERS
+    include/matrix_connected_components/Algorithm.hpp
+    include/matrix_connected_components/MatrixSlice.hpp
+    include/matrix_connected_components/MatrixUtils.hpp
 )
 
 add_library(
