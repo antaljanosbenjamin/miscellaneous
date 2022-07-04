@@ -39,7 +39,9 @@ public:
     if (this != &other) {
       this->m_height = other.m_height;
       this->m_width = other.m_width;
-      this->m_values = other.m_values;
+      this->m_values = std::move(other.m_values);
+      other.m_height = 0;
+      other.m_width = 0;
     }
     return *this;
   }
