@@ -52,11 +52,11 @@ public:
   }
 
   [[nodiscard]] ValueType &get(const int64_t row, const int64_t column) {
-    return this->m_matrix->get(m_height_offset + row, m_width_offset + column);
+    return this->m_matrix->get(this->m_height_offset + row, this->m_width_offset + column);
   }
 
   [[nodiscard]] const ValueType &get(const int64_t row, const int64_t column) const {
-    return this->m_matrix->get(m_height_offset + row, m_width_offset + column);
+    return this->m_matrix->get(this->m_height_offset + row, this->m_width_offset + column);
   }
 
 private:
