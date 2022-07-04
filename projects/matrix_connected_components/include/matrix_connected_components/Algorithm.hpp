@@ -8,7 +8,7 @@
 #include "matrix_connected_components/MatrixSlice.hpp"
 #include "matrix_connected_components/MatrixUtils.hpp"
 #include "utils/Concepts.hpp"
-#include "utils/containers/DisjointSets.hpp"
+#include "utils/containers/DisjointSet.hpp"
 #include "utils/containers/Matrix.hpp"
 #include "utils/containers/ValueTypeOf.hpp"
 
@@ -26,7 +26,7 @@ void labelConnectedCompnents(TMatrix &matrix) {
   using ValueType = utils::containers::ValueTypeOf<TMatrix>;
   using LabelType = ValueType;
 
-  utils::containers::DisjointSets<LabelType> labelUnions;
+  utils::containers::DisjointSet<LabelType> labelUnions;
   static constexpr ValueType kUnmarked = kUnmarkedField<ValueType>;
   static constexpr ValueType kMarked = kMarkedField<ValueType>;
   static constexpr ValueType kFirstLabel = kMarked + 1;

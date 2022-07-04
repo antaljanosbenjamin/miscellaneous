@@ -2,7 +2,7 @@ add_library(
   utils
   include/utils/Assert.hpp
   include/utils/Concepts.hpp
-  include/utils/containers/DisjointSets.hpp
+  include/utils/containers/DisjointSet.hpp
   include/utils/containers/Matrix.hpp
   include/utils/containers/ValueTypeOf.hpp
   include/utils/Likely.hpp

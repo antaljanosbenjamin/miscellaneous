@@ -10,7 +10,7 @@
 namespace utils::containers {
 
 template <NumericIntegral TValue>
-class DisjointSets {
+class DisjointSet {
 public:
   using ValueType = TValue;
 
