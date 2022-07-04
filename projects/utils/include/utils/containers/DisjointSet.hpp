@@ -15,31 +15,31 @@ public:
   using ValueType = TValue;
 
   [[nodiscard]] int64_t size() const noexcept {
-    return static_cast<int64_t>(this->m_parents.size());
+    return static_cast<int64_t>(m_parents.size());
   }
 
   bool add(const ValueType value) {
-    if (this->m_parents.contains(value)) {
+    if (m_parents.contains(value)) {
       return false;
     }
-    this->m_parents.emplace(value, value);
+    m_parents.emplace(value, value);
     return true;
   }
 
   std::optional<ValueType> find(const ValueType value) {
-    if (auto it = this->m_parents.find(value); it != this->m_parents.end()) {
+    if (auto it = m_parents.find(value); it != m_parents.end()) {
       return this->findParent(it)->first;
     }
     return std::nullopt;
   }
 
   bool merge(const ValueType lhs, const ValueType rhs) {
-    auto lhsIts = this->m_parents.find(lhs);
-    if (lhsIts == this->m_parents.end()) {
+    auto lhsIts = m_parents.find(lhs);
+    if (lhsIts == m_parents.end()) {
       return false;
     }
-    auto rhsIts = this->m_parents.find(rhs);
-    if (rhsIts == this->m_parents.end()) {
+    auto rhsIts = m_parents.find(rhs);
+    if (rhsIts == m_parents.end()) {
       return false;
     }
 
@@ -65,7 +65,7 @@ private:
 
     while (it->first != it->second) {
       visitedNodesIts.push_back(it);
-      it = this->m_parents.find(it->second);
+      it = m_parents.find(it->second);
     }
 
     for (auto &visitedNodeIt: visitedNodesIts) {

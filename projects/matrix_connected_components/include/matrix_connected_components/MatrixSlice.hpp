@@ -23,10 +23,10 @@ public:
     , m_width{width}
     , m_matrix{&matrix} {
     // TODO(antaljanosbenjamin): improve checks
-    if (this->m_height_offset + this->m_height > this->m_matrix->height()) {
+    if (m_height_offset + m_height > m_matrix->height()) {
       throw std::invalid_argument{"Invalid height ot height offset"};
     }
-    if (this->m_width_offset + this->m_width > this->m_matrix->width()) {
+    if (m_width_offset + m_width > m_matrix->width()) {
       throw std::invalid_argument{"Invalid height ot height offset"};
     }
   }
@@ -39,24 +39,24 @@ public:
   ~MatrixSlice() = default;
 
   [[nodiscard]] int64_t heightOffset() const noexcept {
-    return this->m_height_offset;
+    return m_height_offset;
   }
   [[nodiscard]] int64_t widthOffset() const noexcept {
-    return this->m_width_offset;
+    return m_width_offset;
   }
   [[nodiscard]] int64_t height() const noexcept {
-    return this->m_height;
+    return m_height;
   }
   [[nodiscard]] int64_t width() const noexcept {
-    return this->m_width;
+    return m_width;
   }
 
   [[nodiscard]] ValueType &get(const int64_t row, const int64_t column) {
-    return this->m_matrix->get(this->m_height_offset + row, this->m_width_offset + column);
+    return m_matrix->get(m_height_offset + row, m_width_offset + column);
   }
 
   [[nodiscard]] const ValueType &get(const int64_t row, const int64_t column) const {
-    return this->m_matrix->get(this->m_height_offset + row, this->m_width_offset + column);
+    return m_matrix->get(m_height_offset + row, m_width_offset + column);
   }
 
 private:

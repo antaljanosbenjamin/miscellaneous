@@ -22,12 +22,12 @@ class TaskSystemBase {
   void run(const uint64_t startIndex) {
     while (true) {
       std::function<void()> task;
-      for (auto i = 0U; i != m_count * kNumberOfTrialIterations; ++i) {
-        if (m_queue[(startIndex + i) % m_count].try_pop(task)) {
+      for (auto i = 0U; i != this->m_count * kNumberOfTrialIterations; ++i) {
+        if (this->m_queue[(startIndex + i) % this->m_count].try_pop(task)) {
           break;
         }
       }
-      if (!task && !m_queue[startIndex].pop(task)) {
+      if (!task && !this->m_queue[startIndex].pop(task)) {
         break;
       }
       task();
