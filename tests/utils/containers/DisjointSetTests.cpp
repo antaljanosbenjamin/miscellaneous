@@ -129,7 +129,9 @@ TEST_CASE("MultipleAdd") {
 TEST_CASE("SimpleMerge") {
   DisjointSet<int64_t> ds;
   using Values = std::pair<int64_t, int64_t>;
-  const auto [firstValue, secondValue] = GENERATE(Values{24, 42}, Values{5, 3});
+  const auto values = GENERATE(Values{24, 42}, Values{5, 3});
+  const auto firstValue = values.first;
+  const auto secondValue = values.second;
   const auto expected = std::min(firstValue, secondValue);
 
   ds.add(firstValue);
@@ -157,9 +159,11 @@ TEST_CASE("SimpleMerge") {
 TEST_CASE("DoubleMerge") {
   DisjointSet<int64_t> ds;
   using Values = std::tuple<int64_t, int64_t, int64_t>;
-  const auto [firstValue, secondValue, thirdValue] =
-      GENERATE(Values{10, 100, 1000}, Values{10, 1000, 100}, Values{100, 10, 1000}, Values{100, 1000, 10},
-               Values{1000, 10, 100}, Values{1000, 100, 10});
+  const auto values = GENERATE(Values{10, 100, 1000}, Values{10, 1000, 100}, Values{100, 10, 1000},
+                               Values{100, 1000, 10}, Values{1000, 10, 100}, Values{1000, 100, 10});
+  const auto firstValue = std::get<0>(values);
+  const auto secondValue = std::get<1>(values);
+  const auto thirdValue = std::get<2>(values);
   const auto expected = std::min(std::min(firstValue, secondValue), thirdValue);
 
   ds.add(firstValue);
