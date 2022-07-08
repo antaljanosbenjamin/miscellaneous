@@ -61,7 +61,8 @@ public:
   }
 
 private:
-  using NodeIterator = typename std::unordered_map<ValueType, ValueType>::iterator;
+  using HashMap = std::unordered_map<ValueType, ValueType>;
+  using NodeIterator = typename HashMap::iterator;
   [[nodiscard]] NodeIterator findParent(NodeIterator it) {
 
     std::vector<NodeIterator> visitedNodesIts;
@@ -76,6 +77,6 @@ private:
     }
     return it;
   }
-  std::unordered_map<ValueType, ValueType> m_parents;
+  HashMap m_parents;
 };
 } // namespace utils::containers
