@@ -34,8 +34,8 @@ void labelConnectedCompnents(TMatrix &matrix) {
   auto currentLabel = kFirstLabel;
   const auto width = matrix.width();
   const auto height = matrix.height();
-  for (auto row = 0; row < height; ++row) {
-    for (auto column = 0; column < width; ++column) {
+  for (auto row{0}; row < height; ++row) {
+    for (auto column{0}; column < width; ++column) {
       auto &label = matrix.get(row, column);
       if (label == kUnmarked) {
         continue;
@@ -73,8 +73,8 @@ void labelConnectedCompnents(TMatrix &matrix) {
       }
     }
   }
-  for (auto row = 0; row < height; ++row) {
-    for (auto column = 0; column < width; ++column) {
+  for (auto row{0}; row < height; ++row) {
+    for (auto column{0}; column < width; ++column) {
       auto &label = matrix.get(row, column);
       if (label != kUnmarked) {
         label = *labelUnions.find(label);
