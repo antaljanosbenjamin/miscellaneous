@@ -1,8 +1,16 @@
 #include <catch2/catch.hpp>
+
 #include "utils/containers/DisjointSet.hpp"
+#include "utils/containers/ValueTypeOf.hpp"
 
 namespace utils::containers::tests {
 
+static_assert(std::same_as<ValueTypeOf<DisjointSet<int64_t>>, int64_t>, "ValueTypeOf doesn't work with DisjointSet");
+static_assert(std::same_as<ValueTypeOf<DisjointSet<uint64_t>>, uint64_t>, "ValueTypeOf doesn't work with DisjointSet");
+
+// Very similar functions can be found in other container tests, but because of the very slight differences, it is hard
+// to unify them. Instead of centralizing the functions with complex logic for customizations, they are just copied and
+// modified.
 template <typename TDisjointSet, typename TCheck>
 void TestWithCopyCtor(const TDisjointSet &ds, TCheck check) {
   INFO("CopyCtor");
@@ -40,11 +48,12 @@ void TestWithMoveAssignment(const TDisjointSet &ds, TCheck check) {
 }
 
 template <typename TDisjointSet, typename TCheck>
-void TestWithSpecialMemberFunctions(const TDisjointSet &ds, TCheck check) {
+void TestWithSpecialMemberFunctions(TDisjointSet &ds, TCheck check) {
   TestWithCopyCtor(ds, check);
   TestWithCopyAssignment(ds, check);
   TestWithMoveCtor(ds, check);
   TestWithMoveAssignment(ds, check);
+  check(ds);
 }
 
 TEST_CASE("EmptyDisjointSet") {
@@ -52,7 +61,6 @@ TEST_CASE("EmptyDisjointSet") {
   CHECK(0 == ds.size());
 
   const auto check = [](auto &ds) { CHECK(!ds.find(1).has_value()); };
-  check(ds);
   TestWithSpecialMemberFunctions(ds, check);
 }
 
@@ -66,7 +74,6 @@ TEST_CASE("AddSingle") {
     CHECK(!ds.find(2).has_value());
   };
   TestWithSpecialMemberFunctions(ds, check);
-  check(ds);
 }
 
 TEST_CASE("AddTwo") {
@@ -90,7 +97,6 @@ TEST_CASE("AddTwo") {
     CHECK(!ds.find(kSecondValue + 1).has_value());
   };
   TestWithSpecialMemberFunctions(ds, check);
-  check(ds);
 }
 
 TEST_CASE("MultipleAdd") {
@@ -118,7 +124,6 @@ TEST_CASE("MultipleAdd") {
     }
   };
   TestWithSpecialMemberFunctions(ds, check);
-  check(ds);
 }
 
 TEST_CASE("SimpleMerge") {
@@ -147,7 +152,6 @@ TEST_CASE("SimpleMerge") {
     CHECK(!ds.merge(firstValue, secondValue));
   };
   TestWithSpecialMemberFunctions(ds, check);
-  check(ds);
 }
 
 TEST_CASE("DoubleMerge") {
@@ -181,6 +185,5 @@ TEST_CASE("DoubleMerge") {
     CHECK(!ds.merge(firstValue, thirdValue));
   };
   TestWithSpecialMemberFunctions(ds, check);
-  check(ds);
 }
 } // namespace utils::containers::tests
