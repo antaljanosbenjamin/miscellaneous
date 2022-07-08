@@ -1,6 +1,6 @@
 #pragma once
 
 namespace utils::containers {
-template <typename TMatrix>
-using ValueTypeOf = typename TMatrix::ValueType;
+template <typename TContainer>
+using ValueTypeOf = typename TContainer::ValueType;
 }
