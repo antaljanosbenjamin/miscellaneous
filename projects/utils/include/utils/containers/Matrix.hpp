@@ -76,14 +76,14 @@ public:
   }
 
   TValue &getChecked(const int64_t row, const int64_t column) {
-    if (const auto *ptr = this->tryGet(row, column); nullptr == ptr) {
+    if (auto *ptr = this->tryGet(row, column); nullptr != ptr) {
       return *ptr;
     }
     throw std::out_of_range{"Invalid row or column"};
   }
 
-  const TValue *getChecked(const int64_t row, const int64_t column) const {
-    if (const auto *ptr = this->tryGet(row, column); nullptr == ptr) {
+  const TValue &getChecked(const int64_t row, const int64_t column) const {
+    if (const auto *ptr = this->tryGet(row, column); nullptr != ptr) {
       return *ptr;
     }
     throw std::out_of_range{"Invalid row or column"};
