@@ -42,10 +42,13 @@ public:
     if (rhsIts == m_parents.end()) {
       return false;
     }
+    if (lhsIts->second == rhsIts->second) {
+      return false;
+    }
 
     auto lhsParent = this->findParent(lhsIts);
     auto rhsParent = this->findParent(rhsIts);
-    if (&lhsParent == &rhsParent) {
+    if (lhsParent == rhsParent) {
       return false;
     }
 
