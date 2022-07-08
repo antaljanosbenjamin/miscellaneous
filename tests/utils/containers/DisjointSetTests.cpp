@@ -65,8 +65,8 @@ TEST_CASE("AddSingle") {
     CHECK(1 == ds.find(1));
     CHECK(!ds.find(2).has_value());
   };
-  check(ds);
   TestWithSpecialMemberFunctions(ds, check);
+  check(ds);
 }
 
 TEST_CASE("AddTwo") {
@@ -82,14 +82,15 @@ TEST_CASE("AddTwo") {
 
   const auto check = [](auto &ds) {
     CHECK(2 == ds.size());
-
+    CHECK(ds.find(kFirstValue) == kFirstValue);
+    CHECK(ds.find(kSecondValue) == kSecondValue);
     CHECK(!ds.find(kFirstValue - 1).has_value());
     CHECK(!ds.find(kFirstValue + 1).has_value());
     CHECK(!ds.find(kSecondValue - 1).has_value());
     CHECK(!ds.find(kSecondValue + 1).has_value());
   };
-  check(ds);
   TestWithSpecialMemberFunctions(ds, check);
+  check(ds);
 }
 
 TEST_CASE("MultipleAdd") {
@@ -116,7 +117,70 @@ TEST_CASE("MultipleAdd") {
       CHECK(!ds.find(i + 1).has_value());
     }
   };
-  check(ds);
   TestWithSpecialMemberFunctions(ds, check);
+  check(ds);
+}
+
+TEST_CASE("SimpleMerge") {
+  DisjointSet<int64_t> ds;
+  using Values = std::pair<int64_t, int64_t>;
+  const auto [firstValue, secondValue] = GENERATE(Values{24, 42}, Values{5, 3});
+  const auto expected = std::min(firstValue, secondValue);
+
+  ds.add(firstValue);
+  CHECK(firstValue == ds.find(firstValue));
+
+  ds.add(secondValue);
+  CHECK(secondValue == ds.find(secondValue));
+
+  CHECK(ds.merge(firstValue, secondValue));
+  const auto check = [firstValue, secondValue, expected](auto &ds) {
+    CHECK(2 == ds.size());
+
+    CHECK(ds.find(firstValue) == expected);
+    CHECK(ds.find(secondValue) == expected);
+    CHECK(!ds.find(firstValue - 1).has_value());
+    CHECK(!ds.find(firstValue + 1).has_value());
+    CHECK(!ds.find(secondValue - 1).has_value());
+    CHECK(!ds.find(secondValue + 1).has_value());
+
+    CHECK(!ds.merge(firstValue, secondValue));
+  };
+  TestWithSpecialMemberFunctions(ds, check);
+  check(ds);
+}
+
+TEST_CASE("DoubleMerge") {
+  DisjointSet<int64_t> ds;
+  using Values = std::tuple<int64_t, int64_t, int64_t>;
+  const auto [firstValue, secondValue, thirdValue] =
+      GENERATE(Values{10, 100, 1000}, Values{10, 1000, 100}, Values{100, 10, 1000}, Values{100, 1000, 10},
+               Values{1000, 10, 100}, Values{1000, 100, 10});
+  const auto expected = std::min(std::min(firstValue, secondValue), thirdValue);
+
+  ds.add(firstValue);
+  CHECK(firstValue == ds.find(firstValue));
+
+  ds.add(secondValue);
+  CHECK(secondValue == ds.find(secondValue));
+
+  ds.add(thirdValue);
+  CHECK(thirdValue == ds.find(thirdValue));
+
+  CHECK(ds.merge(firstValue, secondValue));
+  CHECK(ds.merge(secondValue, thirdValue));
+  const auto check = [firstValue, secondValue, thirdValue, expected](auto &ds) {
+    CHECK(3 == ds.size());
+
+    CHECK(ds.find(firstValue) == expected);
+    CHECK(ds.find(secondValue) == expected);
+    CHECK(ds.find(thirdValue) == expected);
+
+    CHECK(!ds.merge(firstValue, secondValue));
+    CHECK(!ds.merge(secondValue, thirdValue));
+    CHECK(!ds.merge(firstValue, thirdValue));
+  };
+  TestWithSpecialMemberFunctions(ds, check);
+  check(ds);
 }
 } // namespace utils::containers::tests
