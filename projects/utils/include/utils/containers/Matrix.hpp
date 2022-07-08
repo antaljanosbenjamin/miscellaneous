@@ -103,11 +103,11 @@ private:
   }
 
   [[nodiscard]] bool isValidRow(const int64_t row) const noexcept {
-    return row < m_height;
+    return 0 <= row && row < m_height;
   }
 
   [[nodiscard]] bool isValidColumn(const int64_t column) const noexcept {
-    return column < m_width;
+    return 0 <= column && column < m_width;
   }
 
   [[nodiscard]] bool areValidRowAndColumn(const int64_t row, const int64_t column) const noexcept {
