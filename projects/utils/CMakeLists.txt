@@ -8,10 +8,7 @@ add_library(
   include/utils/Likely.hpp
   include/utils/NotNull.hpp
   include/utils/PropagateConst.hpp
-  include/utils/task_system/NotificationQueue.hpp
-  include/utils/task_system/TaskSystem.hpp
   src/Assert.cpp
-  src/task_system/NotificationQueue.cpp
 )
 
 target_include_directories(utils PUBLIC include)
