@@ -65,18 +65,14 @@ private:
   using NodeIterator = typename HashMap::iterator;
   [[nodiscard]] NodeIterator findParent(NodeIterator it) {
 
-    std::vector<NodeIterator> visitedNodesIts;
-
+    auto originalIt = it;
     while (it->first != it->second) {
-      visitedNodesIts.push_back(it);
       it = m_parents.find(it->second);
     }
-
-    for (auto &visitedNodeIt: visitedNodesIts) {
-      visitedNodeIt->second = it->second;
-    }
+    originalIt->second = it->second;
     return it;
   }
+
   HashMap m_parents;
 };
 } // namespace utils::containers
