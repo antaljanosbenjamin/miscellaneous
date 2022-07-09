@@ -18,7 +18,13 @@ macro(run_conan)
                          benchmark/1.6.1
   )
 
-  if(NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+  if(NOT WIN32 AND NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    set(USE_JEMALLOC TRUE)
+  else()
+    set(USE_JEMALLOC FALSE)
+  endif()
+
+  if(USE_JEMALLOC)
     list(APPEND CONAN_DEPENDENCIES jemalloc/5.2.1)
   endif()
 

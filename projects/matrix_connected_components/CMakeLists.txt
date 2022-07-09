@@ -24,7 +24,7 @@ target_link_libraries(
   matrix_connected_components_demo matrix_connected_components project_options project_warnings
 )
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+if(USE_JEMALLOC)
   target_link_libraries(matrix_connected_components_demo CONAN_PKG::jemalloc)
 endif()
 
