@@ -238,6 +238,7 @@ TEST_CASE("DoubleMerge") {
   TestWithSpecialMemberFunctions(ds, check);
 }
 
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables,modernize-avoid-c-arrays)
 TEMPLATE_TEST_CASE("MergeChains", "", const DisjointSet<int64_t> &, DisjointSet<int64_t> &) {
   DisjointSet<int64_t> ds;
   // DisjointSet<T>::findParent work differently in the const and non-const version
