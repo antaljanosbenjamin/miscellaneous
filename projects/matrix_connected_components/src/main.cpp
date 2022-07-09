@@ -64,7 +64,7 @@ int main() {
 
   std::cout << "Start " << StringRep<ValueType>::value << '\n';
   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-  matrix_connected_components::labelConnectedCompnents(matrix);
+  matrix_connected_components::countConnectedComponents(matrix);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   std::cout << "Done\n";
 

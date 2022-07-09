@@ -20,13 +20,19 @@ static constexpr TValue kUnmarkedField = std::numeric_limits<TValue>::min();
 template <utils::NumericIntegral TValue>
 static constexpr TValue kMarkedField = kUnmarkedField<TValue> + 1;
 
-template <IsNumericalMatrixLike TMatrix>
-void labelConnectedCompnents(TMatrix &matrix) {
+template <typename T>
+using ValueTypeOf = utils::containers::ValueTypeOf<T>;
 
-  using ValueType = utils::containers::ValueTypeOf<TMatrix>;
+template <typename T>
+using DisjointSet = utils::containers::DisjointSet<T>;
+
+template <IsNumericalMatrixLike TMatrix>
+DisjointSet<ValueTypeOf<TMatrix>> attachInitialLabels(TMatrix &matrix) {
+
+  using ValueType = ValueTypeOf<TMatrix>;
   using LabelType = ValueType;
 
-  utils::containers::DisjointSet<LabelType> labelUnions;
+  DisjointSet<LabelType> labelUnions;
   static constexpr ValueType kUnmarked = kUnmarkedField<ValueType>;
   static constexpr ValueType kMarked = kMarkedField<ValueType>;
   static constexpr ValueType kFirstLabel = kMarked + 1;
@@ -73,6 +79,15 @@ void labelConnectedCompnents(TMatrix &matrix) {
       }
     }
   }
+  return labelUnions;
+}
+
+template <IsNumericalMatrixLike TMatrix>
+void relabelMatrix(TMatrix &matrix, DisjointSet<ValueTypeOf<TMatrix>> &labelUnions) {
+  using ValueType = ValueTypeOf<TMatrix>;
+  static constexpr ValueType kUnmarked = kUnmarkedField<ValueType>;
+  const auto width = matrix.width();
+  const auto height = matrix.height();
   for (auto row{0}; row < height; ++row) {
     for (auto column{0}; column < width; ++column) {
       auto &label = matrix.get(row, column);
@@ -81,8 +96,16 @@ void labelConnectedCompnents(TMatrix &matrix) {
       }
     }
   }
-
-  std::cout << "Size: " << labelUnions.size() << std::endl;
 }
 
+template <IsNumericalMatrixLike TMatrix>
+int64_t countConnectedComponents(TMatrix matrix) {
+  return attachInitialLabels(matrix).numberOfDisjointSets();
+}
+
+template <IsNumericalMatrixLike TMatrix>
+void labelConnectedCompnents(TMatrix &matrix) {
+  auto labelUnions = attachInitialLabels(matrix);
+  relabelMatrix(matrix, labelUnions);
+}
 } // namespace matrix_connected_components
