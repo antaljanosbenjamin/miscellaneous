@@ -64,9 +64,9 @@ int main() {
 
   std::cout << "Start " << StringRep<ValueType>::value << '\n';
   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-  matrix_connected_components::countConnectedComponents(std::move(matrix));
+  const auto components = matrix_connected_components::countConnectedComponents(std::move(matrix));
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  std::cout << "Done\n";
+  std::cout << "Done, there are " << components << " components.\n";
 
   std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
             << "[ms]" << std::endl;

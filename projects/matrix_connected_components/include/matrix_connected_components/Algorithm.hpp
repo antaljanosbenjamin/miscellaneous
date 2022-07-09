@@ -99,13 +99,14 @@ void relabelMatrix(TMatrix &matrix, DisjointSet<ValueTypeOf<TMatrix>> &labelUnio
 }
 
 template <IsNumericalMatrixLike TMatrix>
-int64_t countConnectedComponents(TMatrix matrix) {
+[[nodiscard]] int64_t countConnectedComponents(TMatrix matrix) {
   return attachInitialLabels(matrix).numberOfDisjointSets();
 }
 
 template <IsNumericalMatrixLike TMatrix>
-void labelConnectedCompnents(TMatrix &matrix) {
+[[nodiscard]] TMatrix labelConnectedComponents(TMatrix matrix) {
   auto labelUnions = attachInitialLabels(matrix);
   relabelMatrix(matrix, labelUnions);
+  return matrix;
 }
 } // namespace matrix_connected_components
