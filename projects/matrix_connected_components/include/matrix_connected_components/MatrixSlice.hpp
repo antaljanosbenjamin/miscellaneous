@@ -22,12 +22,25 @@ public:
     , m_height{height}
     , m_width{width}
     , m_matrix{&matrix} {
-    // TODO(antaljanosbenjamin): improve checks
+    if (m_height < 0) {
+      throw std::invalid_argument{"The height of the slice cannot be negative!"};
+    }
+    if (m_width < 0) {
+      throw std::invalid_argument{"The width of the slice cannot be negative!"};
+    }
+    if (m_height_offset < 0) {
+      throw std::invalid_argument{"The height offset of the slice cannot be negative!"};
+    }
+    if (m_width_offset < 0) {
+      throw std::invalid_argument{"The width offset of the slice cannot be negative!"};
+    }
     if (m_height_offset + m_height > m_matrix->height()) {
-      throw std::invalid_argument{"Invalid height ot height offset"};
+      throw std::invalid_argument{
+          "The height plus the height offset is greater than the height of the underlying matrix!"};
     }
     if (m_width_offset + m_width > m_matrix->width()) {
-      throw std::invalid_argument{"Invalid height ot height offset"};
+      throw std::invalid_argument{
+          "The width plus the width offset is greater than the width of the underlying matrix!"};
     }
   }
 
