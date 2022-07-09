@@ -36,11 +36,11 @@ public:
 
   ~NotNull() = default;
 
-  decltype(auto) operator->() const {
+  [[nodiscard]] decltype(auto) operator->() const {
     return get();
   }
 
-  decltype(auto) operator*() const {
+  [[nodiscard]] decltype(auto) operator*() const {
     return *get();
   }
 
