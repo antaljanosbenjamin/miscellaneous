@@ -79,7 +79,7 @@ TEST_CASE("EmptyMatrix") {
   const auto check = [](auto &matrix) {
     CHECK(matrix.width() == 0);
     CHECK(matrix.height() == 0);
-    CHECK_THROWS(matrix.getChecked(0, 0));
+    CHECK_THROWS_AS(matrix.getChecked(0, 0), std::out_of_range);
     CHECK(nullptr == matrix.tryGet(0, 0));
   };
   TestScenarios(matrix, check);
@@ -156,15 +156,15 @@ TEST_CASE("InvalidIndices") {
 
   const auto check = [](auto &matrix) {
     for (int64_t column{0}; column < kWidth; ++column) {
-      CHECK_THROWS(matrix.getChecked(-1, column));
+      CHECK_THROWS_AS(matrix.getChecked(-1, column), std::out_of_range);
       CHECK(nullptr == matrix.tryGet(-1, column));
-      CHECK_THROWS(matrix.getChecked(kHeight, column));
+      CHECK_THROWS_AS(matrix.getChecked(kHeight, column), std::out_of_range);
       CHECK(nullptr == matrix.tryGet(kHeight, column));
     }
     for (int64_t row{0}; row < kHeight; ++row) {
-      CHECK_THROWS(matrix.getChecked(row, -1));
+      CHECK_THROWS_AS(matrix.getChecked(row, -1), std::out_of_range);
       CHECK(nullptr == matrix.tryGet(row, -1));
-      CHECK_THROWS(matrix.getChecked(row, kWidth));
+      CHECK_THROWS_AS(matrix.getChecked(row, kWidth), std::out_of_range);
       CHECK(nullptr == matrix.tryGet(row, kWidth));
     }
   };
