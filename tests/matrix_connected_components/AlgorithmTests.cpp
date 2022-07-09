@@ -266,15 +266,15 @@ TEST_CASE("Generic") {
                           {2, 2},
                           {3, 3},
                           {4, 4},
-                          {5, 5},
-                          {6, 6},
-                          {7, 7},
-                          {8, 8},
-                          {9, 9},
-                          {10, 10},
-                          {11, 11},
-                          {12, 12},
-                          {13, 13},
+                          {5, 5},   // NOLINT(readability-magic-numbers)
+                          {6, 6},   // NOLINT(readability-magic-numbers)
+                          {7, 7},   // NOLINT(readability-magic-numbers)
+                          {8, 8},   // NOLINT(readability-magic-numbers)
+                          {9, 9},   // NOLINT(readability-magic-numbers)
+                          {10, 10}, // NOLINT(readability-magic-numbers)
+                          {11, 11}, // NOLINT(readability-magic-numbers)
+                          {12, 12}, // NOLINT(readability-magic-numbers)
+                          {13, 13}, // NOLINT(readability-magic-numbers)
                       },
                   .expectedConnectedComponents =
                       {
