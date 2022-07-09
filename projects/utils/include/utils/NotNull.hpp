@@ -27,14 +27,9 @@ public:
 
   NotNull(std::nullptr_t) = delete;
 
-  NotNull(const NotNull &other) noexcept
-    : m_ptr{other.m_ptr} {
-  }
+  NotNull(const NotNull &other) noexcept = default;
 
-  // NOLINTNEXTLINE(cert-oop54-cpp) self assignment is no problem here
-  NotNull &operator=(const NotNull &other) noexcept {
-    m_ptr = other.m_ptr;
-  }
+  NotNull &operator=(const NotNull &other) noexcept = default;
 
   NotNull(NotNull &&) noexcept = default;
   NotNull &operator=(NotNull &&) noexcept = default;
