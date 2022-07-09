@@ -2,6 +2,7 @@
 Checks:           >
   *,
   -cert-err58-cpp,
+  -clang-analyzer-cplusplus.Move,
   -clang-diagnostic-invalid-constexpr,
   -cppcoreguidelines-avoid-c-arrays,
   -cppcoreguidelines-avoid-magic-numbers,
@@ -15,6 +16,7 @@ Checks:           >
   -fuchsia-trailing-return,
   -google-runtime-references,
   -hicpp-avoid-c-arrays,
+  -hicpp-invalid-access-moved,
   -hicpp-explicit-conversions,
   -hicpp-move-const-arg,
   -hicpp-noexcept-move,
@@ -70,4 +72,3 @@ CheckOptions:
   - key:             modernize-use-nullptr.NullMacros
     value:           'NULL'
 ...
-

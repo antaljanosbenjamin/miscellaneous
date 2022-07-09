@@ -22,7 +22,9 @@ struct PairHash {
   }
 };
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define SIZE_TYPE int64_t
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define LABEL_TYPE int64_t
 
 template <typename T>
@@ -70,6 +72,7 @@ static void Vector(benchmark::State &state) {
   }
 }
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define BENCH(kMaxDimension, kFilledItems)                                                                             \
   BENCHMARK_TEMPLATE(Vector, std::vector<LABEL_TYPE>, kMaxDimension, kFilledItems);                                    \
   BENCHMARK_TEMPLATE(Map, std::unordered_map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE, PairHash<uint32_t>>,         \
@@ -82,10 +85,15 @@ static void Vector(benchmark::State &state) {
                      robin_hood::unordered_node_map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE, PairHash<size_t>>,    \
                      kMaxDimension, kFilledItems)
 
+// NOLINTNEXTLINE(cppcoreguidelines-owning-memory,cppcoreguidelines-avoid-non-const-global-variables)
 BENCH(5, 10);
+// NOLINTNEXTLINE(cppcoreguidelines-owning-memory,cppcoreguidelines-avoid-non-const-global-variables)
 BENCH(50, 1'000);
+// NOLINTNEXTLINE(cppcoreguidelines-owning-memory,cppcoreguidelines-avoid-non-const-global-variables)
 BENCH(500, 100'000);
+// NOLINTNEXTLINE(cppcoreguidelines-owning-memory,cppcoreguidelines-avoid-non-const-global-variables)
 BENCH(5'000, 10'000'000);
+// NOLINTNEXTLINE(cppcoreguidelines-owning-memory,cppcoreguidelines-avoid-non-const-global-variables)
 BENCHMARK_TEMPLATE(Vector, std::vector<LABEL_TYPE>, 50'000, 1'000'000'000);
 
 int main(int argc, char **argv) {

@@ -48,41 +48,36 @@ public:
 
   ~Matrix() = default;
 
-  template <typename TContainer>
-  static Matrix<TValue> sameSizeAs(const TContainer &container) {
-    return Matrix<TValue>{container.height(), container.width()};
-  }
-
-  TValue &get(const int64_t row, const int64_t column) {
+  [[nodiscard]] TValue &get(const int64_t row, const int64_t column) {
     return m_values[this->getIndexFromRowAndColumn(row, column)];
   }
 
-  const TValue &get(const int64_t row, const int64_t column) const {
+  [[nodiscard]] const TValue &get(const int64_t row, const int64_t column) const {
     return m_values[this->getIndexFromRowAndColumn(row, column)];
   }
 
-  TValue *tryGet(const int64_t row, const int64_t column) {
+  [[nodiscard]] TValue *tryGet(const int64_t row, const int64_t column) {
     if (this->areValidRowAndColumn(row, column)) {
       return &this->get(row, column);
     }
     return nullptr;
   }
 
-  const TValue *tryGet(const int64_t row, const int64_t column) const {
+  [[nodiscard]] const TValue *tryGet(const int64_t row, const int64_t column) const {
     if (this->areValidRowAndColumn(row, column)) {
       return &this->get(row, column);
     }
     return nullptr;
   }
 
-  TValue &getChecked(const int64_t row, const int64_t column) {
+  [[nodiscard]] TValue &getChecked(const int64_t row, const int64_t column) {
     if (auto *ptr = this->tryGet(row, column); nullptr != ptr) {
       return *ptr;
     }
     throw std::out_of_range{"Invalid row or column"};
   }
 
-  const TValue &getChecked(const int64_t row, const int64_t column) const {
+  [[nodiscard]] const TValue &getChecked(const int64_t row, const int64_t column) const {
     if (const auto *ptr = this->tryGet(row, column); nullptr != ptr) {
       return *ptr;
     }

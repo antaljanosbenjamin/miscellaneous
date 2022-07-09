@@ -66,7 +66,7 @@ TEST_CASE("MoveCtor") {
   value++;
   NotNull moved{std::move(original)}; // NOLINT(performance-move-const-arg)
   value++;
-  CHECK(&value == original.get()); // NOLINT(hicpp-invalid-access-moved)
+  CHECK(&value == original.get()); // NOLINT(bugprone-use-after-move)
   CHECK(value == *original);
   CHECK(&value == moved.get());
   CHECK(value == *moved);
@@ -80,7 +80,7 @@ TEST_CASE("MoveAssignment") {
   NotNull moved{&dummyValue};
   moved = std::move(original); // NOLINT(performance-move-const-arg)
   value++;
-  CHECK(&value == original.get()); // NOLINT(hicpp-invalid-access-moved)
+  CHECK(&value == original.get()); // NOLINT(bugprone-use-after-move)
   CHECK(value == *original);
   CHECK(&value == moved.get());
   CHECK(value == *moved);

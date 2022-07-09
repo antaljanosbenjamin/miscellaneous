@@ -30,8 +30,8 @@ void TestWithMoveCtor(const Matrix<TValue> &matrix, TCheck check) {
   auto copiedMatrix = matrix;
   auto movedMatrix = std::move(copiedMatrix);
   check(movedMatrix);
-  CHECK(copiedMatrix.width() == 0);
-  CHECK(copiedMatrix.height() == 0);
+  CHECK(copiedMatrix.width() == 0);  // NOLINT(bugprone-use-after-move)
+  CHECK(copiedMatrix.height() == 0); // NOLINT(bugprone-use-after-move)
 }
 
 // Requires copy ctor
@@ -42,8 +42,8 @@ void TestWithMoveAssignment(const Matrix<TValue> &matrix, TCheck check) {
   Matrix<TValue> movedMatrix{0, 0};
   movedMatrix = std::move(copiedMatrix);
   check(movedMatrix);
-  CHECK(copiedMatrix.width() == 0);
-  CHECK(copiedMatrix.height() == 0);
+  CHECK(copiedMatrix.width() == 0);  // NOLINT(bugprone-use-after-move)
+  CHECK(copiedMatrix.height() == 0); // NOLINT(bugprone-use-after-move)
 }
 
 template <typename TMatrix, typename TCheck>

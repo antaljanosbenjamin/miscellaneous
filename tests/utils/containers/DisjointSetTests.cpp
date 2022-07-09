@@ -33,7 +33,7 @@ void TestWithMoveCtor(const TDisjointSet &ds, TCheck check) {
   auto copiedDs = ds;
   auto movedDs = std::move(copiedDs);
   check(movedDs);
-  CHECK(0 == copiedDs.size());
+  CHECK(0 == copiedDs.size()); // NOLINT(bugprone-use-after-move)
 }
 
 // Requires copy ctor
@@ -44,7 +44,7 @@ void TestWithMoveAssignment(const TDisjointSet &ds, TCheck check) {
   TDisjointSet movedDs;
   movedDs = std::move(copiedDs);
   check(movedDs);
-  CHECK(0 == copiedDs.size());
+  CHECK(0 == copiedDs.size()); // NOLINT(bugprone-use-after-move)
 }
 
 template <typename TDisjointSet, typename TCheck>
