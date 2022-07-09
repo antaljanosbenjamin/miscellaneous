@@ -36,7 +36,6 @@ void TestWithMoveCtor(const TDisjointSet &ds, TCheck check) {
   CHECK(0 == copiedDs.size()); // NOLINT(bugprone-use-after-move)
 }
 
-// Requires copy ctor
 template <typename TDisjointSet, typename TCheck>
 void TestWithMoveAssignment(const TDisjointSet &ds, TCheck check) {
   INFO("MoveAssignment");
@@ -60,7 +59,10 @@ TEST_CASE("EmptyDisjointSet") {
   DisjointSet<int64_t> ds;
   CHECK(0 == ds.size());
 
-  const auto check = [](auto &ds) { CHECK(!ds.find(1).has_value()); };
+  const auto check = [](auto &ds) {
+    CHECK(!ds.find(1).has_value());
+    CHECK(0 == ds.numberOfDisjointSets());
+  };
   TestWithSpecialMemberFunctions(ds, check);
 }
 
@@ -70,8 +72,15 @@ TEST_CASE("AddSingle") {
 
   const auto check = [](auto &ds) {
     CHECK(1 == ds.size());
+
+    const auto &constDs = ds;
+    CHECK(1 == constDs.find(1));
+    CHECK(!constDs.find(2).has_value());
+
     CHECK(1 == ds.find(1));
     CHECK(!ds.find(2).has_value());
+
+    CHECK(1 == ds.numberOfDisjointSets());
   };
   TestWithSpecialMemberFunctions(ds, check);
 }
@@ -89,12 +98,23 @@ TEST_CASE("AddTwo") {
 
   const auto check = [](auto &ds) {
     CHECK(2 == ds.size());
+
+    const auto &constDs = ds;
+    CHECK(constDs.find(kFirstValue) == kFirstValue);
+    CHECK(constDs.find(kSecondValue) == kSecondValue);
+    CHECK(!constDs.find(kFirstValue - 1).has_value());
+    CHECK(!constDs.find(kFirstValue + 1).has_value());
+    CHECK(!constDs.find(kSecondValue - 1).has_value());
+    CHECK(!constDs.find(kSecondValue + 1).has_value());
+
     CHECK(ds.find(kFirstValue) == kFirstValue);
     CHECK(ds.find(kSecondValue) == kSecondValue);
     CHECK(!ds.find(kFirstValue - 1).has_value());
     CHECK(!ds.find(kFirstValue + 1).has_value());
     CHECK(!ds.find(kSecondValue - 1).has_value());
     CHECK(!ds.find(kSecondValue + 1).has_value());
+
+    CHECK(2 == ds.numberOfDisjointSets());
   };
   TestWithSpecialMemberFunctions(ds, check);
 }
@@ -117,7 +137,14 @@ TEST_CASE("MultipleAdd") {
 
   const auto check = [expectedSize](auto &ds) {
     CHECK(expectedSize == ds.size());
+    CHECK(expectedSize == ds.numberOfDisjointSets());
+    const auto &constDs = ds;
+
     for (auto i = kStartValue; i < kEndValue; i += kIncrement) {
+      CHECK(constDs.find(i).has_value());
+      CHECK(!constDs.find(i - 1).has_value());
+      CHECK(!constDs.find(i + 1).has_value());
+
       CHECK(ds.find(i).has_value());
       CHECK(!ds.find(i - 1).has_value());
       CHECK(!ds.find(i + 1).has_value());
@@ -139,10 +166,21 @@ TEST_CASE("SimpleMerge") {
 
   ds.add(secondValue);
   CHECK(secondValue == ds.find(secondValue));
+  CHECK(2 == ds.numberOfDisjointSets());
 
   CHECK(ds.merge(firstValue, secondValue));
   const auto check = [firstValue, secondValue, expected](auto &ds) {
     CHECK(2 == ds.size());
+
+    const auto &constDs = ds;
+    CHECK(constDs.find(firstValue) == expected);
+    CHECK(constDs.find(secondValue) == expected);
+    CHECK(!constDs.find(firstValue - 1).has_value());
+    CHECK(!constDs.find(firstValue + 1).has_value());
+    CHECK(!constDs.find(secondValue - 1).has_value());
+    CHECK(!constDs.find(secondValue + 1).has_value());
+
+    CHECK(1 == ds.numberOfDisjointSets());
 
     CHECK(ds.find(firstValue) == expected);
     CHECK(ds.find(secondValue) == expected);
@@ -175,10 +213,19 @@ TEST_CASE("DoubleMerge") {
   ds.add(thirdValue);
   CHECK(thirdValue == ds.find(thirdValue));
 
+  CHECK(3 == ds.numberOfDisjointSets());
   CHECK(ds.merge(firstValue, secondValue));
+  CHECK(2 == ds.numberOfDisjointSets());
   CHECK(ds.merge(secondValue, thirdValue));
+  CHECK(1 == ds.numberOfDisjointSets());
   const auto check = [firstValue, secondValue, thirdValue, expected](auto &ds) {
     CHECK(3 == ds.size());
+    CHECK(1 == ds.numberOfDisjointSets());
+
+    const auto &constDs = ds;
+    CHECK(constDs.find(firstValue) == expected);
+    CHECK(constDs.find(secondValue) == expected);
+    CHECK(constDs.find(thirdValue) == expected);
 
     CHECK(ds.find(firstValue) == expected);
     CHECK(ds.find(secondValue) == expected);
@@ -189,5 +236,45 @@ TEST_CASE("DoubleMerge") {
     CHECK(!ds.merge(firstValue, thirdValue));
   };
   TestWithSpecialMemberFunctions(ds, check);
+}
+
+TEMPLATE_TEST_CASE("MergeChains", "", const DisjointSet<int64_t> &, DisjointSet<int64_t> &) {
+  DisjointSet<int64_t> ds;
+  // DisjointSet<T>::findParent work differently in the const and non-const version
+  TestType testDs = ds;
+  static constexpr int64_t chain1Start = 42;
+  static constexpr int64_t chain1End = chain1Start - 10;
+  static constexpr int64_t chain2Start = -145;
+  static constexpr int64_t chain2End = chain2Start - 10;
+
+  auto createChain = [&ds](const int64_t chainStart, const int64_t chainEnd) {
+    ds.add(chainStart);
+    for (auto i = chainStart - 1; i >= chainEnd; --i) {
+      ds.add(i);
+      if (i % 2 == 0) {
+        ds.merge(i, i + 1);
+      } else {
+        ds.merge(i + 1, i);
+      }
+    }
+  };
+
+  auto checkChain = [&testDs](const int64_t chainStart, const int64_t chainEnd, const int64_t expected) {
+    for (auto i = chainStart; i >= chainEnd; --i) {
+      CHECK(expected == testDs.find(i));
+    }
+  };
+
+  createChain(chain1Start, chain1End);
+  checkChain(chain1Start, chain1End, chain1End);
+  CHECK(1 == testDs.numberOfDisjointSets());
+  createChain(chain2Start, chain2End);
+  checkChain(chain1Start, chain1End, chain1End);
+  checkChain(chain2Start, chain2End, chain2End);
+  CHECK(2 == testDs.numberOfDisjointSets());
+  ds.merge(chain1End, chain2End);
+  checkChain(chain1Start, chain1End, chain2End);
+  checkChain(chain2Start, chain2End, chain2End);
+  CHECK(1 == testDs.numberOfDisjointSets());
 }
 } // namespace utils::containers::tests
