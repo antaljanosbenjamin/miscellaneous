@@ -13,15 +13,16 @@ public:
   using ValueType = typename std::vector<TValue>::value_type;
 
   Matrix(int64_t height, int64_t width, TValue defaultValue = TValue{})
-    : m_height(height)
-    , m_width(width)
-    , m_values() {
+    : m_height{height}
+    , m_width{width} {
     if (m_height < 0) {
       throw std::invalid_argument{"The height of the matrix cannot be negative!"};
     }
     if (m_width < 0) {
       throw std::invalid_argument{"The width of the matrix cannot be negative!"};
     }
+    // The creation of the vector has to be done after checking the size, otherwise the constructor of the vector might
+    // throw an exception.
     m_values = std::vector<ValueType>(m_height * m_width, defaultValue);
   }
 
