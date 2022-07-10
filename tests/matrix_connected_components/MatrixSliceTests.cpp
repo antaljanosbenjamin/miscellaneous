@@ -9,6 +9,8 @@
 namespace matrix_connected_components::tests {
 
 using TestMatrix = utils::containers::Matrix<uint64_t>;
+static_assert(IsNumericalMatrixLike<MatrixSlice<TestMatrix>>,
+              "MatrixSlice doesn't meet the requirements of IsNumericalMatrixLike!");
 
 void checkSliceAndMatrix(MatrixSlice<TestMatrix> &slice, const TestMatrix &matrix) {
   const auto checkSlice = [&matrix](auto &slice) {
