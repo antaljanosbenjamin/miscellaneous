@@ -6,13 +6,12 @@ set(MATRIX_CONNECTED_COMPONENTS_HEADERS
 )
 
 add_library(
-  matrix_connected_components ${MATRIX_CONNECTED_COMPONENTS_HEADERS}
+  matrix_connected_components INTERFACE ${MATRIX_CONNECTED_COMPONENTS_HEADERS}
                               ${MATRIX_CONNECTED_COMPONENTS_SOURCES}
 )
-target_include_directories(matrix_connected_components PUBLIC include/)
+target_include_directories(matrix_connected_components INTERFACE include/)
 
-target_link_libraries(matrix_connected_components PUBLIC project_options utils)
-target_link_libraries(matrix_connected_components PRIVATE project_warnings)
+target_link_libraries(matrix_connected_components INTERFACE project_options utils)
 
 set_target_properties(matrix_connected_components PROPERTIES FOLDER "matrix_connected_components")
 
