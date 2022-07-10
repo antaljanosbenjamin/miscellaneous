@@ -75,14 +75,14 @@ static void Vector(benchmark::State &state) {
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define BENCH(kMaxDimension, kFilledItems)                                                                             \
   BENCHMARK_TEMPLATE(Vector, std::vector<LABEL_TYPE>, kMaxDimension, kFilledItems);                                    \
-  BENCHMARK_TEMPLATE(Map, std::unordered_map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE, PairHash<uint32_t>>,         \
+  BENCHMARK_TEMPLATE(Map, std::unordered_map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE, PairHash<SIZE_TYPE>>,        \
                      kMaxDimension, kFilledItems);                                                                     \
   BENCHMARK_TEMPLATE(Map, std::map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE>, kMaxDimension, kFilledItems);         \
   BENCHMARK_TEMPLATE(Map,                                                                                              \
-                     robin_hood::unordered_flat_map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE, PairHash<uint32_t>>,  \
+                     robin_hood::unordered_flat_map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE, PairHash<SIZE_TYPE>>, \
                      kMaxDimension, kFilledItems);                                                                     \
   BENCHMARK_TEMPLATE(Map,                                                                                              \
-                     robin_hood::unordered_node_map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE, PairHash<size_t>>,    \
+                     robin_hood::unordered_node_map<std::pair<SIZE_TYPE, SIZE_TYPE>, LABEL_TYPE, PairHash<SIZE_TYPE>>, \
                      kMaxDimension, kFilledItems)
 
 // NOLINTNEXTLINE(cppcoreguidelines-owning-memory,cppcoreguidelines-avoid-non-const-global-variables)
