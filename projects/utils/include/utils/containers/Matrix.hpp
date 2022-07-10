@@ -7,11 +7,17 @@
 
 namespace utils::containers {
 
+// A container represents a 2D matrix.
 template <typename TValue>
 class Matrix {
 public:
   using ValueType = typename std::vector<TValue>::value_type;
 
+  // The parameters are the following:
+  // - `height`: the height of the 2D matrix
+  // - `width`: the width of the 2D matrix
+  // - `defaultValue`: the matrix will be filled with it after construction
+  // Throws `std::invalid_argument` if any of the sizes is less than zero.
   Matrix(int64_t height, int64_t width, TValue defaultValue = TValue{})
     : m_height{height}
     , m_width{width} {
@@ -50,14 +56,24 @@ public:
 
   ~Matrix() = default;
 
+  // Returns a reference to the item specified by its row and column. The behavior is undefined if `row` or `column` is
+  // not a valid index. Valid indices are greater or equal than zero and less than the corresponding size of the matrix.
+  // Complexity: constant
   [[nodiscard]] TValue &get(const int64_t row, const int64_t column) {
     return m_values[this->getIndexFromRowAndColumn(row, column)];
   }
 
+  // Returns a constant reference to the item specified by its row and column. The behavior is undefined if `row` or
+  // `column` is not a valid index. Valid indices are greater or equal than zero and less than the corresponding size of
+  // the matrix.
+  // Complexity: constant
   [[nodiscard]] const TValue &get(const int64_t row, const int64_t column) const {
     return m_values[this->getIndexFromRowAndColumn(row, column)];
   }
 
+  // Returns a pointer to the item specified by its row and column, or `nullptr` if `row` or `column` is not a valid
+  // index. Valid indices are greater or equal than zero and less than the corresponding size of the matrix.
+  // Complexity: constant
   [[nodiscard]] TValue *tryGet(const int64_t row, const int64_t column) {
     if (this->areValidRowAndColumn(row, column)) {
       return &this->get(row, column);
@@ -65,6 +81,9 @@ public:
     return nullptr;
   }
 
+  // Returns a constant pointer to the item specified by its row and column, or `nullptr` if `row` or `column` is not a
+  // valid index. Valid indices are greater or equal than zero and less than the corresponding size of the matrix.
+  // Complexity: constant
   [[nodiscard]] const TValue *tryGet(const int64_t row, const int64_t column) const {
     if (this->areValidRowAndColumn(row, column)) {
       return &this->get(row, column);
@@ -72,6 +91,10 @@ public:
     return nullptr;
   }
 
+  // Returns a reference to the item specified by its row and column, or throws a `std::out_of_range` exception if `row`
+  // or `column` is not a valid index. Valid indices are greater or equal than zero and less than the corresponding size
+  // of the matrix.
+  // Complexity: constant
   [[nodiscard]] TValue &getChecked(const int64_t row, const int64_t column) {
     if (auto *ptr = this->tryGet(row, column); nullptr != ptr) {
       return *ptr;
@@ -79,6 +102,10 @@ public:
     throw std::out_of_range{"Invalid row or column"};
   }
 
+  // Returns a constant reference to the item specified by its row and column, or throws a `std::out_of_range` exception
+  // if `row` or `column` is not a valid index. Valid indices are greater or equal than zero and less than the
+  // corresponding size of the matrix.
+  // Complexity: constant
   [[nodiscard]] const TValue &getChecked(const int64_t row, const int64_t column) const {
     if (const auto *ptr = this->tryGet(row, column); nullptr != ptr) {
       return *ptr;
@@ -86,10 +113,14 @@ public:
     throw std::out_of_range{"Invalid row or column"};
   }
 
+  // Returns the height of the matrix.
+  // Complexity: constant
   [[nodiscard]] int64_t height() const noexcept {
     return m_height;
   }
 
+  // Returns the width of the matrix.
+  // Complexity: constant
   [[nodiscard]] int64_t width() const noexcept {
     return m_width;
   }
