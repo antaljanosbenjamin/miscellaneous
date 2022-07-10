@@ -16,9 +16,9 @@ class MatrixSlice {
 public:
   using ValueType = utils::containers::ValueTypeOf<TMatrix>;
 
-  MatrixSlice(TMatrix &matrix, int64_t height_offset, int64_t width_offset, int64_t height, int64_t width)
-    : m_height_offset{height_offset}
-    , m_width_offset{width_offset}
+  MatrixSlice(TMatrix &matrix, int64_t heightOffset, int64_t widthOffset, int64_t height, int64_t width)
+    : m_heightOffset{heightOffset}
+    , m_widthOffset{widthOffset}
     , m_height{height}
     , m_width{width}
     , m_matrix{&matrix} {
@@ -28,17 +28,17 @@ public:
     if (m_width < 0) {
       throw std::invalid_argument{"The width of the slice cannot be negative!"};
     }
-    if (m_height_offset < 0) {
+    if (m_heightOffset < 0) {
       throw std::invalid_argument{"The height offset of the slice cannot be negative!"};
     }
-    if (m_width_offset < 0) {
+    if (m_widthOffset < 0) {
       throw std::invalid_argument{"The width offset of the slice cannot be negative!"};
     }
-    if (m_height_offset + m_height > m_matrix->height()) {
+    if (m_heightOffset + m_height > m_matrix->height()) {
       throw std::invalid_argument{
           "The height plus the height offset is greater than the height of the underlying matrix!"};
     }
-    if (m_width_offset + m_width > m_matrix->width()) {
+    if (m_widthOffset + m_width > m_matrix->width()) {
       throw std::invalid_argument{
           "The width plus the width offset is greater than the width of the underlying matrix!"};
     }
@@ -52,10 +52,10 @@ public:
   ~MatrixSlice() = default;
 
   [[nodiscard]] int64_t heightOffset() const noexcept {
-    return m_height_offset;
+    return m_heightOffset;
   }
   [[nodiscard]] int64_t widthOffset() const noexcept {
-    return m_width_offset;
+    return m_widthOffset;
   }
   [[nodiscard]] int64_t height() const noexcept {
     return m_height;
@@ -65,16 +65,16 @@ public:
   }
 
   [[nodiscard]] ValueType &get(const int64_t row, const int64_t column) {
-    return m_matrix->get(m_height_offset + row, m_width_offset + column);
+    return m_matrix->get(m_heightOffset + row, m_widthOffset + column);
   }
 
   [[nodiscard]] const ValueType &get(const int64_t row, const int64_t column) const {
-    return m_matrix->get(m_height_offset + row, m_width_offset + column);
+    return m_matrix->get(m_heightOffset + row, m_widthOffset + column);
   }
 
 private:
-  int64_t m_height_offset{0};
-  int64_t m_width_offset{0};
+  int64_t m_heightOffset{0};
+  int64_t m_widthOffset{0};
   int64_t m_height{0};
   int64_t m_width{0};
   utils::NotNull<TMatrix *> m_matrix;
