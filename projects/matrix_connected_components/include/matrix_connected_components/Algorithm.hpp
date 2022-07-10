@@ -68,10 +68,10 @@ void relabelMatrix(TMatrix &matrix, DisjointSet<ValueTypeOf<TMatrix>> &labelSets
 // This function takes a matrix-like object by value and returns the same type of matrix-like object with all of the
 // marked fields labelled with a number that is unique to component they are part of.
 // The fields of the input matrix can have 2 values:
-// 1. kUnmarkedField<ValueType> means the field is not marked, thus it cannot be part of any of the components. It won't
-//    be labelled in the algorithm.
-// 2. kMarkedField<ValueType> means the field is marked, so it has to be part one of components. It will be labelled as
-//    part of the algorithm.
+// 1. `kUnmarkedField<ValueType>` means the field is not marked, thus it cannot be part of any of the components. It
+//    won't be labelled in the algorithm.
+// 2. `kMarkedField<ValueType>` means the field is marked, so it has to be part one of components. It will be labelled
+//    as part of the algorithm.
 // If an input object contains any other value, then the behavior of the algorithm is undefined.
 template <IsNumericalMatrixLike TMatrix>
 [[nodiscard]] TMatrix labelConnectedComponents(TMatrix matrix) {
@@ -87,8 +87,8 @@ template <IsNumericalMatrixLike TMatrix>
   return assignInitialLabels(matrix).numberOfDisjointSets();
 }
 
-// This function takes a matrix-like object by reference and assigns the initial labels of the marked fields in the
-// matrix and returns the set of labels in a DisjointSet data structure.
+// This function takes a matrix-like object by reference and assigns the initial labels to the marked fields in the
+// matrix and returns the sets of labels in a DisjointSet data structure.
 template <IsNumericalMatrixLike TMatrix>
 DisjointSet<ValueTypeOf<TMatrix>> assignInitialLabels(TMatrix &matrix) {
 
@@ -122,7 +122,7 @@ DisjointSet<ValueTypeOf<TMatrix>> assignInitialLabels(TMatrix &matrix) {
       }
 
       if (smallerLabel == kUnmarked) {
-        // we don't have any collision for sure
+        // we don't have any conflict for sure
         if (greaterLabel == kUnmarked) {
           // We need a new label
           label = currentLabel++;
@@ -133,10 +133,9 @@ DisjointSet<ValueTypeOf<TMatrix>> assignInitialLabels(TMatrix &matrix) {
           label = greaterLabel;
         }
       } else {
-        // we might have a collision
+        // we might have a conflict
         label = smallerLabel;
         if (smallerLabel != greaterLabel) {
-
           labelSets.merge(smallerLabel, greaterLabel);
         }
       }
