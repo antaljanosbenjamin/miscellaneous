@@ -87,5 +87,7 @@ static_assert(IsNumericalMatrixLike<MatrixSlice<utils::containers::Matrix<uint64
               "MatrixSlice has to satisfy IsNumericalMatrixLike, please check the requirements");
 static_assert(IsNumericalMatrixLike<MatrixSlice<utils::containers::Matrix<int64_t>>>,
               "MatrixSlice has to satisfy IsNumericalMatrixLike, please check the requirements");
+static_assert(std::is_trivially_copyable_v<MatrixSlice<utils::containers::Matrix<int64_t>>>,
+              "MatrixSlice meant to be trivially copyable!");
 
 } // namespace matrix_connected_components
