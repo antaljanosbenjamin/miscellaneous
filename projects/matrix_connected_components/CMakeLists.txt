@@ -5,15 +5,14 @@ set(MATRIX_CONNECTED_COMPONENTS_HEADERS
     include/matrix_connected_components/MatrixUtils.hpp
 )
 
-add_library(
-  matrix_connected_components INTERFACE ${MATRIX_CONNECTED_COMPONENTS_HEADERS}
-                              ${MATRIX_CONNECTED_COMPONENTS_SOURCES}
+add_library(matrix_connected_components INTERFACE)
+target_include_directories(matrix_connected_components INTERFACE include)
+target_link_libraries(matrix_connected_components INTERFACE utils project_options)
+
+add_dummy_project_for_header_only_lib(
+  matrix_connected_components_ ${MATRIX_CONNECTED_COMPONENTS_HEADERS} FOLDER
+  "matrix_connected_components"
 )
-target_include_directories(matrix_connected_components INTERFACE include/)
-
-target_link_libraries(matrix_connected_components INTERFACE project_options utils)
-
-set_target_properties(matrix_connected_components PROPERTIES FOLDER "matrix_connected_components")
 
 # Demo
 set(MATRIX_CONNECTED_COMPONENTS_DEMO_SOURCES src/main.cpp)
