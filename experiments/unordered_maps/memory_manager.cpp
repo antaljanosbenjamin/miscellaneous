@@ -30,7 +30,14 @@ void CustomMemoryManager::untrackMemory(size_t size) {
 }
 
 void CustomMemoryManager::untrackMemory(void *ptr) {
-  untrackMemory(malloc_usable_size(ptr));
+  const auto blockSize = std::invoke([ptr] {
+#ifdef _WIN32
+    return _msize(ptr);
+#else
+    return malloc_usable_size(ptr);
+#endif
+  });
+  untrackMemory(blockSize);
 }
 
 CustomMemoryManager &getMemoryManager() {
