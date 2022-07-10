@@ -6,13 +6,11 @@
 #include "matrix_connected_components/Algorithm.hpp"
 #include "utils/containers/Matrix.hpp"
 
+#include "MatrixUtils.hpp"
+
 namespace matrix_connected_components::tests {
 
-size_t asSizeT(const int64_t value) {
-  return static_cast<size_t>(value);
-}
-
-utils::containers::Matrix<uint64_t> makeMatrix(const std::vector<std::string> &input) {
+[[nodiscard]] utils::containers::Matrix<uint64_t> makeInputMatrix(const std::vector<std::string> &input) {
   const auto height = static_cast<int64_t>(input.size());
   const auto width = static_cast<int64_t>(input.front().size());
 
@@ -27,20 +25,7 @@ utils::containers::Matrix<uint64_t> makeMatrix(const std::vector<std::string> &i
   return matrix;
 }
 
-utils::containers::Matrix<uint64_t> makeExpectedMatrix(const std::vector<std::vector<uint64_t>> &input) {
-  const auto height = static_cast<int64_t>(input.size());
-  const auto width = static_cast<int64_t>(input.front().size());
-
-  utils::containers::Matrix<uint64_t> matrix{height, width, matrix_connected_components::kUnmarkedField<uint64_t>};
-  for (int64_t row{0}; row < height; ++row) {
-    for (int64_t column{0}; column < width; ++column) {
-      matrix.get(row, column) = input[asSizeT(row)][asSizeT(column)];
-    }
-  }
-  return matrix;
-}
-
-int64_t numberOfConnectedComponents(const std::unordered_map<uint64_t, uint64_t> &labelUnions) {
+[[nodiscard]] int64_t numberOfConnectedComponents(const std::unordered_map<uint64_t, uint64_t> &labelUnions) {
   int64_t count{0};
   for (const auto [label, root]: labelUnions) {
     if (label == root) {
@@ -52,13 +37,8 @@ int64_t numberOfConnectedComponents(const std::unordered_map<uint64_t, uint64_t>
 
 void checkMatrix(const std::vector<std::vector<uint64_t>> &expected,
                  const utils::containers::Matrix<uint64_t> &actual) {
-  const auto heightIsTheSame = expected.size() == asSizeT(actual.height());
-  CHECK(heightIsTheSame);
-  const auto widthIsTheSame = expected.front().size() == asSizeT(actual.width());
-  CHECK(widthIsTheSame);
-  if (!widthIsTheSame || !heightIsTheSame) {
-    return;
-  }
+  REQUIRE(expected.size() == asSizeT(actual.height()));
+  REQUIRE(expected.front().size() == asSizeT(actual.width()));
   for (int64_t row{0}; row < actual.height(); ++row) {
     for (int64_t column{0}; column < actual.width(); ++column) {
       INFO("Row: " << row << ", column: " << column);
@@ -71,10 +51,8 @@ void checkLabelUnions(const std::unordered_map<uint64_t, uint64_t> &expected, co
   CHECK(expected.size() == asSizeT(actual.size()));
   for (const auto [label, root]: expected) {
     const auto rootFromActual = actual.find(label);
-    CHECK(rootFromActual.has_value());
-    if (rootFromActual.has_value()) {
-      CHECK(root == *rootFromActual);
-    }
+    REQUIRE(rootFromActual.has_value());
+    CHECK(root == *rootFromActual);
   }
 }
 
@@ -322,7 +300,7 @@ TEST_CASE("Generic") {
     INFO(testCase.name);
 
     const auto expectedNumberOfConnectedComponents = numberOfConnectedComponents(testCase.expectedLabelUnions);
-    auto matrix = makeMatrix(testCase.input);
+    auto matrix = makeInputMatrix(testCase.input);
     const auto numberOfConnectedComponent = countConnectedComponents(matrix);
     const auto labelledMatrix = labelConnectedComponents(matrix);
     const auto labelUnions = attachInitialLabels(matrix);
