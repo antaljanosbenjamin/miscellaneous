@@ -294,6 +294,41 @@ TEST_CASE("Generic") {
                           {2, 2, 2, 2, 2},
                       },
               },
+              {
+                  .name = "DoubleChessBoard",
+                  .input =
+                      {
+                          {"xx..xx"},
+                          {"xx..xx"},
+                          {"..xx.."},
+                          {"..xx.."},
+                          {"xx..xx"},
+                      },
+                  .expectedInitialLabels =
+                      {
+                          {2, 2, 0, 0, 3, 3},
+                          {2, 2, 0, 0, 3, 3},
+                          {0, 0, 4, 4, 0, 0},
+                          {0, 0, 4, 4, 0, 0},
+                          {5, 5, 0, 0, 6, 6}, // NOLINT(readability-magic-numbers)
+                      },
+                  .expectedLabelUnions =
+                      {
+                          {2, 2},
+                          {3, 3},
+                          {4, 4},
+                          {5, 5}, // NOLINT(readability-magic-numbers)
+                          {6, 6}, // NOLINT(readability-magic-numbers)
+                      },
+                  .expectedConnectedComponents =
+                      {
+                          {2, 2, 0, 0, 3, 3},
+                          {2, 2, 0, 0, 3, 3},
+                          {0, 0, 4, 4, 0, 0},
+                          {0, 0, 4, 4, 0, 0},
+                          {5, 5, 0, 0, 6, 6}, // NOLINT(readability-magic-numbers)
+                      },
+              },
           };
 
   for (const auto &testCase: testCases) {
