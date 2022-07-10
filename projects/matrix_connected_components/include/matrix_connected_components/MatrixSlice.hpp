@@ -24,6 +24,9 @@ public:
   // - `widthOffset`: the index of the first column that should be accessible through this wrapper
   // - `height`: the number of row that should accessible through this wrapper starting from the `heightOffset` row
   // - `width`: the number of columns that should accessible through this wrapper starting from the `widthOffset` column
+  // Throws `std::invalid_argument` if:
+  // - any of the four mentioned values are less then 0
+  // - if `height + heightOffset > matrix.height()` or `width + widthOffset > matrix.width()` is true
   MatrixSlice(TMatrix &matrix, int64_t heightOffset, int64_t widthOffset, int64_t height, int64_t width)
     : m_heightOffset{heightOffset}
     , m_widthOffset{widthOffset}
@@ -59,23 +62,41 @@ public:
 
   ~MatrixSlice() = default;
 
+  // Returns the height offset of the slice.
+  // Complexity: constant
   [[nodiscard]] int64_t heightOffset() const noexcept {
     return m_heightOffset;
   }
+
+  // Returns the width offset of the slice.
+  // Complexity: constant
   [[nodiscard]] int64_t widthOffset() const noexcept {
     return m_widthOffset;
   }
+
+  // Returns the height of the slice.
+  // Complexity: constant
   [[nodiscard]] int64_t height() const noexcept {
     return m_height;
   }
+
+  // Returns the width of the slice.
+  // Complexity: constant
   [[nodiscard]] int64_t width() const noexcept {
     return m_width;
   }
 
+  // Returns a reference to the item specified by its row and column. The behavior is undefined if `row` or `column` is
+  // not a valid index. Valid indices are greater or equal than zero and less than the corresponding size of the slice.
+  // Complexity: constant
   [[nodiscard]] ValueType &get(const int64_t row, const int64_t column) {
     return m_matrix->get(m_heightOffset + row, m_widthOffset + column);
   }
 
+  // Returns a constant reference to the item specified by its row and column. The behavior is undefined if `row` or
+  // `column` is not a valid index. Valid indices are greater or equal than zero and less than the corresponding size of
+  // the slice.
+  // Complexity: constant
   [[nodiscard]] const ValueType &get(const int64_t row, const int64_t column) const {
     return m_matrix->get(m_heightOffset + row, m_widthOffset + column);
   }
