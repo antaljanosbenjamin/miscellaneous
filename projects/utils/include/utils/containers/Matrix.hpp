@@ -15,13 +15,14 @@ public:
   Matrix(int64_t height, int64_t width, TValue defaultValue = TValue{})
     : m_height(height)
     , m_width(width)
-    , m_values(m_height * m_width, defaultValue) {
+    , m_values() {
     if (m_height < 0) {
       throw std::invalid_argument{"The height of the matrix cannot be negative!"};
     }
     if (m_width < 0) {
       throw std::invalid_argument{"The width of the matrix cannot be negative!"};
     }
+    m_values = std::vector<ValueType>(m_height * m_width, defaultValue);
   }
 
   Matrix(const Matrix &) = default;
