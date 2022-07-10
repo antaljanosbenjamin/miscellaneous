@@ -49,3 +49,9 @@ My initial plan was to create a multi-threaded solution, but I realized that I d
 2. `MatrixSlice` can be used to run the initial a labelling phase easily in a multi-threaded manner by slicing up a matrix into lines or columns (or rectangles if that is better).
 3. After the initial labelling, marching over the border of matrix slices and registering cross-border conflicts.
 4. As a last step, the relabelling can be done in multiple threads, because only the matrix should be changed, but with slicing properly the data races can be avoided. The final `DisjointSet` data structure has constant member function to look-up the final label, so calling that from multiple threads wouldn't introduce any data races.
+
+## Interface
+
+There are two main things about the interface I provided:
+1. signed size types: I agree with [Bjarne Stroustrup](https://www.open-std.org/JTC1/SC22/WG21/docs/papers/2019/p1428r0.pdf) in using signed number as size types. I think the strongest reason for this is most of the arithmetic operations on integer types result in a signed integer. Therefore it can protect use from a lot of casting. And yes, 2^63 bytes are more than I think a single computer can utilize as RAM nowadays.
+2. I used template functions for the algorithms to provide flexibility to the users of the library. My assumption here was people might want to use it with signed/unsigned integers and they might not necessary want to use my `Matrix` class. In this case they can provide their own class that fulfills the `IsNumericalMatrixLike` concept and the algorithm would work with their class beautifully. This is similar (of course, on a much simpler level) to how algorithms are implemented in the standard library.
