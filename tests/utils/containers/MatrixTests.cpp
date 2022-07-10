@@ -67,7 +67,7 @@ void CheckValue(TMatrix &matrix, const int64_t row, const int64_t column, const 
     CHECK(expectedValue == matrix.get(row, column));
     CHECK(expectedValue == matrix.getChecked(row, column));
     const auto *ptr = matrix.tryGet(row, column);
-    CHECK(nullptr != ptr);
+    REQUIRE(nullptr != ptr);
     CHECK(expectedValue == *ptr);
   };
   check(matrix);
@@ -84,6 +84,13 @@ TEST_CASE("EmptyMatrix") {
   };
   TestScenarios(matrix, check);
   check(matrix);
+}
+
+TEST_CASE("CheckInvalidSize") {
+  CHECK_THROWS_MATCHES((Matrix<uint64_t>{-1, 1}), std::invalid_argument,
+                       Catch::Matchers::Message("The height of the matrix cannot be negative!"));
+  CHECK_THROWS_MATCHES((Matrix<uint64_t>{1, -1}), std::invalid_argument,
+                       Catch::Matchers::Message("The width of the matrix cannot be negative!"));
 }
 
 TEST_CASE("DefaultValue") {
@@ -109,15 +116,16 @@ TEST_CASE("SetValue") {
   Matrix<uint64_t> matrix{kHeight, kWidth, kDefaultValue};
   for (int64_t row{0}; row < kHeight; ++row) {
     for (int64_t column{0}; column < kWidth; ++column) {
-      switch (row * column % 3) {
+      auto value = (row * kWidth) + column;
+      switch (value % 3) {
       case 0:
-        matrix.get(row, column) = row * column;
+        matrix.get(row, column) = value;
         break;
       case 1:
-        matrix.getChecked(row, column) = row * column;
+        matrix.getChecked(row, column) = value;
         break;
       case 2:
-        *matrix.tryGet(row, column) = row * column;
+        *matrix.tryGet(row, column) = value;
         break;
       }
     }
@@ -126,7 +134,7 @@ TEST_CASE("SetValue") {
   const auto check = [](auto &matrix) {
     for (int64_t row{0}; row < kHeight; ++row) {
       for (int64_t column{0}; column < kWidth; ++column) {
-        CheckValue(matrix, row, column, row * column);
+        CheckValue(matrix, row, column, (row * kWidth) + column);
       }
     }
   };
@@ -134,38 +142,46 @@ TEST_CASE("SetValue") {
 }
 
 TEST_CASE("InvalidIndices") {
-  constexpr int64_t kWidth = 3;
-  constexpr int64_t kHeight = 2;
-  constexpr uint64_t kDefaultValue = 42;
-  Matrix<uint64_t> matrix{kHeight, kWidth, kDefaultValue};
+  static constexpr int64_t kWidth = 3;
+  static constexpr int64_t kHeight = 2;
+  static constexpr uint64_t kDefaultValue = 42;
+  Matrix<int64_t> matrix{kHeight, kWidth, kDefaultValue};
   for (int64_t row{0}; row < kHeight; ++row) {
     for (int64_t column{0}; column < kWidth; ++column) {
-      switch (row * column % 3) {
+      auto value = (row * kWidth) + column;
+      switch (value % 3) {
       case 0:
-        matrix.get(row, column) = row * column;
+        matrix.get(row, column) = value;
         break;
       case 1:
-        matrix.getChecked(row, column) = row * column;
+        matrix.getChecked(row, column) = value;
         break;
       case 2:
-        *matrix.tryGet(row, column) = row * column;
+        *matrix.tryGet(row, column) = value;
         break;
       }
     }
   }
 
   const auto check = [](auto &matrix) {
+    static constexpr int64_t checkedRow = 1;
     for (int64_t column{0}; column < kWidth; ++column) {
       CHECK_THROWS_AS(matrix.getChecked(-1, column), std::out_of_range);
       CHECK(nullptr == matrix.tryGet(-1, column));
       CHECK_THROWS_AS(matrix.getChecked(kHeight, column), std::out_of_range);
       CHECK(nullptr == matrix.tryGet(kHeight, column));
+
+      CheckValue(matrix, checkedRow, column, checkedRow * kWidth + column);
     }
+
+    static constexpr int64_t checkedColumn = kWidth - 1;
     for (int64_t row{0}; row < kHeight; ++row) {
       CHECK_THROWS_AS(matrix.getChecked(row, -1), std::out_of_range);
       CHECK(nullptr == matrix.tryGet(row, -1));
       CHECK_THROWS_AS(matrix.getChecked(row, kWidth), std::out_of_range);
       CHECK(nullptr == matrix.tryGet(row, kWidth));
+
+      CheckValue(matrix, row, checkedColumn, row * kWidth + checkedColumn);
     }
   };
   TestScenarios(matrix, check);
