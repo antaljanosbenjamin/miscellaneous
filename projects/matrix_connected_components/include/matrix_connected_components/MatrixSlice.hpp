@@ -11,11 +11,19 @@
 
 namespace matrix_connected_components {
 
+// A simple wrapper class that can be used to restrict the access to a contiguous, rectangular-shaped part of a
+// matrix-like object.
 template <IsNumericalMatrixLike TMatrix>
 class MatrixSlice {
 public:
   using ValueType = utils::containers::ValueTypeOf<TMatrix>;
 
+  // The parameters are the following:
+  // - `matrix`: the matrix-like object to be wrapped
+  // - `heightOffset`: the index of the first line that should be accessible through this wrapper
+  // - `widthOffset`: the index of the first column that should be accessible through this wrapper
+  // - `height`: the number of row that should accessible through this wrapper starting from the `heightOffset` row
+  // - `width`: the number of columns that should accessible through this wrapper starting from the `widthOffset` column
   MatrixSlice(TMatrix &matrix, int64_t heightOffset, int64_t widthOffset, int64_t height, int64_t width)
     : m_heightOffset{heightOffset}
     , m_widthOffset{widthOffset}
