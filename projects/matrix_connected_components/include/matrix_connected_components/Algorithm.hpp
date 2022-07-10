@@ -27,12 +27,75 @@ template <typename T>
 using DisjointSet = utils::containers::DisjointSet<T>;
 
 template <IsNumericalMatrixLike TMatrix>
-DisjointSet<ValueTypeOf<TMatrix>> attachInitialLabels(TMatrix &matrix) {
+DisjointSet<ValueTypeOf<TMatrix>> assignInitialLabels(TMatrix &matrix);
+
+template <IsNumericalMatrixLike TMatrix>
+void relabelMatrix(TMatrix &matrix, DisjointSet<ValueTypeOf<TMatrix>> &labelSets);
+
+// # General description of the algorithm
+//
+// Labelling the connected components in a matrix works in two phases:
+// 1. First, assign an initial label to every marked field of the matrix and register the conflicts when two different
+// labels are on neighboring fields.
+// 2. After the conflicts are resolved, all of the initial labels can be replaced to final labels, thus assigning the
+// final label for all of fields. After this step, all the fields in a connected component has the same label and no two
+// components will have the same label.
+//
+// # First phase
+//
+// The next free label value is always maintained during the algorithm, but it's actual value is not that relevant. In
+// the first phase, all the fields are marched in a raster pattern (from top to bottom line by line, then in a single
+// line from the left to the right). To determine the initial label for a field, two of neighbors, the left and the top
+// are checked:
+// 1. If only one of them is labelled, then the current field will get the same label.
+// 2. If both of them are labelled, then the current field will get the label with the smallest value.
+// 3. If none of them are labelled, then the current field will get the next free label (and therefore the value of the
+//    next free label is incremented).
+// In case of #3, we have to also deal with the conflict, because that case means two differently labelled area are next
+// to each other. For this, we are maintaining the a DisjointSet (UnionFind) data structure which is optimized for
+// merging disjoint sets of integers. Every time we detect a conflict, the sets of the two different labels has to be
+// merged. This way all of the labels occurring in a single connected component will be merged into a single set in the
+// DisjointSet data structure.
+//
+// # Second phase
+//
+// In the second phase we just iterate over the matrix and update the label of each field to the lowest label of their
+// label set using the DisjointSet data structure built up in first phase.
+//
+// Alternatively if we only care about the number if connected components, it is enough to get the number of disjoint
+// sets from the same data structure.
+
+// This function takes a matrix-like object by value and returns the same type of matrix-like object with all of the
+// marked fields labelled with a number that is unique to component they are part of.
+// The fields of the input matrix can have 2 values:
+// 1. kUnmarkedField<ValueType> means the field is not marked, thus it cannot be part of any of the components. It won't
+//    be labelled in the algorithm.
+// 2. kMarkedField<ValueType> means the field is marked, so it has to be part one of components. It will be labelled as
+//    part of the algorithm.
+// If an input object contains any other value, then the behavior of the algorithm is undefined.
+template <IsNumericalMatrixLike TMatrix>
+[[nodiscard]] TMatrix labelConnectedComponents(TMatrix matrix) {
+  auto labelSets = assignInitialLabels(matrix);
+  relabelMatrix(matrix, labelSets);
+  return matrix;
+}
+
+// This function takes a matrix-like object by value and returns the number of connected components in the matrix. The
+// input object has to adhere to the same restrictions as for the `labelConnectedComponents` function.
+template <IsNumericalMatrixLike TMatrix>
+[[nodiscard]] int64_t countConnectedComponents(TMatrix matrix) {
+  return assignInitialLabels(matrix).numberOfDisjointSets();
+}
+
+// This function takes a matrix-like object by reference and assigns the initial labels of the marked fields in the
+// matrix and returns the set of labels in a DisjointSet data structure.
+template <IsNumericalMatrixLike TMatrix>
+DisjointSet<ValueTypeOf<TMatrix>> assignInitialLabels(TMatrix &matrix) {
 
   using ValueType = ValueTypeOf<TMatrix>;
   using LabelType = ValueType;
 
-  DisjointSet<LabelType> labelUnions;
+  DisjointSet<LabelType> labelSets;
   static constexpr ValueType kUnmarked = kUnmarkedField<ValueType>;
   static constexpr ValueType kMarked = kMarkedField<ValueType>;
   static constexpr ValueType kFirstLabel = kMarked + 1;
@@ -64,7 +127,7 @@ DisjointSet<ValueTypeOf<TMatrix>> attachInitialLabels(TMatrix &matrix) {
           // We need a new label
           label = currentLabel++;
 
-          labelUnions.add(label);
+          labelSets.add(label);
 
         } else {
           label = greaterLabel;
@@ -74,16 +137,20 @@ DisjointSet<ValueTypeOf<TMatrix>> attachInitialLabels(TMatrix &matrix) {
         label = smallerLabel;
         if (smallerLabel != greaterLabel) {
 
-          labelUnions.merge(smallerLabel, greaterLabel);
+          labelSets.merge(smallerLabel, greaterLabel);
         }
       }
     }
   }
-  return labelUnions;
+  return labelSets;
 }
 
+// This function takes a matrix-like object by reference and the disjoint sets of labels. Iterates over all of marked
+// fields and update the label of each field to the lowest label of their label set. If the input matrix contains any
+// field that is not unmarked or it doesn't belong to any of the label sets, then the result of the algorithm is
+// undefined.
 template <IsNumericalMatrixLike TMatrix>
-void relabelMatrix(TMatrix &matrix, DisjointSet<ValueTypeOf<TMatrix>> &labelUnions) {
+void relabelMatrix(TMatrix &matrix, DisjointSet<ValueTypeOf<TMatrix>> &labelSets) {
   using ValueType = ValueTypeOf<TMatrix>;
   static constexpr ValueType kUnmarked = kUnmarkedField<ValueType>;
   const auto width = matrix.width();
@@ -92,21 +159,9 @@ void relabelMatrix(TMatrix &matrix, DisjointSet<ValueTypeOf<TMatrix>> &labelUnio
     for (auto column{0}; column < width; ++column) {
       auto &label = matrix.get(row, column);
       if (label != kUnmarked) {
-        label = *labelUnions.find(label);
+        label = *labelSets.find(label);
       }
     }
   }
-}
-
-template <IsNumericalMatrixLike TMatrix>
-[[nodiscard]] int64_t countConnectedComponents(TMatrix matrix) {
-  return attachInitialLabels(matrix).numberOfDisjointSets();
-}
-
-template <IsNumericalMatrixLike TMatrix>
-[[nodiscard]] TMatrix labelConnectedComponents(TMatrix matrix) {
-  auto labelUnions = attachInitialLabels(matrix);
-  relabelMatrix(matrix, labelUnions);
-  return matrix;
 }
 } // namespace matrix_connected_components

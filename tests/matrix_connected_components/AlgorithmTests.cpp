@@ -25,9 +25,9 @@ namespace matrix_connected_components::tests {
   return matrix;
 }
 
-[[nodiscard]] int64_t numberOfConnectedComponents(const std::unordered_map<uint64_t, uint64_t> &labelUnions) {
+[[nodiscard]] int64_t numberOfConnectedComponents(const std::unordered_map<uint64_t, uint64_t> &labelSets) {
   int64_t count{0};
-  for (const auto [label, root]: labelUnions) {
+  for (const auto [label, root]: labelSets) {
     if (label == root) {
       ++count;
     }
@@ -303,12 +303,12 @@ TEST_CASE("Generic") {
     auto matrix = makeInputMatrix(testCase.input);
     const auto numberOfConnectedComponent = countConnectedComponents(matrix);
     const auto labelledMatrix = labelConnectedComponents(matrix);
-    const auto labelUnions = attachInitialLabels(matrix);
+    const auto labelSets = assignInitialLabels(matrix);
 
     CHECK(expectedNumberOfConnectedComponents == numberOfConnectedComponent);
     {
       INFO("Checking label unions after initial labels");
-      checkLabelUnions(testCase.expectedLabelUnions, labelUnions);
+      checkLabelUnions(testCase.expectedLabelUnions, labelSets);
     }
     {
       INFO("Checking initial labels");
@@ -318,15 +318,15 @@ TEST_CASE("Generic") {
       INFO("Checking labelled matrix");
       checkMatrix(testCase.expectedConnectedComponents, labelledMatrix);
     }
-    auto labelUnionsCopy = labelUnions;
-    relabelMatrix(matrix, labelUnionsCopy);
+    auto labelSetsCopy = labelSets;
+    relabelMatrix(matrix, labelSetsCopy);
     {
       INFO("Checking manually labelled matrix");
       checkMatrix(testCase.expectedConnectedComponents, labelledMatrix);
     }
     {
       INFO("Checking label unions after relabeling");
-      checkLabelUnions(testCase.expectedLabelUnions, labelUnionsCopy);
+      checkLabelUnions(testCase.expectedLabelUnions, labelSetsCopy);
     }
   }
 }
