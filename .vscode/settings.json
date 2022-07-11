@@ -1,5 +1,7 @@
 {
     "cmake.configureSettings": {
         "ENABLE_CLANG_TIDY": false
-    }
+    },
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true
 }

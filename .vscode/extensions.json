@@ -13,7 +13,8 @@
 		"twxs.cmake",
 		"vadimcn.vscode-lldb",
 		"ms-vscode.cmake-tools",
-		"xaver.clang-format"
+		"xaver.clang-format",
+		"mhutchie.git-graph"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": []

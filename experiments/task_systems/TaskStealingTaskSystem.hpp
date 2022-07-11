@@ -11,20 +11,20 @@
 
 template <size_t K>
 class TaskStealingTaskSystem {
-  const unsigned count_{std::thread::hardware_concurrency()};
-  std::vector<std::thread> threads_;
-  std::vector<NotificationQueue> q_{count_};
-  std::atomic<unsigned> index_{0};
+  const unsigned m_count{std::thread::hardware_concurrency()};
+  std::vector<std::thread> m_threads;
+  std::vector<NotificationQueue> m_queue{m_count};
+  std::atomic<unsigned> m_index{0};
 
   void run(unsigned i) {
     while (true) {
       std::function<void()> f;
-      for (unsigned n = 0; n != count_ * K; ++n) {
-        if (q_[(i + n) % count_].try_pop(f)) {
+      for (unsigned n = 0; n != m_count * K; ++n) {
+        if (m_queue[(i + n) % m_count].try_pop(f)) {
           break;
         }
       }
-      if (!f && !q_[i].pop(f)) {
+      if (!f && !m_queue[i].pop(f)) {
         break;
       }
       f();
@@ -33,16 +33,16 @@ class TaskStealingTaskSystem {
 
 public:
   TaskStealingTaskSystem() {
-    for (unsigned n = 0; n != count_; ++n) {
-      threads_.emplace_back([&, n] { run(n); });
+    for (unsigned n = 0; n != m_count; ++n) {
+      m_threads.emplace_back([&, n] { run(n); });
     }
   }
 
   ~TaskStealingTaskSystem() {
-    for (auto &e: q_) {
+    for (auto &e: m_queue) {
       e.done();
     }
-    for (auto &e: threads_) {
+    for (auto &e: m_threads) {
       e.join();
     }
   }
@@ -54,12 +54,12 @@ public:
 
   template <typename F>
   void async(F &&f) {
-    auto i = index_++;
-    for (unsigned n = 0; n != count_ * K; ++n) {
-      if (q_[(i + n) % count_].try_push(std::forward<F>(f))) {
+    auto i = m_index++;
+    for (unsigned n = 0; n != m_count * K; ++n) {
+      if (m_queue[(i + n) % m_count].try_push(std::forward<F>(f))) {
         return;
       }
     }
-    q_[i % count_].push(std::forward<F>(f)); // NOLINT(clang-analyzer-core.DivideZero)
+    m_queue[i % m_count].push(std::forward<F>(f)); // NOLINT(clang-analyzer-core.DivideZero)
   }
 };
